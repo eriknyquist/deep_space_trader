@@ -34,6 +34,9 @@ rare_item_types = [
 
 
 class Items(object):
+    initial_variance_percent = 2.0
+    daily_variance_percent = 5.0
+
     def __init__(self, itemtype, quantity, value=None):
         self.type = itemtype
         self.quantity = quantity
@@ -42,6 +45,30 @@ class Items(object):
             self.value = itemtype.base_value
         else:
             self.value = value
+
+        # 15 percent of initial value
+        variance = (float(self.value) / 100.0) * self.initial_variance_percent
+
+        # Initial slope value
+        self.value_slope = random.uniform(-variance, variance)
+
+        self.value_history = [self.value]
+
+    def update_value(self):
+        # Random value within range for daily variance
+        variance = (float(self.value) / 100.0) * self.daily_variance_percent
+
+        change = random.uniform(-variance, variance)
+
+        if (float(self.value) + self.value_slope + change) >= 0.0:
+            # Update current slope
+            self.value_slope += change
+
+            # Update value with current slope
+            self.value += int(self.value_slope)
+
+        # Update value history
+        self.value_history.append(self.value)
 
     @classmethod
     def random(cls, value_multiplier=1.0, quantity_multiplier=1.0):
@@ -81,6 +108,10 @@ class ItemCollection(object):
                 self.items[item.type.name] = item
 
             self.items[item.type.name].quantity += item.quantity
+
+    def iter_items(self):
+        for itemname in self.items:
+            yield self.items[itemname]
 
     def add_items(self, itemname, other, quantity=1, delete_empty=True):
         if itemname not in other.items:

@@ -40,6 +40,11 @@ class State(object):
         if self.day == self.max_days:
             return False
 
+        # Update prices of all items on all discovered planets
+        for planet in self.planets:
+            for item in planet.items.iter_items():
+                item.update_value()
+
         self.day += 1
         self.warehouse_puts = 0
         self.warehouse_gets = 0

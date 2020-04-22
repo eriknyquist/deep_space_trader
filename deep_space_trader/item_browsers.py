@@ -1,4 +1,5 @@
 from deep_space_trader.transaction_dialogs import Buy, Sell, PlayerToWarehouse, WarehouseToPlayer
+from deep_space_trader.price_graph import PriceHistoryGraph
 from deep_space_trader import constants as const
 from deep_space_trader.utils import errorDialog
 
@@ -121,6 +122,16 @@ class PlanetItemBrowser(ItemBrowser):
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
         header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
         header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
+
+        self.table.doubleClicked.connect(self.onDoubleClick)
+
+    def onDoubleClick(self, signal):
+        itemname = self.table.item(signal.row(), 0).text()
+        item = self.parent.state.current_planet.items.items[itemname]
+
+        dialog = PriceHistoryGraph(self.parent, item)
+        dialog.setWindowModality(QtCore.Qt.ApplicationModal)
+        dialog.exec_()
 
     def buyButtonClicked(self):
         selectedRow = self.table.currentRow()
