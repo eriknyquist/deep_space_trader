@@ -120,6 +120,7 @@ class Store(QtWidgets.QDialog):
         self.table.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.table.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
         self.table.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.table.doubleClicked.connect(self.onDoubleClick)
 
         header = self.table.horizontalHeader()
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
@@ -160,13 +161,7 @@ class Store(QtWidgets.QDialog):
         self.populateTable()
         super(Store, self).update()
 
-    def buyButtonClicked(self):
-        selectedRow = self.table.currentRow()
-        if selectedRow < 0:
-            errorDialog(self, message="Please select an item first")
-            return
-
-        item = store_items[selectedRow]
+    def buyItem(self, item):
         if self.parent.state.money < item.price:
             errorDialog(self, message="You don't have enough money to buy '%s'" % item.name)
             return
@@ -176,6 +171,19 @@ class Store(QtWidgets.QDialog):
 
         self.parent.state.money -= item.price
         self.parent.infoBar.update()
+
+    def onDoubleClick(self, signal):
+        item = store_items[signal.row()]
+        self.buyItem(item)
+
+    def buyButtonClicked(self):
+        selectedRow = self.table.currentRow()
+        if selectedRow < 0:
+            errorDialog(self, message="Please select an item first")
+            return
+
+        item = store_items[selectedRow]
+        self.buyItem(item)
 
     def sizeHint(self):
         return QtCore.QSize(800, 400)
