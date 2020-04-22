@@ -56,7 +56,8 @@ class State(object):
 
         new_planets = Planet.random(num=num_new, existing=self.planets)
         for new in new_planets:
+            new.discovery_day = self.day
             new.items = ItemCollection.random(value_multiplier=self.level,
                                               quantity_multiplier=self.level)
 
-        self.planets+= new_planets
+        self.planets += new_planets

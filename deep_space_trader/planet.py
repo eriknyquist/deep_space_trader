@@ -121,6 +121,7 @@ class Planet(object):
         self._number = number
         self._letter = letter
         self._visited = False
+        self._discovery_day = 1
         self._items = ItemCollection()
 
     def neighbour(self):
@@ -142,6 +143,14 @@ class Planet(object):
             number = random_planet_number()
 
         return Planet(name, number, letter)
+
+    @property
+    def discovery_day(self):
+        return self._discovery_day
+
+    @discovery_day.setter
+    def discovery_day(self, val):
+        self._discovery_day = val
 
     @property
     def items(self):
