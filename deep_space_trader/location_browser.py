@@ -26,6 +26,7 @@ class LocationBrowser(QtWidgets.QWidget):
         self.table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
         self.table.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.table.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
+        self.table.doubleClicked.connect(self.onDoubleClick)
 
         header = self.table.horizontalHeader()
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
@@ -90,6 +91,10 @@ class LocationBrowser(QtWidgets.QWidget):
             return
 
         self.travelToPlanet(planetname)
+
+    def onDoubleClick(self, signal):
+        planet = self.parent.state.planets[signal.row()]
+        self.travelToPlanet(planet.full_name)
 
     def previousButtonClicked(self):
         if self.parent.state.previous_planet is None:
