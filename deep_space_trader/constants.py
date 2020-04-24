@@ -1,5 +1,5 @@
 # ------ Initial values for player data on day 1 ------
-INITIAL_MONEY = 1000
+INITIAL_MONEY = 100000
 INITIAL_TRAVEL_COST = 100
 INITIAL_ITEM_CAPACITY = 100
 INITIAL_PLANET_COUNT = 12
@@ -61,3 +61,12 @@ CAPACITY_INCREASE = 100
 
 # Max. length of names for high scores
 MAX_HIGHSCORE_NAME_LEN = 32
+
+# Text shown in the intro dialog
+GAME_INTRO_TEXT = (
+    "The year is 81899, and you are the operator of an inter-planetary "
+    "commercial trading vessel. You make your living by collecting various "
+    "resources and treasures from countless planets across the galaxy, and "
+    "selling them wherever you can.<br><br>"
+    "Make as much money as you possibly can before your time runs out."
+)

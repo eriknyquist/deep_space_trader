@@ -49,7 +49,7 @@ class HighScoreTable(QtWidgets.QDialog):
 
     def populateTable(self):
         self.table.setRowCount(0)
-        for score_info in config.highscores():
+        for score_info in config.get_highscores():
             self.addRow(*score_info)
 
     def update(self):
@@ -126,6 +126,6 @@ class HighScoreSharing(QtWidgets.QDialog):
     def update(self):
         super(HighScoreSharing, self).update()
 
-        data = json.dumps(config.highscores())
+        data = json.dumps(config.get_highscores())
         b64 = scores_encode(bytes(data, encoding='utf8'))
         self.displayScores.setText(b64.decode('utf-8'))

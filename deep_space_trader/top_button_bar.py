@@ -40,7 +40,7 @@ class ButtonBar(QtWidgets.QWidget):
         dialog.exec_()
 
     def checkHighScore(self):
-        scores = config.highscores()
+        scores = config.get_highscores()
 
         # High scores are sorted in descending order
         if (len(scores) > 0) and (self.parent.state.money <= scores[0][1]):

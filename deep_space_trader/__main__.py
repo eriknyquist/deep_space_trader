@@ -3,7 +3,9 @@ import os
 import random
 import time
 
+from deep_space_trader import config
 from deep_space_trader.main_widget import MainWidget
+from deep_space_trader.utils import gameStoryDialog
 
 from PyQt5 import QtWidgets, QtGui, QtCore
 
@@ -79,5 +81,10 @@ if __name__ == '__main__':
     win = MainWindow(app.primaryScreen())
     win.setWindowTitle("Deep Space Trader %s" % package_version)
     win.show()
+
+    if config.get_show_intro():
+        dont_show_again = gameStoryDialog()
+        config.set_show_intro(not dont_show_again)
+
     sys.exit(app.exec_())
 

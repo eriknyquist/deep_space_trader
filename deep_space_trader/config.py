@@ -8,8 +8,10 @@ FILENAME = os.path.join(os.path.expanduser('~'), '.deep_space_trader_config.json
 
 
 SCORES_KEY = 'highscores'
+SHOWINTRO_KEY = 'show_intro'
 
 config = {
+    SHOWINTRO_KEY: True,
     SCORES_KEY: []
 }
 
@@ -30,6 +32,8 @@ def config_load():
         return
 
     try:
+        config[SHOWINTRO_KEY] = loaded[SHOWINTRO_KEY]
+
         if loaded[SCORES_KEY] == '':
             config[SCORES_KEY] = []
         else:
@@ -49,6 +53,7 @@ def config_store():
         encoded = ''
 
     cfg[SCORES_KEY] = encoded
+    cfg[SHOWINTRO_KEY] = config[SHOWINTRO_KEY]
 
     try:
         with open(FILENAME, 'w') as fh:
@@ -56,10 +61,16 @@ def config_store():
     except:
         errorDialog(None, "Error", message="Unable to write file %s" % FILENAME)
 
-def add_highscore(name, score):
-    config['highscores'].append([name, score])
-    config['highscores'].sort(key=lambda x: x[1])
-    config['highscores'].reverse()
+def set_show_intro(value):
+    config[SHOWINTRO_KEY] = value
 
-def highscores():
-    return config['highscores']
+def get_show_intro():
+    return config[SHOWINTRO_KEY]
+
+def add_highscore(name, score):
+    config[SCORES_KEY].append([name, score])
+    config[SCORES_KEY].sort(key=lambda x: x[1])
+    config[SCORES_KEY].reverse()
+
+def get_highscores():
+    return config[SCORES_KEY]

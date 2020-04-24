@@ -1,13 +1,53 @@
 import hashlib
 import base64
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore, QtGui
+
+from deep_space_trader import constants as const
 
 
 DATA_ITER = 99
 PWD_ITER = 72
 PWD = b'g\x54n70erew feasf90s gf\xff\x0f\x290780 9\x02ng7804\x00>:": k'
 
+
+class CancelableInfoDialog(QtWidgets.QDialog):
+    def __init__(self, title, text):
+        super(CancelableInfoDialog, self).__init__()
+
+        self.dont_show_again = False
+        mainLayout = QtWidgets.QVBoxLayout(self)
+        textLayout = QtWidgets.QHBoxLayout()
+        textGroup = QtWidgets.QGroupBox()
+        self.text = QtWidgets.QLabel(text)
+        checkboxLabel = QtWidgets.QLabel("Don't show this message again")
+        self.checkbox = QtWidgets.QCheckBox()
+        self.checkbox.stateChanged.connect(self.checkboxClicked)
+
+        self.text.setText(text)
+        self.text.setWordWrap(True)
+        textLayout.addWidget(self.text)
+        textGroup.setLayout(textLayout)
+
+        self.checkboxLayout = QtWidgets.QHBoxLayout()
+        self.checkboxLayout.addWidget(checkboxLabel)
+        self.checkboxLayout.addWidget(self.checkbox)
+
+        mainLayout.addWidget(textGroup)
+        mainLayout.addLayout(self.checkboxLayout)
+
+        self.setLayout(mainLayout)
+        self.setWindowTitle(title)
+
+    def checkboxClicked(self):
+        self.dont_show_again = self.checkbox.isChecked()
+
+
+def gameStoryDialog():
+    dialog = CancelableInfoDialog("Deep Space Trader", const.GAME_INTRO_TEXT)
+    dialog.setWindowModality(QtCore.Qt.ApplicationModal)
+    dialog.exec_()
+    return dialog.dont_show_again
 
 def yesNoDialog(parent, header="", message="Are you sure?"):
     reply = QtWidgets.QMessageBox.question(parent, header, message,
