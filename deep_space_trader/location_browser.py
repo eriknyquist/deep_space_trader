@@ -74,7 +74,11 @@ class LocationBrowser(QtWidgets.QWidget):
         self.parent.state.money -= self.parent.state.travel_cost
         self.parent.state.change_current_planet(planetname)
         self.parent.advanceDay()
-        self.parent.locationBrowser.update()
+
+        currentRow = self.table.currentRow()
+        self.update()
+        self.table.selectRow(currentRow)
+
         self.parent.planetItemBrowser.update()
         self.parent.infoBar.update()
 
