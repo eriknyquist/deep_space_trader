@@ -6,8 +6,9 @@ import traceback
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
-from deep_space_trader.utils import yesNoDialog, errorDialog
+from deep_space_trader.utils import yesNoDialog, errorDialog, infoDialog
 from deep_space_trader.game_state import State
+from deep_space_trader import constants as const
 from deep_space_trader import config
 from deep_space_trader.location_browser import LocationBrowser
 from deep_space_trader.top_button_bar import ButtonBar
@@ -135,6 +136,53 @@ class MainWidget(QtWidgets.QDialog):
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Escape:
             self.quit()
+
+    def advanceDay(self):
+        if self.state.next_day():
+            # Days remaining
+            self.infoBar.update()
+            self.planetItemBrowser.update()
+        else:
+            # No days remaining
+            infoDialog(self, "Game complete", message="You are done")
+            self.checkHighScore()
+            self.reset()
+
+    def checkHighScore(self):
+        scores = config.get_highscores()
+
+        # High scores are sorted in descending order
+        if (len(scores) > 0) and (self.parent.state.money <= scores[0][1]):
+            return
+
+        proceed = yesNoDialog(self, "High score!",
+                              message="You have achieved a high score (%d) ! "
+                                      "would you like to enter your name? (high "
+                                      "scores are only stored locally)" % self.state.money)
+
+        if not proceed:
+            return
+
+        initial_text = '' if len(scores) == 0 else scores[0][0]
+        name = None
+
+        while True:
+            name, accepted = QtWidgets.QInputDialog.getText(self, 'Enter name',
+                                                            "Enter your name for the high score table",
+                                                            text=initial_text)
+
+            if not accepted:
+                return
+
+            if len(name) > const.MAX_HIGHSCORE_NAME_LEN:
+                errorDialog(self, "Too long", "Name is too long (max %d characters)"
+                                  % const.MAX_HIGHSCORE_NAME_LEN)
+            else:
+                break
+
+        config.add_highscore(name, self.state.money)
+        config.config_store()
+        self.showHighScores()
 
     def sizeHint(self):
         return QtCore.QSize(1920, 1080)
