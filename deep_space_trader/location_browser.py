@@ -60,6 +60,10 @@ class LocationBrowser(QtWidgets.QWidget):
         super(LocationBrowser, self).update()
 
     def travelToPlanet(self, planetname):
+        if self.parent.state.current_planet.full_name == planetname:
+            errorDialog(self, message="You are already on %s!" % planetname)
+            return
+
         if self.parent.state.money < self.parent.state.travel_cost:
             errorDialog(self, message="You don't have enough money! (%d required)"
                                       % self.parent.state.travel_cost)
@@ -90,10 +94,6 @@ class LocationBrowser(QtWidgets.QWidget):
             return
 
         planetname = self.table.item(selectedRow, 0).text()
-
-        if self.parent.state.current_planet.full_name == planetname:
-            errorDialog(self, message="You are already on %s!" % planetname)
-            return
 
         self.travelToPlanet(planetname)
 
