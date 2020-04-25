@@ -152,7 +152,7 @@ class MainWidget(QtWidgets.QDialog):
         scores = config.get_highscores()
 
         # High scores are sorted in descending order
-        if (len(scores) > 0) and (self.parent.state.money <= scores[0][1]):
+        if (len(scores) > 0) and (self.state.money <= scores[0][1]):
             return
 
         proceed = yesNoDialog(self, "High score!",
