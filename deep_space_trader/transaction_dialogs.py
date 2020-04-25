@@ -51,7 +51,11 @@ class TransactionDialog(QtWidgets.QDialog):
         self.spinbox.setValue(self.maximumQuantity())
 
     def acceptButtonClicked(self):
-        self.acceptTransaction(int(self.spinbox.value()))
+        value = int(self.spinbox.value())
+        if value == 0:
+            return
+
+        self.acceptTransaction(value)
         self.parent.playerItemBrowser.update()
         self.parent.planetItemBrowser.update()
         self.parent.warehouseItemBrowser.update()
