@@ -1,5 +1,5 @@
 # ------ Initial values for player data on day 1 ------
-INITIAL_MONEY = 1000
+INITIAL_MONEY = 100000
 INITIAL_TRAVEL_COST = 100
 INITIAL_ITEM_CAPACITY = 100
 INITIAL_PLANET_COUNT = 12
@@ -61,6 +61,12 @@ CAPACITY_INCREASE = 100
 
 # Max. length of names for high scores
 MAX_HIGHSCORE_NAME_LEN = 32
+
+# Quanity range required when giving a sample of a new item to a planet
+ITEM_SAMPLE_QUANTITY_RANGE = (2, 10)
+
+# Chance that giving a free sample will be successful, in percent
+ITEM_SAMPLE_SUCCESS_PERCENT = 75
 
 # Text shown in the intro dialog
 GAME_INTRO_TEXT = (

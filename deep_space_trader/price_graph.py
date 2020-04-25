@@ -21,5 +21,8 @@ class PriceHistoryGraph(QtWidgets.QDialog):
                             (item.type.name, parent.state.current_planet.full_name))
 
         planet = parent.state.current_planet
-        x_axis = list(range(planet.discovery_day, self.parent.state.day + 1))
+        range_end = self.parent.state.day + 1
+        range_start = (self.parent.state.day - len(self.item.value_history)) + 1
+
+        x_axis = list(range(range_start, range_end))
         self.graph.plot(x_axis, self.item.value_history)

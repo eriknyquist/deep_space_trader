@@ -123,6 +123,7 @@ class Planet(object):
         self._visited = False
         self._discovery_day = 1
         self._items = ItemCollection()
+        self._samples_today = []
 
     def neighbour(self):
         name = self._name
@@ -143,6 +144,13 @@ class Planet(object):
             number = random_planet_number()
 
         return Planet(name, number, letter)
+
+    def clear_samples_today(self):
+        self._samples_today = []
+
+    @property
+    def samples_today(self):
+        return self._samples_today
 
     @property
     def discovery_day(self):

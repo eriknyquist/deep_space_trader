@@ -1,7 +1,9 @@
+import random
+
 from deep_space_trader.transaction_dialogs import Buy, Sell, PlayerToWarehouse, WarehouseToPlayer
 from deep_space_trader.price_graph import PriceHistoryGraph
 from deep_space_trader import constants as const
-from deep_space_trader.utils import errorDialog
+from deep_space_trader.utils import errorDialog, yesNoDialog, infoDialog
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
@@ -58,6 +60,58 @@ class PlayerItemBrowser(ItemBrowser):
         self.add_button("Sell item", self.sellButtonClicked)
         self.add_button("Add to warehouse", self.warehouseButtonClicked)
 
+    def introduceNewItem(self, itemname):
+        quantity = self.parent.state.items.items[itemname].quantity
+        rand_quantity = random.randrange(*const.ITEM_SAMPLE_QUANTITY_RANGE)
+        planet = self.parent.state.current_planet
+
+        if quantity <= rand_quantity:
+            rand_quantity = max(1, int(quantity / 2))
+
+        msg = ("{0} has never been seen on {1}, and you will have to persuade them "
+               "that it is worth buying. If you provide a free sample of {2} {0}, "
+               "this may help your cause.<br><br>Provide a free sample of "
+               "{2} {0}?".format(itemname, planet.full_name, rand_quantity))
+
+        proceed = yesNoDialog(self, "Provide sample?", message=msg)
+        if not proceed:
+            return
+
+        if itemname in planet.samples_today:
+            errorDialog(self, "Already sampled today",
+                        message="%s has already sampled %s today, try again on "
+                                "a different day" % (planet.full_name, itemname))
+            return
+
+        planet.samples_today.append(itemname)
+
+        # Add new items to planet-- we might remove them in a sec, but this
+        # also handles deleteing them from the player's items, so, meh
+        planet.items.add_items(itemname, self.parent.state.items, rand_quantity)
+        self.parent.playerItemBrowser.update()
+
+        successful = random.randrange(0, 100) < const.ITEM_SAMPLE_SUCCESS_PERCENT
+        if successful:
+            # Sample succesful, update planet item browser to show new item we added
+            self.parent.planetItemBrowser.update()
+
+            # Reset item's value history
+            item = planet.items.items[itemname]
+            item.value_history = [item.value]
+
+            title = "Good news!"
+            msg = ("Your sample achieved its intended purpose! "
+                    "%s is now actively trading in %s." % (planet.full_name, itemname))
+        else:
+            # Sample unsuccessful, delete items from planet
+            planet.items.remove_items(itemname, rand_quantity)
+            title = "Bad news!"
+            msg = ("Your sample was not well received, and %s has decided not to "
+                   "trade in %s." % (planet.full_name, itemname))
+
+
+        infoDialog(self, title, message=msg)
+
     def sellButtonClicked(self):
         selectedRow = self.table.currentRow()
         if selectedRow < 0:
@@ -66,8 +120,7 @@ class PlayerItemBrowser(ItemBrowser):
 
         itemname = self.table.item(selectedRow, 0).text()
         if itemname not in self.parent.state.current_planet.items.items:
-            errorDialog(self, message="%s is not currently in demand on %s"
-                                      % (itemname, self.parent.state.current_planet.full_name))
+            self.introduceNewItem(itemname)
             return
 
         dialog = Sell(self.parent, itemname)

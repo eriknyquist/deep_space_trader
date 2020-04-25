@@ -42,6 +42,7 @@ class State(object):
 
         # Update prices of all items on all discovered planets
         for planet in self.planets:
+            planet.clear_samples_today()
             for item in planet.items.iter_items():
                 item.update_value()
 

@@ -113,6 +113,16 @@ class ItemCollection(object):
         for itemname in self.items:
             yield self.items[itemname]
 
+    def remove_items(self, itemname, quantity=1, delete_empty=True):
+        if itemname not in self.items:
+            return
+
+        num = min(quantity, self.items[itemname].quantity)
+        self.items[itemname].quantity -= num
+
+        if (self.items[itemname].quantity == 0) and delete_empty:
+            del self.items[itemname]
+
     def add_items(self, itemname, other, quantity=1, delete_empty=True):
         if itemname not in other.items:
             return
