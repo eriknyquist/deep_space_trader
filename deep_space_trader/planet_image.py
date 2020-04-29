@@ -10,8 +10,14 @@ HEIGHT = 50
 planet_outline = os.path.join(IMAGE_DIR, 'planet_outline.png')
 planet_ring = os.path.join(IMAGE_DIR, 'planet_ring.png')
 planet_fill = os.path.join(IMAGE_DIR, 'planet_fill.png')
-planet_shine = os.path.join(IMAGE_DIR, 'planet_shine.png')
 planet_background = os.path.join(IMAGE_DIR, 'planet_background.png')
+planet_shine_1 = os.path.join(IMAGE_DIR, 'planet_shine_1.png')
+planet_shine_2 = os.path.join(IMAGE_DIR, 'planet_shine_2.png')
+planet_shine_3 = os.path.join(IMAGE_DIR, 'planet_shine_3.png')
+planet_shine_4 = os.path.join(IMAGE_DIR, 'planet_shine_4.png')
+
+def shineImageIndex(planetname):
+    return (ord(planetname[-2]) * len(planetname)) % 4
 
 def hasRing(planetname):
     return bool((ord(planetname[-1]) * len(planetname)) % 2)
@@ -25,11 +31,10 @@ def planetNameToColors(planetname):
 
     for j in range(num_colors):
         for _ in range(3):
-            b1 = planetname[i]
-            b2 = planetname[(i + 1) % len(planetname)]
-            rgbbuf.append((ord(b1) + ord(b2) * len(planetname)) % 255)
+            b = planetname[i]
+            rgbbuf.append((ord(b) * len(planetname)) % 255)
 
-            i = (i + 2) % len(planetname)
+            i = (i + 1) % len(planetname)
 
         ret.append(QtGui.QColor(*rgbbuf))
         rgbbuf = []
@@ -49,10 +54,16 @@ class PlanetImage(QtWidgets.QWidget):
 
         self.painter = QtGui.QPainter(self.pixmap)
         self.bg_image = QtGui.QPixmap(planet_background).scaled(WIDTH, HEIGHT)
-        self.shine_image = QtGui.QPixmap(planet_shine).scaled(WIDTH, HEIGHT)
         self.fill_image = QtGui.QPixmap(planet_fill).scaled(WIDTH, HEIGHT)
         self.outline_image = QtGui.QPixmap(planet_outline).scaled(WIDTH, HEIGHT)
         self.ring_image = QtGui.QPixmap(planet_ring).scaled(WIDTH, HEIGHT)
+
+        self.shine_images = [
+            QtGui.QPixmap(planet_shine_1).scaled(WIDTH, HEIGHT),
+            QtGui.QPixmap(planet_shine_2).scaled(WIDTH, HEIGHT),
+            QtGui.QPixmap(planet_shine_3).scaled(WIDTH, HEIGHT),
+            QtGui.QPixmap(planet_shine_4).scaled(WIDTH, HEIGHT),
+        ]
 
         self.update()
         self.mainLayout.addWidget(self.planetLabel)
@@ -83,10 +94,12 @@ class PlanetImage(QtWidgets.QWidget):
 
     def setPlanetColors(self, bg_color, outline_color, fill_color, shine_color,
                         ring_color=None):
+        planet = self.parent.state.current_planet
+        shine_image = self.shine_images[shineImageIndex(planet.full_name)]
         self.painter.drawImage(0, 0, self.changeColor(self.bg_image, bg_color, alpha_white=True))
-        self.painter.drawImage(0, 0, self.changeColor(self.shine_image, shine_color))
         self.painter.drawImage(0, 0, self.changeColor(self.outline_image, outline_color))
         self.painter.drawImage(0, 0, self.changeColor(self.fill_image, fill_color))
+        self.painter.drawImage(0, 0, self.changeColor(shine_image, shine_color))
 
         if ring_color is not None:
             self.painter.drawImage(0, 0, self.changeColor(self.ring_image, ring_color))
