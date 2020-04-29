@@ -34,7 +34,7 @@ rare_item_types = [
 
 
 class Items(object):
-    initial_variance_percent = 1.0
+    initial_variance_percent = 5.0
     daily_variance_percent = 2.0
 
     def __init__(self, itemtype, quantity, value=None):
@@ -51,7 +51,6 @@ class Items(object):
 
         # Initial slope value
         self.value_slope = random.uniform(-variance, variance)
-
         self.value_history = [self.value]
 
     def update_value(self):

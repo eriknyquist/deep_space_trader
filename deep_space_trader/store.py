@@ -78,7 +78,7 @@ class CapacityIncrease(StoreItem):
 
         parent.state.capacity += const.CAPACITY_INCREASE
         parent.infoBar.update()
-
+        parent.updatePlayerItemsLabel()
         infoDialog(parent, "Success", message="Capacity successfully increased. "
                                               "New capacity is %d" % parent.state.capacity)
         return True
