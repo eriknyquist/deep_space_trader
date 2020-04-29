@@ -1,5 +1,6 @@
 import hashlib
 import base64
+import os
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
@@ -9,6 +10,10 @@ from deep_space_trader import constants as const
 DATA_ITER = 99
 PWD_ITER = 72
 PWD = b'g\x54n70erew feasf90s gf\xff\x0f\x290780 9\x02ng7804\x00>:": k'
+
+
+SOURCE_DIR = os.path.dirname(os.path.realpath(__file__))
+IMAGE_DIR = os.path.join(SOURCE_DIR, 'images')
 
 
 class CancelableInfoDialog(QtWidgets.QDialog):

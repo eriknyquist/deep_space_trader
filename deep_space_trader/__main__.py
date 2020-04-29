@@ -5,7 +5,7 @@ import time
 
 from deep_space_trader import config
 from deep_space_trader.main_widget import MainWidget
-from deep_space_trader.utils import gameStoryDialog
+from deep_space_trader.utils import gameStoryDialog, SOURCE_DIR, IMAGE_DIR
 
 from PyQt5 import QtWidgets, QtGui, QtCore
 
@@ -30,10 +30,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.initUi()
 
     def initUi(self):
-        scriptDir = os.path.dirname(os.path.realpath(__file__))
-        imageDir = os.path.join(scriptDir, 'images')
-        self.iconPath = os.path.join(imageDir, 'icon.png')
-        self.compassPath = os.path.join(imageDir, 'compass.png')
+        self.iconPath = os.path.join(IMAGE_DIR, 'icon.png')
         self.setWindowIcon(QtGui.QIcon(self.iconPath))
 
         random.seed(time.time())

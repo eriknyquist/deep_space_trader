@@ -1,4 +1,8 @@
+import os
+
 from PyQt5 import QtWidgets, QtCore, QtGui
+
+from deep_space_trader.planet_image import PlanetImage
 
 
 class InfoBar(QtWidgets.QWidget):
@@ -7,10 +11,14 @@ class InfoBar(QtWidgets.QWidget):
 
         self.parent = parent
 
-        planetLayout = QtWidgets.QHBoxLayout()
-        self.planetLabel = QtWidgets.QLabel("")
+        planetLayout = QtWidgets.QVBoxLayout()
+        self.planetImage = PlanetImage(self.parent)
+        planetLayout.addWidget(self.planetImage)
+
+        self.planetLabel = QtWidgets.QLabel()
         self.planetLabel.setAlignment(QtCore.Qt.AlignCenter)
         planetLayout.addWidget(self.planetLabel)
+
         planetGroup = QtWidgets.QGroupBox("Current planet")
         planetGroup.setAlignment(QtCore.Qt.AlignCenter)
         planetGroup.setLayout(planetLayout)
@@ -57,6 +65,7 @@ class InfoBar(QtWidgets.QWidget):
 
     def update(self):
         self.planetLabel.setText(self.parent.state.current_planet.full_name)
+        self.planetImage.update()
         self.dayLabel.setText('%d/%d' % (self.parent.state.day, self.parent.state.max_days))
         self.moneyLabel.setText('{:,}'.format(self.parent.state.money))
         self.planetCountLabel.setText(str(len(self.parent.state.planets)))
