@@ -34,8 +34,8 @@ rare_item_types = [
 
 
 class Items(object):
-    initial_variance_percent = 2.0
-    daily_variance_percent = 5.0
+    initial_variance_percent = 1.0
+    daily_variance_percent = 2.0
 
     def __init__(self, itemtype, quantity, value=None):
         self.type = itemtype
