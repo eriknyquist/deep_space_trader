@@ -1,6 +1,7 @@
 import hashlib
 import base64
 import os
+import sys
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
@@ -11,8 +12,11 @@ DATA_ITER = 99
 PWD_ITER = 72
 PWD = b'g\x54n70erew feasf90s gf\xff\x0f\x290780 9\x02ng7804\x00>:": k'
 
+if getattr(sys, 'frozen', False):
+    SOURCE_DIR = os.path.dirname(sys.executalbe)
+else:
+    SOURCE_DIR = os.path.dirname(__file__)
 
-SOURCE_DIR = os.path.dirname(os.path.realpath(__file__))
 IMAGE_DIR = os.path.join(SOURCE_DIR, 'images')
 
 
