@@ -7,11 +7,20 @@ from deep_space_trader import constants as const
 from PyQt5 import QtWidgets, QtCore, QtGui
 
 
+store_items = []
+
+
 class StoreItem(object):
     def __init__(self, name, description, price):
         self.name = name
         self.description = description
         self.price = price
+
+    def use(self, parent):
+        raise NotImplementedError()
+
+    def after_use(self, parent):
+        pass
 
 
 class PlanetExploration(StoreItem):
@@ -62,33 +71,46 @@ class PlanetDestruction(StoreItem):
 
 class CapacityIncrease(StoreItem):
     def __init__(self):
-        incr = const.CAPACITY_INCREASE
+        self.incr = const.CAPACITY_INCREASE
         price = const.CAPACITY_INCREASE_COST
         name = "Increase item capacity"
-        desc = (
-            "Increases your item capacity by %s" % incr
-        )
+        desc = ""
 
         super(CapacityIncrease, self).__init__(name, desc, price)
+
+        self._update_desc()
+
+    def _update_desc(self):
+        self.description = (
+            "Increases your item capacity by %s" % self.incr
+        )
 
     def use(self, parent):
         if not yesNoDialog(parent, "Are you sure?",
                            message="Are you sure want to increase your capacity?"):
             return False
 
-        parent.state.capacity += const.CAPACITY_INCREASE
+        parent.state.capacity += self.incr
         parent.infoBar.update()
         parent.updatePlayerItemsLabel()
         infoDialog(parent, "Success", message="Capacity successfully increased. "
                                               "New capacity is %d" % parent.state.capacity)
+
         return True
 
+    def after_use(self, parent):
+        self.incr *= 2
+        self.price *= 2
+        self._update_desc()
 
-store_items = [
-    CapacityIncrease(),
-    PlanetExploration(),
-    PlanetDestruction()
-]
+
+def load_store_items():
+    store_items.clear()
+    store_items.extend([
+        CapacityIncrease(),
+        PlanetExploration(),
+        PlanetDestruction()
+    ])
 
 
 class Store(QtWidgets.QDialog):
@@ -133,6 +155,7 @@ class Store(QtWidgets.QDialog):
         self.setLayout(self.mainLayout)
         self.setWindowTitle("Store")
 
+        load_store_items()
         self.update()
 
     def updateMoneyLabel(self):
@@ -171,6 +194,9 @@ class Store(QtWidgets.QDialog):
 
         self.parent.state.money -= item.price
         self.parent.infoBar.update()
+
+        item.after_use(self.parent)
+        self.update()
 
     def onDoubleClick(self, signal):
         item = store_items[signal.row()]

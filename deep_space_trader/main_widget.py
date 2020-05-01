@@ -8,6 +8,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 
 from deep_space_trader.utils import yesNoDialog, errorDialog, infoDialog
 from deep_space_trader.game_state import State
+from deep_space_trader.store import load_store_items
 from deep_space_trader import constants as const
 from deep_space_trader import config
 from deep_space_trader.location_browser import LocationBrowser
@@ -121,6 +122,7 @@ class MainWidget(QtWidgets.QDialog):
         return yesNoDialog(self, "Are you sure?", "Are you sure you want to quit?")
 
     def reset(self):
+        load_store_items()
         self.state.initialize()
         self.infoBar.update()
         self.locationBrowser.update()
