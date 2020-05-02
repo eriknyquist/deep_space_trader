@@ -137,6 +137,8 @@ class PlayerItemBrowser(ItemBrowser):
         itemname = self.table.item(selectedRow, 0).text()
         if itemname not in self.parent.state.current_planet.items.items:
             self.introduceNewItem(itemname)
+            return
+
         dialog = Sell(self.parent, itemname)
         dialog.setWindowModality(QtCore.Qt.ApplicationModal)
         dialog.exec_()
@@ -280,7 +282,8 @@ class WarehouseItemBrowser(ItemBrowser):
         super(WarehouseItemBrowser, self).__init__(*args, **kwargs)
 
         self.table.doubleClicked.connect(self.onDoubleClick)
-        self.add_button("Retrieve from warehouse", self.removeButtonClicked)
+        self.add_button("Retrieve items", self.removeButtonClicked)
+        self.add_button("Retrieve all", self.removeAllButtonClicked)
         self.add_button("Dump items", self.dumpButtonClicked)
 
     def onDoubleClick(self):
@@ -296,6 +299,37 @@ class WarehouseItemBrowser(ItemBrowser):
         dialog = DumpWarehouseItem(self.parent, itemname)
         dialog.setWindowModality(QtCore.Qt.ApplicationModal)
         dialog.exec_()
+
+    def removeAllButtonClicked(self):
+        capacity = self.parent.state.capacity - self.parent.state.items.count()
+        totalitemcount = self.parent.state.warehouse.count()
+        itemcount = min(capacity, totalitemcount)
+
+        if itemcount < totalitemcount:
+            msg = (
+                "You do not have room for all items, the maximum amount of items "
+                "that can be retrieved is {0}. Are you sure you want to retrieve {0} "
+                "items? ".format(itemcount)
+            )
+        else:
+            msg = "Are you sure you want to retrieve all items?"
+
+        proceed = yesNoDialog(self.parent, "Are you sure?", message=msg)
+        if not proceed:
+            return
+
+        for name in list(self.parent.state.warehouse.items.keys()):
+            if itemcount == 0:
+                break
+
+            item = self.parent.state.warehouse.items[name]
+            quantity = min(itemcount, item.quantity)
+            self.parent.state.items.add_items(name, self.parent.state.warehouse, quantity)
+            itemcount -= quantity
+
+        self.parent.warehouseItemBrowser.update()
+        self.parent.playerItemBrowser.update()
+        self.parent.updatePlayerItemsLabel()
 
     def removeButtonClicked(self):
         if self.parent.state.warehouse_gets == self.parent.state.warehouse_gets_per_day:
