@@ -62,6 +62,7 @@ class PlayerItemBrowser(ItemBrowser):
         super(PlayerItemBrowser, self).__init__(*args, **kwargs)
 
         self.add_button("Sell items", self.sellButtonClicked)
+        self.add_button("Sell all", self.sellAllButtonClicked)
         self.add_button("Dump items", self.dumpButtonClicked)
         self.add_button("Add to warehouse", self.warehouseButtonClicked)
 
@@ -128,21 +129,52 @@ class PlayerItemBrowser(ItemBrowser):
         dialog.setWindowModality(QtCore.Qt.ApplicationModal)
         dialog.exec_()
 
-
     def sellButtonClicked(self):
         selectedRow = self.table.currentRow()
         if selectedRow < 0:
             errorDialog(self, message="Please select an item to sell first!")
             return
-
         itemname = self.table.item(selectedRow, 0).text()
         if itemname not in self.parent.state.current_planet.items.items:
             self.introduceNewItem(itemname)
-            return
-
         dialog = Sell(self.parent, itemname)
         dialog.setWindowModality(QtCore.Qt.ApplicationModal)
         dialog.exec_()
+
+    def sellAllButtonClicked(self):
+        planet = self.parent.state.current_planet
+        gain = 0
+
+        if self.parent.state.items.count() == 0:
+            errorDialog(self, "No items", "You have no items to sell.")
+            return
+
+        for name in self.parent.state.items.items:
+            if name not in planet.items.items:
+                continue
+
+            price = planet.items.items[name].value
+            quantity = self.parent.state.items.items[name].quantity
+            gain += price * quantity
+
+        proceed = yesNoDialog(self, "Sell all?",
+                              message="Are you sure you want to sell all your items "
+                              "that are currently being traded on %s? (total "
+                              "gain: %d)"% (planet.full_name, gain))
+
+        if not proceed:
+            return
+
+        for name in list(self.parent.state.items.items.keys()):
+            if name not in planet.items.items:
+                continue
+
+            quantity = self.parent.state.items.items[name].quantity
+            planet.items.add_items(name, self.parent.state.items, quantity)
+
+        self.parent.state.money += gain
+        self.parent.infoBar.update()
+        self.parent.playerItemBrowser.update()
 
     def warehouseButtonClicked(self):
         if self.parent.state.warehouse_puts == self.parent.state.warehouse_puts_per_day:
