@@ -23,6 +23,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         self.table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
         self.table.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.table.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
+        self.table.doubleClicked.connect(self.onDoubleClick)
 
         header = self.table.horizontalHeader()
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
@@ -34,6 +35,9 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         self.setLayout(self.mainLayout)
         self.table.resizeColumnsToContents()
         self.update()
+
+    def onDoubleClick(self):
+        self.selectButtonClicked()
 
     def addRow(self, planet):
         nextFreeRow = self.table.rowCount()

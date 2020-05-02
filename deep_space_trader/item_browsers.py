@@ -230,7 +230,11 @@ class WarehouseItemBrowser(ItemBrowser):
     def __init__(self,  *args, **kwargs):
         super(WarehouseItemBrowser, self).__init__(*args, **kwargs)
 
+        self.table.doubleClicked.connect(self.onDoubleClick)
         self.add_button("Retrieve from warehouse", self.removeButtonClicked)
+
+    def onDoubleClick(self):
+        self.removeButtonClicked()
 
     def removeButtonClicked(self):
         if self.parent.state.warehouse_gets == const.WAREHOUSE_GETS_PER_DAY:
