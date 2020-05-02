@@ -1,6 +1,10 @@
 import random
 
-from deep_space_trader.transaction_dialogs import Buy, Sell, PlayerToWarehouse, WarehouseToPlayer
+from deep_space_trader.transaction_dialogs import (
+        Buy, Sell, PlayerToWarehouse, WarehouseToPlayer, DumpWarehouseItem,
+        DumpPlayerItem
+)
+
 from deep_space_trader.price_graph import PriceHistoryGraph
 from deep_space_trader import constants as const
 from deep_space_trader.utils import errorDialog, yesNoDialog, infoDialog
@@ -57,7 +61,8 @@ class PlayerItemBrowser(ItemBrowser):
     def __init__(self,  *args, **kwargs):
         super(PlayerItemBrowser, self).__init__(*args, **kwargs)
 
-        self.add_button("Sell item", self.sellButtonClicked)
+        self.add_button("Sell items", self.sellButtonClicked)
+        self.add_button("Dump items", self.dumpButtonClicked)
         self.add_button("Add to warehouse", self.warehouseButtonClicked)
 
     def introduceNewItem(self, itemname):
@@ -111,6 +116,18 @@ class PlayerItemBrowser(ItemBrowser):
 
 
         infoDialog(self, title, message=msg)
+
+    def dumpButtonClicked(self):
+        selectedRow = self.table.currentRow()
+        if selectedRow < 0:
+            errorDialog(self, message="Please select an item first!")
+            return
+
+        itemname = self.table.item(selectedRow, 0).text()
+        dialog = DumpPlayerItem(self.parent, itemname)
+        dialog.setWindowModality(QtCore.Qt.ApplicationModal)
+        dialog.exec_()
+
 
     def sellButtonClicked(self):
         selectedRow = self.table.currentRow()
@@ -232,9 +249,21 @@ class WarehouseItemBrowser(ItemBrowser):
 
         self.table.doubleClicked.connect(self.onDoubleClick)
         self.add_button("Retrieve from warehouse", self.removeButtonClicked)
+        self.add_button("Dump items", self.dumpButtonClicked)
 
     def onDoubleClick(self):
         self.removeButtonClicked()
+
+    def dumpButtonClicked(self):
+        selectedRow = self.table.currentRow()
+        if selectedRow < 0:
+            errorDialog(self, message="Please select an item first!")
+            return
+
+        itemname = self.table.item(selectedRow, 0).text()
+        dialog = DumpWarehouseItem(self.parent, itemname)
+        dialog.setWindowModality(QtCore.Qt.ApplicationModal)
+        dialog.exec_()
 
     def removeButtonClicked(self):
         if self.parent.state.warehouse_gets == self.parent.state.warehouse_gets_per_day:

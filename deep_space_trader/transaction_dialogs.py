@@ -1,3 +1,5 @@
+from deep_space_trader.utils import errorDialog, yesNoDialog, infoDialog
+
 from PyQt5 import QtWidgets, QtCore, QtGui
 
 
@@ -60,6 +62,7 @@ class TransactionDialog(QtWidgets.QDialog):
         self.parent.planetItemBrowser.update()
         self.parent.warehouseItemBrowser.update()
         self.parent.infoBar.update()
+        self.parent.updatePlayerItemsLabel()
         self.accept()
 
     def cancelButtonClicked(self):
@@ -172,4 +175,56 @@ class WarehouseToPlayer(TransactionDialog):
         self.spinboxLabel.setText("Move quantity")
 
     def maximumQuantity(self):
-        return min(self.quantity, self.parent.state.capacity)
+        return min(self.quantity, self.parent.state.capacity - self.parent.state.items.count())
+
+
+class DumpWarehouseItem(TransactionDialog):
+    def __init__(self, parent, itemname):
+        self.quantity = parent.state.warehouse.items[itemname].quantity
+
+        super(DumpWarehouseItem, self).__init__(parent, itemname, include_money=False)
+        self.description.setText("How much %s do you want to dump?" % self.itemName)
+        self.acceptButton.setText("Dump")
+
+    def acceptTransaction(self, quantity):
+        proceed = yesNoDialog(self, "Dump items?",
+                              message="Are you sure you want to dump %d %s from "
+                              "your warehouse? you will lose these items you will "
+                              "not be able to get them back." % (quantity, self.itemName))
+        if not proceed:
+            return
+
+        self.parent.state.warehouse.remove_items(self.itemName, quantity)
+        infoDialog(self, "Success!", message="Items have been removed")
+
+    def valueChanged(self):
+        self.spinboxLabel.setText("Dump quantity")
+
+    def maximumQuantity(self):
+        return self.quantity
+
+
+class DumpPlayerItem(TransactionDialog):
+    def __init__(self, parent, itemname):
+        self.quantity = parent.state.items.items[itemname].quantity
+
+        super(DumpPlayerItem, self).__init__(parent, itemname, include_money=False)
+        self.description.setText("How much %s do you want to dump?" % self.itemName)
+        self.acceptButton.setText("Dump")
+
+    def acceptTransaction(self, quantity):
+        proceed = yesNoDialog(self, "Dump items?",
+                              message="Are you sure you want to dump %d %s from "
+                              "your warehouse? you will lose these items you will "
+                              "not be able to get them back." % (quantity, self.itemName))
+        if not proceed:
+            return
+
+        self.parent.state.items.remove_items(self.itemName, quantity)
+        infoDialog(self, "Success!", message="Items have been removed")
+
+    def valueChanged(self):
+        self.spinboxLabel.setText("Dump quantity")
+
+    def maximumQuantity(self):
+        return self.quantity
