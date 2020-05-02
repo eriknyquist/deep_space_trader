@@ -128,7 +128,7 @@ class PlayerItemBrowser(ItemBrowser):
         dialog.exec_()
 
     def warehouseButtonClicked(self):
-        if self.parent.state.warehouse_puts == const.WAREHOUSE_PUTS_PER_DAY:
+        if self.parent.state.warehouse_puts == self.parent.state.warehouse_puts_per_day:
             errorDialog(self, "Warehouse", message="You cannot put anything else "
                                                    "in the warehouse until tomorrow")
             return
@@ -237,7 +237,7 @@ class WarehouseItemBrowser(ItemBrowser):
         self.removeButtonClicked()
 
     def removeButtonClicked(self):
-        if self.parent.state.warehouse_gets == const.WAREHOUSE_GETS_PER_DAY:
+        if self.parent.state.warehouse_gets == self.parent.state.warehouse_gets_per_day:
             errorDialog(self, "Warehouse", message="You cannot take anything else "
                                                    "from the warehouse until tomorrow")
             return

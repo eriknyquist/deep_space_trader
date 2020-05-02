@@ -31,6 +31,7 @@ class MainWidget(QtWidgets.QDialog):
         self.main = mainWindow
         self.primary_screen = primaryScreen
         self.state = State()
+        load_store_items()
 
         QtWidgets.qApp.setStyle('Windows')
         font = QtWidgets.qApp.font()

@@ -16,6 +16,9 @@ class State(object):
         self.capacity = const.INITIAL_ITEM_CAPACITY
         self.items = ItemCollection()
         self.warehouse = ItemCollection()
+        self.warehouse_gets_per_day = const.WAREHOUSE_GETS_PER_DAY
+        self.warehouse_puts_per_day = const.WAREHOUSE_PUTS_PER_DAY
+        self.max_days = const.INITIAL_MAX_DAYS
         self.max_days = const.INITIAL_MAX_DAYS
         self.day = 1
         self.level = 1

@@ -104,12 +104,35 @@ class CapacityIncrease(StoreItem):
         self._update_desc()
 
 
+class WarehouseSpeedIncrease(StoreItem):
+    def __init__(self):
+        price = const.WAREHOUSE_SPEED_INCREASE_COST
+        name = "Increase warehouse limit"
+        desc = (
+            "Increases your engine power, allowing you to make one more trip to "
+            "the warehouse per day."
+        )
+
+        super(WarehouseSpeedIncrease, self).__init__(name, desc, price)
+
+    def use(self, parent):
+        if not yesNoDialog(parent, "Are you sure?",
+                           message="Are you sure want to increase the warehouse limit?"):
+            return False
+
+        parent.state.warehouse_gets_per_day += 1
+        parent.state.warehouse_puts_per_day += 1
+
+        return True
+
+
 def load_store_items():
     store_items.clear()
     store_items.extend([
         CapacityIncrease(),
         PlanetExploration(),
-        PlanetDestruction()
+        PlanetDestruction(),
+        WarehouseSpeedIncrease()
     ])
 
 
@@ -155,7 +178,6 @@ class Store(QtWidgets.QDialog):
         self.setLayout(self.mainLayout)
         self.setWindowTitle("Store")
 
-        load_store_items()
         self.update()
 
     def updateMoneyLabel(self):
