@@ -82,6 +82,7 @@ if __name__ == '__main__':
     if config.get_show_intro():
         dont_show_again = gameStoryDialog()
         config.set_show_intro(not dont_show_again)
+        config.config_store()
 
     sys.exit(app.exec_())
 
