@@ -27,6 +27,7 @@ class PricesTable(QtWidgets.QDialog):
         self.table.setColumnCount(2)
         self.table.setHorizontalHeaderLabels(['Item type', 'Base price'])
         self.table.verticalHeader().setVisible(False)
+        self.table.horizontalHeader().setSectionsClickable(False)
         self.table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
         self.table.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
         self.table.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)

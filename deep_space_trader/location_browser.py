@@ -23,6 +23,7 @@ class LocationBrowser(QtWidgets.QWidget):
         self.table.setColumnCount(2)
         self.table.setHorizontalHeaderLabels(['Planet', 'visited?'])
         self.table.verticalHeader().setVisible(False)
+        self.table.horizontalHeader().setSectionsClickable(False)
         self.table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
         self.table.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.table.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)

@@ -22,6 +22,7 @@ class ItemBrowser(QtWidgets.QWidget):
 
         self.table = QtWidgets.QTableWidget()
         self.table.verticalHeader().setVisible(False)
+        self.table.horizontalHeader().setSectionsClickable(False)
         self.table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
         self.table.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.table.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
