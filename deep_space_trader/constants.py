@@ -2,7 +2,7 @@
 INITIAL_MONEY = 2000
 INITIAL_TRAVEL_COST = 100
 INITIAL_ITEM_CAPACITY = 100
-INITIAL_PLANET_COUNT = 12
+INITIAL_PLANET_COUNT = 8
 INITIAL_MAX_DAYS = 30
 
 # ------ Base prices for trade items ------
@@ -50,7 +50,7 @@ PLANET_EXPLORATION_UPGRADE_COST = 250000
 # ----- Misc. values -----
 
 # Planet exploration will always yield some number of new planets in this range
-PLANET_DISCOVERY_RANGE = (2, 12)
+PLANET_DISCOVERY_RANGE = (2, 8)
 
 # Must be a power of 2
 MAX_PLANET_DISCOVERY_RANGE_UPPER = 512
