@@ -17,16 +17,19 @@ class Planet(object):
         [
             'ho', 'ce', 'cu', 'he', 'hu', 'sa', 'cy', 'an', 'ir', 'kle', 'ke',
             'ka', 'la', 'ny', 'ky', 'dy', 'bar', 'blar', 'ger', 'yur', 'her',
-            'zor', 'for', 'nor', 'wor', 'gor', 'noth', 'roth', 'nith', 'lith',
-            'sith', 'dith', 'ith', 'oth', 'orb', 'urb', 'erb', 'zorb', 'zor',
-            'zer', 'zerb', 'zera', 'ter', 'er', 'sta', 'gra', 'bra'
+            'zor', 'for', 'nor', 'wor', 'gor', 'noth', 'roth', 'moth', 'zoth',
+            'loth', 'nith', 'lith', 'sith', 'dith', 'ith', 'oth', 'orb', 'urb',
+            'erb', 'zorb', 'zor', 'zer', 'zerb', 'zera', 'ter', 'porb', 'por',
+            'per', 'perb', 'pera', 'er', 'sta', 'morb', 'kur', 'kurb', 'lerb',
+            'gra', 'bra', 'zir', 'dir', 'tir', 'sir', 'mir', 'nir', 'pir', 'lir',
+            'bir'
         ],
         [
             'ta', 'te', 'ti', 'to', 'tu', 'ba', 'be', 'bi', 'bo', 'tis', 'ris',
             'beur', 'bu', 'po', 'cu', 'lur', 'mur', 'tu', 'da', 'de', 'di', 'do',
             'du', 'lor', 'der', 'ser', 'per', 'fu', 'fer', 'ler', 'zer', 'wi',
             'bre', 'dre', 'pre', 'tre', 're', 'fe', 'ge', 'ga', 'gu', 'du', 'mu',
-            'nu', 'ru'
+            'nu', 'ru', 'mi', 'ni', 'su'
         ],
         [
             'res', 'lia', 'gese', 'naise', 'bler', 'pler', 'teres', 'tere',
@@ -72,23 +75,7 @@ class Planet(object):
         return Planet(name, number, letter)
 
     @classmethod
-    def _planet_exists(cls, planet, existing):
-        for p in existing:
-            if p.full_name == planet.full_name:
-                return True
-
-        return False
-
-    @classmethod
-    def _unique_planet(cls, existing):
-        new = cls._random_planet()
-        while cls._planet_exists(new, existing):
-            new = cls._random_planet()
-
-        return new
-
-    @classmethod
-    def random(cls, num=1, existing=[]):
+    def random(cls, num=1):
         max_group_size = 4
         last_planet_with_letter = None
         group_size = None
@@ -106,7 +93,7 @@ class Planet(object):
                     last_planet_with_letter = None
                     group_size = None
 
-            new = cls._unique_planet(existing)
+            new = cls._random_planet()
             if new.letter is not None:
                 last_planet_with_letter = new
                 group_size = 1
