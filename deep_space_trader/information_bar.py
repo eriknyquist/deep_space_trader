@@ -11,13 +11,14 @@ class InfoBar(QtWidgets.QWidget):
 
         self.parent = parent
 
-        planetLayout = QtWidgets.QVBoxLayout()
-        self.planetImage = PlanetImage(self.parent)
-        planetLayout.addWidget(self.planetImage)
+        planetLayout = QtWidgets.QHBoxLayout()
 
         self.planetLabel = QtWidgets.QLabel()
         self.planetLabel.setAlignment(QtCore.Qt.AlignCenter)
         planetLayout.addWidget(self.planetLabel)
+
+        self.planetImage = PlanetImage(self.parent)
+        planetLayout.addWidget(self.planetImage)
 
         planetGroup = QtWidgets.QGroupBox("Current planet")
         planetGroup.setAlignment(QtCore.Qt.AlignCenter)
@@ -68,6 +69,6 @@ class InfoBar(QtWidgets.QWidget):
         self.planetImage.update()
         self.dayLabel.setText('%d/%d' % (self.parent.state.day, self.parent.state.max_days))
         self.moneyLabel.setText('{:,}'.format(self.parent.state.money))
-        self.planetCountLabel.setText(str(len(self.parent.state.planets)))
+        self.planetCountLabel.setText(str(self.parent.state.planets_discovered))
         self.capacityLabel.setText(str(self.parent.state.capacity))
         super(InfoBar, self).update()

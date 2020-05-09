@@ -82,13 +82,17 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             self.parent.state.warehouse.add_all_items(planet.items)
 
         self.parent.state.planets = [self.parent.state.current_planet]
+        self.parent.state.money -= self.all_planets_cost
 
         self.parent.infoBar.update()
         self.parent.locationBrowser.update()
         self.parent.warehouseItemBrowser.update()
         self.parent.infoBar.update()
         self.close()
-        self.accepted = True
+
+        # Set this to false so the money doesn't get updated, we're updating
+        # the money here instead
+        self.accepted = False
 
         infoDialog(self.parent, "Success",
                    message="Your destruction of all planets is complete.")

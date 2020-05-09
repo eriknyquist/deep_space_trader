@@ -176,6 +176,7 @@ class PlayerItemBrowser(ItemBrowser):
 
         self.parent.state.money += gain
         self.parent.infoBar.update()
+        self.parent.updatePlayerItemsLabel()
         self.parent.playerItemBrowser.update()
 
     def warehouseButtonClicked(self):
@@ -301,6 +302,11 @@ class WarehouseItemBrowser(ItemBrowser):
         dialog.exec_()
 
     def removeAllButtonClicked(self):
+        if self.parent.state.warehouse_gets == self.parent.state.warehouse_gets_per_day:
+            errorDialog(self, "Warehouse", message="You cannot take anything else "
+                                                   "from the warehouse until tomorrow")
+            return
+
         capacity = self.parent.state.capacity - self.parent.state.items.count()
         totalitemcount = self.parent.state.warehouse.count()
         itemcount = min(capacity, totalitemcount)
@@ -327,6 +333,7 @@ class WarehouseItemBrowser(ItemBrowser):
             self.parent.state.items.add_items(name, self.parent.state.warehouse, quantity)
             itemcount -= quantity
 
+        self.parent.state.warehouse_gets += 1
         self.parent.warehouseItemBrowser.update()
         self.parent.playerItemBrowser.update()
         self.parent.updatePlayerItemsLabel()

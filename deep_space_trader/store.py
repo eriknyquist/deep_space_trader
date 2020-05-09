@@ -34,23 +34,72 @@ class PlanetExploration(StoreItem):
         super(PlanetExploration, self).__init__(name, desc, price)
 
     def use(self, parent):
+        if len(parent.state.planets) > const.MAX_PLANETS_ALLOWED:
+            errorDialog(parent, "Error", "Too many planets, you need to destroy "
+                                         "some planets before you can discover more")
+            return
+
         if not yesNoDialog(parent, "Are you sure?",
                            message="Are you sure you want to buy a %s" % self.name):
             return
 
-        num_new = random.randrange(*const.PLANET_DISCOVERY_RANGE)
+        num_new = random.randrange(*parent.state.planet_discovery_range)
         parent.state.expand_planets(num_new)
 
-        new_names = [p.full_name for p in parent.state.planets[-num_new:]]
-        name_listing = '<br>'.join(new_names)
-
         infoDialog(parent, "%d new planets with intelligent life have "
-                         "been discovered!<br><br>%s" % (num_new, name_listing))
+                         "been discovered!" % num_new)
 
         parent.infoBar.update()
         parent.locationBrowser.update()
         return True
 
+
+class PlanetExplorationUpgrade(StoreItem):
+    def __init__(self):
+        self.range = const.PLANET_DISCOVERY_RANGE
+        price = const.PLANET_EXPLORATION_UPGRADE_COST
+        name = "Planet discovery upgrade"
+        desc = (
+            ""
+        )
+
+        super(PlanetExplorationUpgrade, self).__init__(name, desc, price)
+
+        self._update_desc()
+
+    def _update_desc(self):
+        curr_upper = self.range[1]
+
+        if curr_upper < const.MAX_PLANET_DISCOVERY_RANGE_UPPER:
+            max_planets = curr_upper * 2
+
+            desc = (
+                "Upgrades your exploration fleet, increasing the max. "
+                "number of planets you can discover to %d" % max_planets
+            )
+        else:
+            desc = "You cannot buy this item anymore"
+
+        self.description = desc
+
+    def use(self, parent):
+        if self.range[1] >= const.MAX_PLANET_DISCOVERY_RANGE_UPPER:
+            errorDialog(parent, "Error", "You cannot expand your planet "
+                                         "discovery range any further")
+            return
+
+        if not yesNoDialog(parent, "Are you sure?",
+                           message="Are you sure you want to buy a %s" % self.name):
+            return
+
+        parent.state.planet_discovery_range = (self.range[0] * 2, self.range[1] * 2)
+        self.range = parent.state.planet_discovery_range
+        infoDialog(parent, "Exploration fleet successfully upgraded")
+        return True
+
+    def after_use(self, parent):
+        self.price *= 2
+        self._update_desc()
 
 class PlanetDestruction(StoreItem):
     def __init__(self):
@@ -136,6 +185,7 @@ def load_store_items():
     store_items.extend([
         CapacityIncrease(),
         PlanetExploration(),
+        PlanetExplorationUpgrade(),
         PlanetDestruction(),
         WarehouseSpeedIncrease()
     ])

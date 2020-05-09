@@ -1,5 +1,5 @@
 # ------ Initial values for player data on day 1 ------
-INITIAL_MONEY = 1000
+INITIAL_MONEY = 2000
 INITIAL_TRAVEL_COST = 100
 INITIAL_ITEM_CAPACITY = 100
 INITIAL_PLANET_COUNT = 12
@@ -30,26 +30,30 @@ PRICE_ANTIMATTER = 200
 # ----- Quantity ranges for trade items in each rarity class -----
 
 # Generated common items will always have a quantity value in this range
-COMMON_QUANTITY_RANGE = (100, 1000)
+COMMON_QUANTITY_RANGE = (1000, 100000)
 
 # Generated medium rare items will always have a quantity value in this range
-MEDIUM_RARE_QUANTITY_RANGE = (100, 500)
+MEDIUM_RARE_QUANTITY_RANGE = (1000, 10000)
 
 # Generated rare items will always have a quantity value in this range
-RARE_QUANTITY_RANGE = (10, 100)
+RARE_QUANTITY_RANGE = (100, 1000)
 
 
 # ----- Prices of store items -----
 
 CAPACITY_INCREASE_COST = 250
-PLANET_DESTRUCTION_COST = 2000
-WAREHOUSE_SPEED_INCREASE_COST = 25000
-PLANET_EXPLORATION_COST = 100000
+PLANET_DESTRUCTION_COST = 25000
+WAREHOUSE_SPEED_INCREASE_COST = 50000
+PLANET_EXPLORATION_COST = 1000000
+PLANET_EXPLORATION_UPGRADE_COST = 250000
 
 # ----- Misc. values -----
 
 # Planet exploration will always yield some number of new planets in this range
 PLANET_DISCOVERY_RANGE = (2, 12)
+
+# Must be a power of 2
+MAX_PLANET_DISCOVERY_RANGE_UPPER = 512
 
 # Number of warehouse retrieval operations allowed per day
 WAREHOUSE_GETS_PER_DAY = 1
@@ -68,6 +72,8 @@ ITEM_SAMPLE_QUANTITY_RANGE = (2, 10)
 
 # Chance that giving a free sample will be successful, in percent
 ITEM_SAMPLE_SUCCESS_PERCENT = 75
+
+MAX_PLANETS_ALLOWED = 2000
 
 # Text shown in the intro dialog
 GAME_INTRO_TEXT = (

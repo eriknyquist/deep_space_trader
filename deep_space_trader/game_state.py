@@ -18,8 +18,10 @@ class State(object):
         self.warehouse = ItemCollection()
         self.warehouse_gets_per_day = const.WAREHOUSE_GETS_PER_DAY
         self.warehouse_puts_per_day = const.WAREHOUSE_PUTS_PER_DAY
+        self.planet_discovery_range = const.PLANET_DISCOVERY_RANGE
         self.max_days = const.INITIAL_MAX_DAYS
         self.max_days = const.INITIAL_MAX_DAYS
+        self.planets_discovered = 0
         self.day = 1
         self.level = 1
 
@@ -58,10 +60,11 @@ class State(object):
         if num_new is None:
             num_new = random.randrange(1, 10)
 
-        new_planets = Planet.random(num=num_new, existing=self.planets)
+        new_planets = Planet.random(num=num_new)
         for new in new_planets:
             new.discovery_day = self.day
             new.items = ItemCollection.random(value_multiplier=self.level,
                                               quantity_multiplier=self.level)
 
         self.planets += new_planets
+        self.planets_discovered += num_new
