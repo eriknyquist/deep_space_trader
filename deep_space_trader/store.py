@@ -262,6 +262,11 @@ class Store(QtWidgets.QDialog):
         super(Store, self).update()
 
     def buyItem(self, item):
+        if self.parent.state.store_purchases >= const.MAX_STORE_PURCHASES_PER_DAY:
+            errorDialog(self, message="You can only make %d store purchases per day. "
+                              "Come back tomorrow." % const.MAX_STORE_PURCHASES_PER_DAY)
+            return
+
         if self.parent.state.money < item.price:
             errorDialog(self, message="You don't have enough money to buy '%s'" % item.name)
             return
@@ -269,6 +274,7 @@ class Store(QtWidgets.QDialog):
         if not item.use(self.parent):
             return
 
+        self.parent.state.store_purchases += 1
         self.parent.state.money -= item.price
         self.parent.infoBar.update()
 

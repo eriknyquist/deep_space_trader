@@ -21,6 +21,7 @@ class State(object):
         self.planet_discovery_range = const.PLANET_DISCOVERY_RANGE
         self.max_days = const.INITIAL_MAX_DAYS
         self.max_days = const.INITIAL_MAX_DAYS
+        self.store_purchases = 0
         self.planets_discovered = 0
         self.day = 1
         self.level = 1
@@ -54,6 +55,7 @@ class State(object):
         self.day += 1
         self.warehouse_puts = 0
         self.warehouse_gets = 0
+        self.store_purchases = 0
         return True
 
     def expand_planets(self, num_new=None):

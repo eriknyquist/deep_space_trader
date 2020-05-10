@@ -39,17 +39,17 @@ MEDIUM_RARE_QUANTITY_RANGE = (1000, 10000)
 RARE_QUANTITY_RANGE = (100, 1000)
 
 
-# ----- Prices of store items -----
+# ----- Initial prices of store items -----
 
 CAPACITY_INCREASE_COST = 250
-PLANET_DESTRUCTION_COST = 25000
+PLANET_DESTRUCTION_COST = 100000
 WAREHOUSE_SPEED_INCREASE_COST = 50000
-PLANET_EXPLORATION_COST = 1000000
+PLANET_EXPLORATION_COST = 5000000
 PLANET_EXPLORATION_UPGRADE_COST = 250000
 
 # ----- Misc. values -----
 
-# Planet exploration will always yield some number of new planets in this range
+# Planet exploration will initially yield some number of new planets in this range
 PLANET_DISCOVERY_RANGE = (2, 8)
 
 # Must be a power of 2
@@ -73,7 +73,12 @@ ITEM_SAMPLE_QUANTITY_RANGE = (2, 10)
 # Chance that giving a free sample will be successful, in percent
 ITEM_SAMPLE_SUCCESS_PERCENT = 75
 
+# If this number of planets or greater is currently loaded, disable planet discovery
+# until some planets are destroyed
 MAX_PLANETS_ALLOWED = 2000
+
+# Max. times per day player can buy something from the store
+MAX_STORE_PURCHASES_PER_DAY = 4
 
 # Text shown in the intro dialog
 GAME_INTRO_TEXT = (
