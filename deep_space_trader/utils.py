@@ -20,30 +20,30 @@ else:
 IMAGE_DIR = os.path.join(SOURCE_DIR, 'images')
 
 
-class CancelableInfoDialog(QtWidgets.QDialog):
-    def __init__(self, title, text):
-        super(CancelableInfoDialog, self).__init__()
+class InfoDialog(QtWidgets.QDialog):
+    def __init__(self, title, text, cancelable=True):
+        super(InfoDialog, self).__init__()
 
         self.dont_show_again = False
         mainLayout = QtWidgets.QVBoxLayout(self)
         textLayout = QtWidgets.QHBoxLayout()
         textGroup = QtWidgets.QGroupBox()
         self.text = QtWidgets.QLabel(text)
-        checkboxLabel = QtWidgets.QLabel("Don't show this message again")
-        self.checkbox = QtWidgets.QCheckBox()
-        self.checkbox.stateChanged.connect(self.checkboxClicked)
 
         self.text.setText(text)
         self.text.setWordWrap(True)
         textLayout.addWidget(self.text)
         textGroup.setLayout(textLayout)
-
-        self.checkboxLayout = QtWidgets.QHBoxLayout()
-        self.checkboxLayout.addWidget(checkboxLabel)
-        self.checkboxLayout.addWidget(self.checkbox)
-
         mainLayout.addWidget(textGroup)
-        mainLayout.addLayout(self.checkboxLayout)
+
+        if cancelable:
+            checkboxLabel = QtWidgets.QLabel("Don't show this message again")
+            self.checkbox = QtWidgets.QCheckBox()
+            self.checkbox.stateChanged.connect(self.checkboxClicked)
+            self.checkboxLayout = QtWidgets.QHBoxLayout()
+            self.checkboxLayout.addWidget(checkboxLabel)
+            self.checkboxLayout.addWidget(self.checkbox)
+            mainLayout.addLayout(self.checkboxLayout)
 
         self.setLayout(mainLayout)
         self.setWindowTitle(title)
@@ -51,9 +51,17 @@ class CancelableInfoDialog(QtWidgets.QDialog):
     def checkboxClicked(self):
         self.dont_show_again = self.checkbox.isChecked()
 
+    def sizeHint(self):
+        return QtCore.QSize(600, 400)
+
+
+def showAboutDialog():
+    dialog = InfoDialog("Deep Space Trader", const.GAME_ABOUT_TEXT, cancelable=False)
+    dialog.setWindowModality(QtCore.Qt.ApplicationModal)
+    dialog.exec_()
 
 def gameStoryDialog():
-    dialog = CancelableInfoDialog("Deep Space Trader", const.GAME_INTRO_TEXT)
+    dialog = InfoDialog("Deep Space Trader", const.GAME_INTRO_TEXT)
     dialog.setWindowModality(QtCore.Qt.ApplicationModal)
     dialog.exec_()
     return dialog.dont_show_again

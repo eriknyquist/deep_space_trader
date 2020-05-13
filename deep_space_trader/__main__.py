@@ -5,13 +5,10 @@ import time
 
 from deep_space_trader import config
 from deep_space_trader.main_widget import MainWidget
-from deep_space_trader.utils import gameStoryDialog, SOURCE_DIR, IMAGE_DIR
+from deep_space_trader.utils import gameStoryDialog, showAboutDialog, SOURCE_DIR, IMAGE_DIR
 
 from PyQt5 import QtWidgets, QtGui, QtCore
 
-from deep_space_trader import __maintainer__ as package_author
-from deep_space_trader import __email__ as author_email
-from deep_space_trader import __name__ as package_name
 from deep_space_trader import __version__ as package_version
 
 
@@ -52,6 +49,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pricesAction.setStatusTip("Show base prices for tradeable items")
         self.pricesAction.triggered.connect(self.widget.showPrices)
 
+        self.aboutAction = QtWidgets.QAction("About", self)
+        self.aboutAction.setShortcut("Ctrl+a")
+        self.aboutAction.setStatusTip("About this game")
+        self.aboutAction.triggered.connect(showAboutDialog)
+
         self.shareScoresAction = QtWidgets.QAction("High score sharing", self)
         self.shareScoresAction.setShortcut("Ctrl+h")
         self.shareScoresAction.setStatusTip("Share your high scores with others")
@@ -66,6 +68,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         helpMenu = menu.addMenu("Help")
         helpMenu.addAction(self.pricesAction)
+        helpMenu.addAction(self.aboutAction)
 
     def closeEvent(self, event):
         if self.widget.warningBeforeQuit():
@@ -85,4 +88,3 @@ if __name__ == '__main__':
         config.config_store()
 
     sys.exit(app.exec_())
-

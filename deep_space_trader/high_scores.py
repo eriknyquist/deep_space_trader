@@ -111,7 +111,7 @@ class HighScoreSharing(QtWidgets.QDialog):
             return
 
         scores_msg = "The string you added contains the following scores:<br><br>"
-        scores_msg += "<br>".join(['%s (%s)' % (x[0], x[1]) for x in scores])
+        scores_msg += "<br>".join(['{0} ({1:,})'.format(x[0], x[1]) for x in scores])
         scores_msg += "<br><br>"
         scores_msg += "Are you sure you want to add them to your high scores?"
 

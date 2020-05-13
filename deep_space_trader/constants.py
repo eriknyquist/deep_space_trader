@@ -1,3 +1,9 @@
+from deep_space_trader import __maintainer__ as package_author
+from deep_space_trader import __email__ as author_email
+from deep_space_trader import __name__ as package_name
+from deep_space_trader import __version__ as package_version
+
+
 # ------ Initial values for player data on day 1 ------
 INITIAL_MONEY = 2000
 INITIAL_TRAVEL_COST = 100
@@ -87,4 +93,16 @@ GAME_INTRO_TEXT = (
     "resources and treasures from countless planets across the galaxy, and "
     "selling them wherever you can.<br><br>"
     "Make as much money as you possibly can before your time runs out."
+)
+
+# Text shown in the Help->About dialog
+GAME_ABOUT_TEXT = (
+    ("Deep Space Trader %s<br><br>" % (package_version)) +
+    ("Created by %s (%s)<br><br><br>" % (package_author, author_email)) +
+    ("Deep Space Trader is written in python! Play it on any system that "
+     "supports Python 3.<br><br>"
+     "Install from Pypi:<br>"
+     "&nbsp;&nbsp;pip install deep_space_trader<br><br>"
+     "Run the installed package as a module:<br>"
+     "&nbsp;&nbsp;python -m deep_space_trader")
 )
