@@ -18,7 +18,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         self.buttonLayout.addWidget(self.selectButton)
 
         self.all_planets_cost = const.PLANET_DESTRUCTION_COST * (len(parent.state.planets) - 1)
-        self.allButton = QtWidgets.QPushButton("Destroy all (cost %d)" % self.all_planets_cost)
+        self.allButton = QtWidgets.QPushButton("Destroy all (cost {:,})".format(self.all_planets_cost))
         self.allButton.clicked.connect(self.allButtonClicked)
         self.buttonLayout.addWidget(self.allButton)
 

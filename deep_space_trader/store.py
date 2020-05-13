@@ -148,7 +148,7 @@ class CapacityIncrease(StoreItem):
         parent.infoBar.update()
         parent.updatePlayerItemsLabel()
         infoDialog(parent, "Success", message="Capacity successfully increased. "
-                                              "New capacity is %d" % parent.state.capacity)
+                                      "New capacity is {:,}".format(parent.state.capacity))
 
         return True
 
@@ -236,7 +236,7 @@ class Store(QtWidgets.QDialog):
         self.update()
 
     def updateMoneyLabel(self):
-        self.moneyLabel.setText("Your money: %d" % self.parent.state.money)
+        self.moneyLabel.setText("Your money: {:,}".format(self.parent.state.money))
 
     def addRow(self, item):
         nextFreeRow = self.table.rowCount()
@@ -244,7 +244,7 @@ class Store(QtWidgets.QDialog):
 
         item1 = QtWidgets.QTableWidgetItem(item.name)
         item2 = QtWidgets.QTableWidgetItem(item.description)
-        item3 = QtWidgets.QTableWidgetItem(str(item.price))
+        item3 = QtWidgets.QTableWidgetItem('{:,}'.format(item.price))
 
         item3.setTextAlignment(QtCore.Qt.AlignHCenter)
 

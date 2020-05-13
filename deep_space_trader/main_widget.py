@@ -100,8 +100,8 @@ class MainWidget(QtWidgets.QDialog):
         config.config_load()
 
     def updatePlayerItemsLabel(self):
-        self.playerItemBrowserGroup.setTitle("Your items (%d/%d)" %
-                                             (self.state.items.count(),
+        self.playerItemBrowserGroup.setTitle("Your items ({0:,}/{1:,})".format(
+                                             self.state.items.count(),
                                              self.state.capacity))
 
     def showHighScores(self):
@@ -159,9 +159,9 @@ class MainWidget(QtWidgets.QDialog):
             return
 
         proceed = yesNoDialog(self, "High score!",
-                              message="You have achieved a high score (%d) ! "
+                              message="You have achieved a high score ({:,}) ! "
                                       "would you like to enter your name? (high "
-                                      "scores are only stored locally)" % self.state.money)
+                                      "scores are only stored locally)".format(self.state.money))
 
         if not proceed:
             return

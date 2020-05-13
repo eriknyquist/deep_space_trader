@@ -14,7 +14,7 @@ class TransactionDialog(QtWidgets.QDialog):
         buttonLayout = QtWidgets.QHBoxLayout()
 
         self.description = QtWidgets.QLabel()
-        moneyCount = QtWidgets.QLabel("(your money: %d)" % parent.state.money)
+        moneyCount = QtWidgets.QLabel("(your money: {:,})".format(parent.state.money))
 
         self.spinboxLabel = QtWidgets.QLabel("")
 
@@ -100,8 +100,7 @@ class Buy(TransactionDialog):
         self.parent.state.money -= self.value * quantity
 
     def valueChanged(self):
-        self.spinboxLabel.setText("Buy quantity (cost: %d)"
-                                  % (int(self.spinbox.value()) * self.value))
+        self.spinboxLabel.setText("Buy quantity (cost: {:,})".format(int(self.spinbox.value()) * self.value))
 
     def maximumQuantity(self):
         capacity = self.parent.state.capacity - self.parent.state.items.count()
@@ -129,8 +128,7 @@ class Sell(TransactionDialog):
         self.parent.state.money += self.value * quantity
 
     def valueChanged(self):
-        self.spinboxLabel.setText("Sell quantity (gain: %d)"
-                                  % (int(self.spinbox.value()) * self.value))
+        self.spinboxLabel.setText("Sell quantity (gain: {:,})".format(int(self.spinbox.value()) * self.value))
 
     def maximumQuantity(self):
         return self.quantity

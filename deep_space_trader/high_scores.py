@@ -41,7 +41,7 @@ class HighScoreTable(QtWidgets.QDialog):
         self.table.insertRow(nextFreeRow)
 
         item1 = QtWidgets.QTableWidgetItem(name)
-        item2 = QtWidgets.QTableWidgetItem(str(score))
+        item2 = QtWidgets.QTableWidgetItem('{:,}'.format(score))
 
         item2.setTextAlignment(QtCore.Qt.AlignHCenter)
 

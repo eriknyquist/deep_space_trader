@@ -161,9 +161,9 @@ class PlayerItemBrowser(ItemBrowser):
             gain += price * quantity
 
         proceed = yesNoDialog(self, "Sell all?",
-                              message="Are you sure you want to sell all your items "
-                              "that are currently being traded on %s? (total "
-                              "gain: %d)"% (planet.full_name, gain))
+                              message="Are you sure you want to sell all items "
+                              "that are currently being traded on {0}? (total "
+                              "gain: {1:,})".format(planet.full_name, gain))
 
         if not proceed:
             return
@@ -202,7 +202,7 @@ class PlayerItemBrowser(ItemBrowser):
         collection = self.parent.state.items
 
         item1 = QtWidgets.QTableWidgetItem(itemname)
-        item2 = QtWidgets.QTableWidgetItem(str(collection.items[itemname].quantity))
+        item2 = QtWidgets.QTableWidgetItem('{:,}'.format(collection.items[itemname].quantity))
 
         item2.setTextAlignment(QtCore.Qt.AlignHCenter)
 
@@ -263,7 +263,7 @@ class PlanetItemBrowser(ItemBrowser):
         collection = self.parent.state.current_planet.items
 
         item1 = QtWidgets.QTableWidgetItem(itemname)
-        item2 = QtWidgets.QTableWidgetItem(str(collection.items[itemname].quantity))
+        item2 = QtWidgets.QTableWidgetItem('{:,}'.format(collection.items[itemname].quantity))
         item3 = QtWidgets.QTableWidgetItem(str(collection.items[itemname].value))
 
         item2.setTextAlignment(QtCore.Qt.AlignHCenter)
@@ -362,7 +362,7 @@ class WarehouseItemBrowser(ItemBrowser):
         collection = self.parent.state.warehouse
 
         item1 = QtWidgets.QTableWidgetItem(itemname)
-        item2 = QtWidgets.QTableWidgetItem(str(collection.items[itemname].quantity))
+        item2 = QtWidgets.QTableWidgetItem('{:,}'.format(collection.items[itemname].quantity))
 
         item2.setTextAlignment(QtCore.Qt.AlignHCenter)
 
