@@ -12,3 +12,8 @@ In Deep Space Trader, unlike Drugwars, you can mount expeditions to discover a
 large number of new planets to trade with, and you also have the option to completely
 destroy any planet and obtain all of the raw materials it holds (for a price,
 of course).
+
+Install
+-------
+
+Download the latest `windows build <windows_build/deep-space-trader-1.0.0.exe>`
