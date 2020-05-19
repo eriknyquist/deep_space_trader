@@ -1,4 +1,4 @@
-from deep_space_trader.utils import errorDialog, yesNoDialog, infoDialog
+from deep_space_trader.utils import errorDialog, yesNoDialog, infoDialog, checkForMoneyBonus
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
@@ -126,6 +126,7 @@ class Sell(TransactionDialog):
                                                          quantity)
 
         self.parent.state.money += self.value * quantity
+        checkForMoneyBonus(self.parent)
 
     def valueChanged(self):
         self.spinboxLabel.setText("Sell quantity (gain: {:,})".format(int(self.spinbox.value()) * self.value))

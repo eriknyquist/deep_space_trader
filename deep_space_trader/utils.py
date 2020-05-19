@@ -94,6 +94,33 @@ def infoDialog(parent, heading="", message=""):
     msg.exec_()
 
 
+def checkForMoneyBonus(parent):
+    new_days = None
+    new_store_purchases = None
+
+    if ((parent.state.money >= const.BONUS_1_MONEY) and
+        (parent.state.max_days < const.BONUS_1_MAX_DAYS)):
+        # Player gets bonus #1
+        new_days = const.BONUS_1_MAX_DAYS
+        new_store_purchases = parent.state.max_store_purchases_per_day + 1
+
+    if ((parent.state.money >= const.BONUS_2_MONEY) and
+        (parent.state.max_days < const.BONUS_2_MAX_DAYS)):
+        # Player gets bonus #2
+        new_days = const.BONUS_2_MAX_DAYS
+        new_store_purchases = parent.state.max_store_purchases_per_day + 1
+
+    if new_days is not None:
+        infoDialog(parent, "Congratulations!",
+                   "Congratulations, industrious trader! you have accrued {0:,}. Your total "
+                   "days has been increased to {1}, and you can now make {2} store "
+                   "purchases per day.".format(parent.state.money, new_days, new_store_purchases))
+
+        parent.state.max_days = new_days
+        parent.state.max_store_purchases_per_day = new_store_purchases
+        parent.infoBar.update()
+
+
 def _add_wrap(v, a, w):
     return (v + a) % w
 

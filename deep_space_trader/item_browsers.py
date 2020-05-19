@@ -7,7 +7,7 @@ from deep_space_trader.transaction_dialogs import (
 
 from deep_space_trader.price_graph import PriceHistoryGraph
 from deep_space_trader import constants as const
-from deep_space_trader.utils import errorDialog, yesNoDialog, infoDialog
+from deep_space_trader.utils import errorDialog, yesNoDialog, infoDialog, checkForMoneyBonus
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
@@ -176,6 +176,7 @@ class PlayerItemBrowser(ItemBrowser):
             planet.items.add_items(name, self.parent.state.items, quantity)
 
         self.parent.state.money += gain
+        checkForMoneyBonus(self.parent)
         self.parent.infoBar.update()
         self.parent.updatePlayerItemsLabel()
         self.parent.playerItemBrowser.update()

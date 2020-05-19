@@ -19,7 +19,7 @@ class State(object):
         self.warehouse_gets_per_day = const.WAREHOUSE_GETS_PER_DAY
         self.warehouse_puts_per_day = const.WAREHOUSE_PUTS_PER_DAY
         self.planet_discovery_range = const.PLANET_DISCOVERY_RANGE
-        self.max_days = const.INITIAL_MAX_DAYS
+        self.max_store_purchases_per_day = const.MAX_STORE_PURCHASES_PER_DAY
         self.max_days = const.INITIAL_MAX_DAYS
         self.store_purchases = 0
         self.planets_discovered = 0

@@ -128,16 +128,9 @@ class CapacityIncrease(StoreItem):
         self.incr = const.CAPACITY_INCREASE
         price = const.CAPACITY_INCREASE_COST
         name = "Increase item capacity"
-        desc = ""
+        desc = "Doubles your item capacity"
 
         super(CapacityIncrease, self).__init__(name, desc, price)
-
-        self._update_desc()
-
-    def _update_desc(self):
-        self.description = (
-            "Increases your item capacity by %s" % self.incr
-        )
 
     def use(self, parent):
         if not yesNoDialog(parent, "Are you sure?",
@@ -155,7 +148,6 @@ class CapacityIncrease(StoreItem):
     def after_use(self, parent):
         self.incr *= 2
         self.price *= 2
-        self._update_desc()
 
 
 class WarehouseSpeedIncrease(StoreItem):
@@ -263,9 +255,9 @@ class Store(QtWidgets.QDialog):
         super(Store, self).update()
 
     def buyItem(self, item):
-        if self.parent.state.store_purchases >= const.MAX_STORE_PURCHASES_PER_DAY:
+        if self.parent.state.store_purchases >= self.parent.state.max_store_purchases_per_day:
             errorDialog(self, message="You can only make %d store purchases per day. "
-                              "Come back tomorrow." % const.MAX_STORE_PURCHASES_PER_DAY)
+                              "Come back tomorrow." % self.parent.state.max_store_purchases_per_day)
             return
 
         if self.parent.state.money < item.price:
