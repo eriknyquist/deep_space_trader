@@ -215,6 +215,7 @@ class Store(QtWidgets.QDialog):
         self.table.setHorizontalHeaderLabels(['Item', 'description', 'Price'])
         self.table.verticalHeader().setVisible(False)
         self.table.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+        self.table.horizontalHeader().setSectionsClickable(False)
         self.table.setWordWrap(True)
         self.table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
         self.table.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)

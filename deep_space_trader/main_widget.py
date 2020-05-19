@@ -130,6 +130,7 @@ class MainWidget(QtWidgets.QDialog):
         self.playerItemBrowser.update()
         self.planetItemBrowser.update()
         self.warehouseItemBrowser.update()
+        self.updatePlayerItemsLabel()
 
     def quit(self):
         if self.warningBeforeQuit():
