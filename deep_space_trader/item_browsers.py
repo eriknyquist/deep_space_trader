@@ -96,6 +96,7 @@ class PlayerItemBrowser(ItemBrowser):
         # also handles deleteing them from the player's items, so, meh
         planet.items.add_items(itemname, self.parent.state.items, rand_quantity)
         self.parent.playerItemBrowser.update()
+        self.parent.updatePlayerItemsLabel()
 
         successful = random.randrange(0, 100) < const.ITEM_SAMPLE_SUCCESS_PERCENT
         if successful:
