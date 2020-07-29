@@ -16,4 +16,4 @@ of course).
 Install
 -------
 
-Download the latest `windows build <windows_build/deep-space-trader-1.0.0.exe>`_
+Download the latest `windows build <windows_build/deep-space-trader-1.0.1.exe>`_
