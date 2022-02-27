@@ -10,7 +10,7 @@ Install
 Pre-built windows binary
 ########################
 
-Download the `Windows x64 installer <https://github.com/eriknyquist/deep_space_trader/raw/master/windows_build/deep-space-trader-1.2.3.exe>`_
+Download the `Windows x64 installer <https://github.com/eriknyquist/deep_space_trader/releases/latest>`_
 
 Python package
 ##############
