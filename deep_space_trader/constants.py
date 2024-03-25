@@ -102,6 +102,9 @@ MAX_PLANETS_ALLOWED = 20000
 # Max. times per day player can buy something from the store
 MAX_STORE_PURCHASES_PER_DAY = 4
 
+# Number of high scores stored
+MAX_HIGH_SCORES = 10
+
 # Text shown in the intro dialog
 GAME_INTRO_TEXT = (
     "The year is 81899, and you are the owner of an inter-planetary commercial "

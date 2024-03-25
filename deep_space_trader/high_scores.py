@@ -33,19 +33,28 @@ class HighScoreTable(QtWidgets.QDialog):
         self.mainLayout.addWidget(self.table)
         self.setLayout(self.mainLayout)
         self.setWindowTitle("High scores")
-
         self.update()
+        self.adjustSize()
 
     def addRow(self, name, score):
         nextFreeRow = self.table.rowCount()
         self.table.insertRow(nextFreeRow)
 
+        if nextFreeRow == 0:
+            name += " <i><b>(1st place)</b></i>"
+        elif nextFreeRow == 1:
+            name += " <i><b>(2nd place)</b></i>"
+        elif nextFreeRow == 2:
+            name += " <i><b>(3rd place)</b></i>"
+
+        widgetText = QtWidgets.QLabel(name)
         item1 = QtWidgets.QTableWidgetItem(name)
         item2 = QtWidgets.QTableWidgetItem('{:,}'.format(score))
 
         item2.setTextAlignment(QtCore.Qt.AlignHCenter)
 
-        self.table.setItem(nextFreeRow, 0, item1)
+        #self.table.setItem(nextFreeRow, 0, item1)
+        self.table.setCellWidget(nextFreeRow, 0, widgetText)
         self.table.setItem(nextFreeRow, 1, item2)
 
     def populateTable(self):

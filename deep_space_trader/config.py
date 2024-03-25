@@ -2,6 +2,7 @@ import os
 import json
 
 from deep_space_trader.utils import errorDialog, scores_encode, scores_decode
+from deep_space_trader.constants import MAX_HIGH_SCORES
 
 
 FILENAME = os.path.join(os.path.expanduser('~'), '.deep_space_trader_config.json')
@@ -39,6 +40,10 @@ def config_load():
         else:
             data = scores_decode(loaded[SCORES_KEY]).decode('utf-8')
             config[SCORES_KEY] = json.loads(data)
+
+            # Handle case where config contains more than the max. high scores,
+            # since the limit on number of stored high scores was only added in version 1.3.0
+            config[SCORES_KEY] = config[SCORES_KEY][:MAX_HIGH_SCORES]
     except:
         _malformed_config()
         return
@@ -71,6 +76,9 @@ def add_highscore(name, score):
     config[SCORES_KEY].append([name, score])
     config[SCORES_KEY].sort(key=lambda x: x[1])
     config[SCORES_KEY].reverse()
+
+    if (len(config[SCORES_KEY]) > MAX_HIGH_SCORES):
+        del config[SCORES_KEY][-1]
 
 def get_highscores():
     return config[SCORES_KEY]

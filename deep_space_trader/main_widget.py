@@ -232,8 +232,9 @@ class MainWidget(QtWidgets.QDialog):
     def checkHighScore(self):
         scores = config.get_highscores()
 
-        # High scores are sorted in descending order
-        if (len(scores) > 0) and (self.state.money <= scores[0][1]):
+        # High scores are sorted in descending order.
+        # We only store up to constants.MAX_HIGH_SCORES high scores.
+        if (len(scores) > 0) and (len(scores) == const.MAX_HIGH_SCORES) and (self.state.money <= scores[-1][1]):
             return
 
         proceed = yesNoDialog(self, "High score!",
