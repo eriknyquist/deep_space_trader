@@ -123,6 +123,7 @@ class HighScoreSharing(QtWidgets.QDialog):
             config.add_highscore(name, score)
 
         infoDialog(self, "Success", "Scores added successfully")
+        config.config_store()
 
     def update(self):
         super(HighScoreSharing, self).update()
