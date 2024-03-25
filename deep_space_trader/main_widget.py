@@ -111,6 +111,11 @@ class MainWidget(QtWidgets.QDialog):
         dialog.setWindowModality(QtCore.Qt.ApplicationModal)
         dialog.exec_()
 
+    def showTransactionLog(self):
+        dialog = ScrollableTextDisplay("Transaction log", self.state.read_transaction_log())
+        dialog.setWindowModality(QtCore.Qt.ApplicationModal)
+        dialog.exec_()
+
     def showHighScores(self):
         dialog = HighScoreTable(self)
         dialog.setWindowModality(QtCore.Qt.ApplicationModal)

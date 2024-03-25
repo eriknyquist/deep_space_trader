@@ -34,6 +34,7 @@ class ScrollableTextDisplay(QtWidgets.QDialog):
         self.setLayout(mainLayout)
         self.setWindowTitle(title)
         self.setWindowIcon(QtGui.QIcon(ICON_PATH))
+        self.setMinimumSize(480, 200)
 
 class InfoDialog(QtWidgets.QDialog):
     def __init__(self, title, text, cancelable=True):

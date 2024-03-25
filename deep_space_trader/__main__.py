@@ -66,6 +66,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.travelLogAction.setStatusTip("Show a log of planets travelled to")
         self.travelLogAction.triggered.connect(self.widget.showTravelLog)
 
+        self.transactionLogAction = QtWidgets.QAction("Show transaction log", self)
+        self.transactionLogAction.setShortcut("Ctrl+t")
+        self.transactionLogAction.setStatusTip("Show a log of all materials bought/sold")
+        self.transactionLogAction.triggered.connect(self.widget.showTransactionLog)
+
         self.darkThemeAction = QtWidgets.QAction("Dark theme", self)
         self.darkThemeAction.setShortcut("Ctrl+v")
         self.darkThemeAction.setStatusTip("Enable/disable dark theme")
@@ -83,6 +88,7 @@ class MainWindow(QtWidgets.QMainWindow):
         toolMenu = menu.addMenu("Tools")
         toolMenu.addAction(self.pricesAction)
         toolMenu.addAction(self.travelLogAction)
+        toolMenu.addAction(self.transactionLogAction)
 
         viewMenu = menu.addMenu("View")
         viewMenu.addAction(self.darkThemeAction)

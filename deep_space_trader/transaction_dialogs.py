@@ -99,6 +99,7 @@ class Buy(TransactionDialog):
                                           quantity, delete_empty=False)
 
         self.parent.state.money -= self.value * quantity
+        self.parent.state.record_purchase(self.itemName, quantity, self.value)
 
     def valueChanged(self):
         self.spinboxLabel.setText("Buy quantity (cost: {:,})".format(int(self.spinbox.value()) * self.value))
@@ -127,6 +128,7 @@ class Sell(TransactionDialog):
                                                          quantity)
 
         self.parent.state.money += self.value * quantity
+        self.parent.state.record_sale(self.itemName, quantity, self.value)
         checkForMoneyBonus(self.parent)
 
     def valueChanged(self):

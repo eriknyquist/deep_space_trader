@@ -38,6 +38,7 @@ class State(object):
         self.previous_planet = None
 
         self.travel_log = []
+        self.transaction_log = []
 
         # Maps battle level to chance of winning battle by percentage.
         # Note: if const.MAX_BATTLE_LEVEL is changed, then this map might need to change too.
@@ -97,6 +98,20 @@ class State(object):
                 self.current_planet = p
                 self.current_planet.visited = True
                 return
+
+    def record_sale(self, item_name, quantity, price):
+        self.transaction_log.append(("sold", self.day, self.current_planet.full_name, item_name, quantity, price))
+
+    def record_purchase(self, item_name, quantity, price):
+        self.transaction_log.append(("bought", self.day, self.current_planet.full_name, item_name, quantity, price))
+
+    def read_transaction_log(self):
+        lines = []
+
+        for desc, daynum, planetname, itemname, quantity, price in self.transaction_log:
+            lines.append("Day %s: %s, %s %s %s for %s each" % (daynum, planetname, desc, quantity, itemname, price))
+
+        return '\n'.join(lines)
 
     def read_travel_log(self):
         return '\n'.join("Day %s: %s" % (daynum, name) for name, daynum in self.travel_log)

@@ -209,6 +209,7 @@ class PlayerItemBrowser(ItemBrowser):
 
             quantity = self.parent.state.items.items[name].quantity
             planet.items.add_items(name, self.parent.state.items, quantity)
+            self.parent.state.record_sale(name, quantity, planet.items.items[name].value)
 
         self.parent.state.money += gain
         checkForMoneyBonus(self.parent)
