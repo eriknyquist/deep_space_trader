@@ -1,7 +1,9 @@
 .. sectnum::
 
-Deep Space Trader
------------------
+Deep Space Trader 1.3.0
+-----------------------
+
+.. image:: readme_image.png
 
 Deep Space Trader is a turn-based strategy game inspired by, and similar in gameplay to,
 the old DOS game "Drugwars".
@@ -25,8 +27,6 @@ Install as a python package:
 
 Introduction
 ============
-
-.. image:: readme_image.png
 
 The player starts off on a planet within a system of 8 randomly-generated planets.
 Each planet has various raw materials available for trading (13 types of raw material in total),
@@ -106,7 +106,7 @@ main game window, directly underneath the "Information" section.
   all progress in the current game. When clicked, this button will first show a prompt,
   asking the player to confirm that they want to reset the game).
 
-* **"Go to store" button**: Opens the Store window. See "Store window" reference section in this
+* **"Go to store" button**: Opens the Store window. See `Store window`_ reference section in this
   document for more details.
 
 * **"Go to next day" button**: Advances the current day by 1. Often, the next day is reached by
@@ -145,7 +145,7 @@ in the bottom left area of the main game window.
 
 * **"Buy item" button**: Allows the player to purchase 1 or more of the selected items in the
   item display table. When clicked, this button will open a new window that allows the player to
-  select the quantity they wish to purchase of the selected item (See "Buy item window" reference
+  select the quantity they wish to purchase of the selected item (See `Buy item window`_ reference
   section in this document for more details about this window).
 
 * **Item display table**: Displays all items available for purchase on the current planet.
@@ -184,7 +184,7 @@ right area of the main game window.
   from their ship to the warehouse. Unlike the player's ship, the warehouse has infinite
   capacity, but only one move to/from the warehouse per day is allowed (i.e. one trip
   to the warehouse per day). Additional warehouse trips per day can be purchased from the Store
-  (see "Store window" reference section in this document for more details about the store window).
+  (See `Store window`_ reference section in this document for more details about the store window).
   Clicking this button opens a new window that allows the player to select the quantity of
   the item they want to move to the warehouse.
 
@@ -216,3 +216,54 @@ right area of the main game window.
   player's ship.
 
 * **"Dump selected" button**:
+
+**Store window**
+################
+
+This section describes the functionality of the "Store" window. The store window can be reached
+by clicking the "Go to store" button in the `Global buttons section`_ of the main window. The
+store window allows the player to exhange money for various upgrades.
+
+* **Increase item capacity**: Buying this item doubles the number of items that can be
+  stored on the players ship. This item can be bought an unlimited number of times.
+  Only 4 store purchases can be made per day, but this number is increased when the
+  player reaches certain scores (see `Score bonuses`_ reference section in this document).
+
+* **Scout expedition**: Buying this item allows the player to discover between 4-8 new planets,
+  which will become available in the `"Planets" section`_. More planets can be discovered per
+  scout expedition by purchasing the "Upgrade scout fleet" store item.
+
+* **Planet destruction kit**: TODO
+
+* **Upgrade scout fleet**: Buying this item increases the number of planets than can be
+  discovered on a single scout expedition. This item can be bought a maximum of 9 times,
+  to upgrade the scout fleet through levels 1 to 10.
+
+  * *Scout fleet level 1*: between 4 and 8 new planets per scout expedition
+  * *Scout fleet level 2*: between 4 and 16 new planets per scout expedition
+  * *Scout fleet level 3*: between 4 and 32 new planets per scout expedition
+  * *Scout fleet level 4*: between 4 and 64 new planets per scout expedition
+  * *Scout fleet level 5*: between 4 and 128 new planets per scout expedition
+  * *Scout fleet level 6*: between 4 and 256 new planets per scout expedition
+  * *Scout fleet level 7*: between 4 and 512 new planets per scout expedition
+  * *Scout fleet level 8*: between 4 and 1024 new planets per scout expedition
+  * *Scout fleet level 9*: between 4 and 2048 new planets per scout expedition
+  * *Scout fleet level 10*: between 4 and 4096 new planets per scout expedition
+
+**Buy item window**
+###################
+
+**Miscellaneous details**
+#########################
+
+This section describes miscellaneous functionality that is not necessarily related
+to any particular game window.
+
+Score bonuses
++++++++++++++
+
+When the player reaches 1,000,000,000 money, the total number of days is increased from 30 to 35,
+and the number of store purchases allowed per day is increased from 4 to 5.
+
+When the player reaches 100,000,000,000 money, the total number of days is increased from 35 to 40,
+and the number of store purchases allowed per day is increased from 5 to 6.
