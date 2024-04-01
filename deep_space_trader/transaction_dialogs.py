@@ -49,7 +49,6 @@ class TransactionDialog(QtWidgets.QDialog):
         mainLayout.addLayout(buttonLayout)
 
         self.setLayout(mainLayout)
-        self.setWindowTitle("Buy items")
         self.setWindowIcon(QtGui.QIcon(ICON_PATH))
 
         self.valueChanged()
@@ -92,6 +91,7 @@ class Buy(TransactionDialog):
 
         self.description.setText("How much %s do you want to buy?" % self.itemName)
         self.acceptButton.setText("Buy")
+        self.setWindowTitle("Buy items")
 
     def acceptTransaction(self, quantity):
         self.parent.state.items.add_items(self.itemName,
@@ -121,6 +121,7 @@ class Sell(TransactionDialog):
         super(Sell, self).__init__(parent, itemname, include_money=False)
         self.description.setText("How much %s do you want to sell?" % self.itemName)
         self.acceptButton.setText("Sell")
+        self.setWindowTitle("Sell items")
 
     def acceptTransaction(self, quantity):
         self.parent.state.current_planet.items.add_items(self.itemName,
@@ -147,6 +148,7 @@ class PlayerToWarehouse(TransactionDialog):
                                  % self.itemName)
 
         self.acceptButton.setText("Move")
+        self.setWindowTitle("Move to warehouse")
 
     def acceptTransaction(self, quantity):
         self.parent.state.warehouse_puts += 1
@@ -170,6 +172,7 @@ class WarehouseToPlayer(TransactionDialog):
                                  % self.itemName)
 
         self.acceptButton.setText("Move")
+        self.setWindowTitle("Retrieve from warehouse")
 
     def acceptTransaction(self, quantity):
         self.parent.state.warehouse_gets += 1
@@ -191,6 +194,7 @@ class DumpWarehouseItem(TransactionDialog):
         super(DumpWarehouseItem, self).__init__(parent, itemname, include_money=False)
         self.description.setText("How much %s do you want to dump?" % self.itemName)
         self.acceptButton.setText("Dump")
+        self.setWindowTitle("Dump warehouse item")
 
     def acceptTransaction(self, quantity):
         proceed = yesNoDialog(self, "Dump items?",
@@ -217,6 +221,7 @@ class DumpPlayerItem(TransactionDialog):
         super(DumpPlayerItem, self).__init__(parent, itemname, include_money=False)
         self.description.setText("How much %s do you want to dump?" % self.itemName)
         self.acceptButton.setText("Dump")
+        self.setWindowTitle("Dump player items")
 
     def acceptTransaction(self, quantity):
         proceed = yesNoDialog(self, "Dump items?",
