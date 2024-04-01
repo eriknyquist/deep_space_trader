@@ -68,6 +68,11 @@ class PlayerItemBrowser(ItemBrowser):
         self.add_button("Dump selected", self.dumpButtonClicked)
         self.add_button("Dump all", self.dumpAllButtonClicked)
 
+        self.table.doubleClicked.connect(self.onDoubleClick)
+
+    def onDoubleClick(self, signal):
+        self.sellButtonClicked()
+
     def introduceNewItem(self, itemname):
         quantity = self.parent.state.items.items[itemname].quantity
         rand_quantity = random.randrange(*const.ITEM_SAMPLE_QUANTITY_RANGE)
