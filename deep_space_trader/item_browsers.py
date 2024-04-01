@@ -273,13 +273,17 @@ class PlanetItemBrowser(ItemBrowser):
 
         self.table.doubleClicked.connect(self.onDoubleClick)
 
-    def onDoubleClick(self, signal):
-        itemname = self.table.item(signal.row(), 0).text()
-        item = self.parent.state.current_planet.items.items[itemname]
+    def keyPressEvent(self, event: QtGui.QKeyEvent):
+        if event.key() == QtCore.Qt.Key_Return:
+            itemname = self.table.item(self.table.currentRow(), 0).text()
+            item = self.parent.state.current_planet.items.items[itemname]
 
-        dialog = PriceHistoryGraph(self.parent, item)
-        dialog.setWindowModality(QtCore.Qt.ApplicationModal)
-        dialog.exec_()
+            dialog = PriceHistoryGraph(self.parent, item)
+            dialog.setWindowModality(QtCore.Qt.ApplicationModal)
+            dialog.exec_()
+
+    def onDoubleClick(self, signal):
+        self.buyButtonClicked()
 
     def buyButtonClicked(self):
         selectedRow = self.table.currentRow()
