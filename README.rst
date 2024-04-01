@@ -1,3 +1,5 @@
+.. sectnum::
+
 Deep Space Trader
 -----------------
 
@@ -63,7 +65,7 @@ Complete Game Reference
 =======================
 
 This following section describes the functionality of all sections of all game windows
-in detail. Each game window has its own section in the document, with further document subsections
+in detail. Each game window has its own section in this document, with further document subsections
 for sections within the game window.
 
 **Main window**
@@ -150,8 +152,9 @@ in the bottom left area of the main game window.
   Consists of three columns: The rightmost column, labelled "Cost", displays the cost of 1
   item. The middle column, labelled "Quantity available", shows the number of items available
   for purchase on the current planet. The leftmost column, labelled "Item type", shows the
-  item name. Double-clicking the item name will display a new window showing the item price
-  over time (from day 1 until the current day).
+  item name. The player can attempt to buy an item by double-clicking on the item name
+  within the item display table. Pressing enter with an item selected will display a new
+  window showing the item price over time (from day 1 until the current day).
 
 
 **"Items on your ship" section**
@@ -177,4 +180,39 @@ right area of the main game window.
   the current planet. Only items that the current planet already holds will be sold
   (free samples can only be provided via the "Sell items" button).
 
+* **"Add to warehouse" button**: Allows the player to move 1 or more of the selected item
+  from their ship to the warehouse. Unlike the player's ship, the warehouse has infinite
+  capacity, but only one move to/from the warehouse per day is allowed (i.e. one trip
+  to the warehouse per day). Additional warehouse trips per day can be purchased from the Store
+  (see "Store window" reference section in this document for more details about the store window).
+  Clicking this button opens a new window that allows the player to select the quantity of
+  the item they want to move to the warehouse.
 
+* **"Dump selected" button**: Throws away the selected items to free up capacity on the
+  player's ship.
+
+* **"Dump all" button**: Throws away all items on the players ship.
+
+* **Item display table**: Displays all items stored on the player's ship. Consists of
+  two colums: The rightmost column, labelled "Quantity", shows the number of items stored
+  on the player's ship. The leftmost column, labelled "Item type", shows the item name. The
+  player can attempt to sell an item by double-clicking on the item name within the item
+  display table.
+
+**"Items in warehouse" section**
+++++++++++++++++++++++++++++++++
+
+This section describes the functionality of the "Items in warehouse" section of the main
+game window. The "Items in warehouse" section is used for browsing / managing items that
+reside in the warehouse. The "Items in warehouse" section is displayed in the bottom
+right area of the main game window.
+
+* **"Retrieve items" button**: Allows the player to move 1 or more of the selected items
+  from the warehouse to their ship. Only one move to/from the warehouse per day is allowed
+  (i.e. one trip to the warehouse per day). Clicking this button opens a new window that
+  allows the player to select the quantity of the item they want to move to their ship.
+
+* **"Retrieve all" button**: Moves all warehouse items (or however many will fit) to the
+  player's ship.
+
+* **"Dump selected" button**:
