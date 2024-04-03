@@ -43,7 +43,7 @@ class State(object):
         # Maps battle level to chance of winning battle by percentage.
         # Note: if const.MAX_BATTLE_LEVEL is changed, then this map might need to change too.
         self.battle_level_chance_map = {
-            0: 0.0,
+            0: 1.0,
             1: 10.0,
             2: 15.0,
             3: 20.0,
@@ -53,7 +53,7 @@ class State(object):
             7: 65.0,
             8: 80.0,
             9: 95.0,
-            10: 100.0
+            10: 99.0
         }
 
     def net_worth(self, include_warehouse=False):
@@ -67,13 +67,13 @@ class State(object):
         value = self.net_worth()
         chance = 0.0
 
-        if value > 1000000000000:
+        if value > 100000000000:
             chance = 90.0
-        elif value > 500000000000:
+        elif value > 1000000000:
             chance = 80.0
-        elif value > 25000000000:
+        elif value > 500000000:
             chance = 60.0
-        elif value > 100000000:
+        elif value > 50000000:
             chance = 30.0
         elif value > 10000000:
             chance = 15.0
