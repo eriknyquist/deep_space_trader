@@ -222,18 +222,27 @@ right area of the main game window.
 
 This section describes the functionality of the "Store" window. The store window can be reached
 by clicking the "Go to store" button in the `Global buttons section`_ of the main window. The
-store window allows the player to exhange money for various upgrades.
+store window allows the player to exhange money for various upgrades and services. Only 4 store
+purchases can be made per day, but this number is increased when the player reaches certain scores
+(see `Score bonuses`_ reference section in this document).
 
 * **Increase item capacity**: Buying this item doubles the number of items that can be
   stored on the players ship. This item can be bought an unlimited number of times.
-  Only 4 store purchases can be made per day, but this number is increased when the
-  player reaches certain scores (see `Score bonuses`_ reference section in this document).
 
 * **Scout expedition**: Buying this item allows the player to discover between 4-8 new planets,
   which will become available in the `"Planets" section`_. More planets can be discovered per
   scout expedition by purchasing the "Upgrade scout fleet" store item.
 
-* **Planet destruction kit**: TODO
+* **Planet destruction kit**: Buying this item allows the player to destroy one planet and obtain
+  all of its materials. The planet will disappear from the `"Planets" section`_ and all materials
+  held by the planet will be transferred to the player's warehouse. Opens a new window that allows
+  the player to pick which planet they want to destroy, or optionally destroy all planets at once
+  (except for the current planet) for a higher price. There is a small chance that a single planet may
+  resist destruction and attempt to fight back. The higher number of planets being destroyed, the
+  higher the chance of one planet resisting will be. The player must decide whether to fight, or leave
+  the planet alone. If the player fights and loses, the player will die and the game will be over.
+  If the player fights and wins, then planet destruction will continue normally. The chance of
+  the player winning this fight depends on the player's battle fleet level.
 
 * **Upgrade scout fleet**: Buying this item increases the number of planets than can be
   discovered on a single scout expedition. This item can be bought a maximum of 9 times,
@@ -249,6 +258,26 @@ store window allows the player to exhange money for various upgrades.
   * *Scout fleet level 8*: between 4 and 1024 new planets per scout expedition
   * *Scout fleet level 9*: between 4 and 2048 new planets per scout expedition
   * *Scout fleet level 10*: between 4 and 4096 new planets per scout expedition
+
+* **Buy/upgrade battle fleet**: Buying this item for the first time gives the player a
+  battle fleet, which increases the chances of the player winning battles against planets
+  that resist destruction, or when being robbed while travelling between planets. Subsequent
+  purchases of this item upgrade the battle fleet through levels 1-10.
+
+  * *Battle fleet level 0 (no battle fleet)*: 1% chance of winning battles
+  * *Battle fleet level 1*: 10% chance of winning battles
+  * *Battle fleet level 2*: 15% chance of winning battles
+  * *Battle fleet level 3*: 20% chance of winning battles
+  * *Battle fleet level 4*: 25% chance of winning battles
+  * *Battle fleet level 5*: 35% chance of winning battles
+  * *Battle fleet level 6*: 50% chance of winning battles
+  * *Battle fleet level 7*: 65% chance of winning battles
+  * *Battle fleet level 8*: 80% chance of winning battles
+  * *Battle fleet level 9*: 95% chance of winning battles
+  * *Battle fleet level 10*: 99% chance of winning battles
+
+* **Increase warehouse limit**: Buying this item will increase by 1 the number of warehouse trips
+  that the player can make in a single day.
 
 **Buy item window**
 ###################
