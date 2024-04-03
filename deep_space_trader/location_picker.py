@@ -82,7 +82,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         # that any single planet will be able to resist us and possibly stop us from destroying it.
         percentage_chance_per_planet = 0.05
 
-        percentage_total_chance = int(max(1.0, percentage_chance_per_planet * len(planets_to_destroy)))
+        percentage_total_chance = int(min(100, percentage_chance_per_planet * len(planets_to_destroy)))
 
         resistance = (random.randint(0, 100) <= percentage_total_chance)
 
@@ -103,7 +103,11 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         msg = (
             "Planet {0} is resisting destruction! A battle fleet from {0} has been " +
             "dispatched, and is prepared to defend the planet if you try to destroy it. " +
-            "You must defeat them if you want to continue with the destruction of {0}. "
+            "You must defeat them if you want to continue with the destruction of {0}." +
+            "<br><br>If you fight and lose, you will die and the game will be over." +
+            "<br><br>If you fight and win, you will destroy this planet and gain its materials." +
+            "<br><br>If you choose not to fight, you will not be able to destroy this planet, " +
+            "but will continue unscathed."
         ).format(resisting_planet.full_name)
 
         if self.state.battle_level == 0:
