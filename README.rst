@@ -3,7 +3,7 @@
 Deep Space Trader 1.3.0
 -----------------------
 
-.. image:: readme_image.png
+.. image:: images/readme_image.png
 
 Deep Space Trader is a turn-based strategy game inspired by, and similar in gameplay to,
 the old DOS game "Drugwars".
@@ -78,6 +78,8 @@ has its own section in this document.
 **"Information" section**
 +++++++++++++++++++++++++
 
+.. image:: images/information_section.png
+
 This section describes the functionality of the "Information" section of the main game window.
 The "Information" section stretches across the entire top of the main game window, and
 shows useful information about the current state of the game.
@@ -99,6 +101,8 @@ shows useful information about the current state of the game.
 **Global buttons section**
 ++++++++++++++++++++++++++
 
+.. image:: images/global_buttons_section.png
+
 This section describes the functionality of the 3 large buttons at the top of the
 main game window, directly underneath the "Information" section.
 
@@ -114,6 +118,8 @@ main game window, directly underneath the "Information" section.
 
 **"Planets" section**
 +++++++++++++++++++++
+
+.. image:: images/planets_section.png
 
 This section describes the functionlity of the "Planets" section of the main game
 window. The "Planets" section is used for travelling between planets, and allows the player
@@ -138,6 +144,8 @@ left area of the main game window.
 **"Items on current planet" section**
 +++++++++++++++++++++++++++++++++++++
 
+.. image:: images/planet_items_section.png
+
 This section describes the functionality of the "Items on current planet" section of the main
 game window. The "Items on current planet" section is used for browsing & buying items from
 the planet that the player is currently on. The "Items on current planet" section is displayed
@@ -159,6 +167,8 @@ in the bottom left area of the main game window.
 
 **"Items on your ship" section**
 ++++++++++++++++++++++++++++++++
+
+.. image:: images/ship_items_section.png
 
 This section describes the functionality of the "Items on your ship" section of the main
 game window. The "Items on your ship" section is used for browsing / managing items that
@@ -202,6 +212,8 @@ right area of the main game window.
 **"Items in warehouse" section**
 ++++++++++++++++++++++++++++++++
 
+.. image:: images/warehouse_section.png
+
 This section describes the functionality of the "Items in warehouse" section of the main
 game window. The "Items in warehouse" section is used for browsing / managing items that
 reside in the warehouse. The "Items in warehouse" section is displayed in the bottom
@@ -219,6 +231,8 @@ right area of the main game window.
 
 **Store window**
 ################
+
+.. image:: images/store.png
 
 This section describes the functionality of the "Store" window. The store window can be reached
 by clicking the "Go to store" button in the `Global buttons section`_ of the main window. The
