@@ -8,6 +8,8 @@ Deep Space Trader 1.3.0
 Deep Space Trader is a turn-based strategy game inspired by, and similar in gameplay to,
 the old DOS game "Drugwars".
 
+.. toctree:: Table Of Contents
+
 Install
 =======
 
