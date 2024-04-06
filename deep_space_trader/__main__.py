@@ -5,6 +5,7 @@ import time
 import qdarktheme
 
 from deep_space_trader import config
+from deep_space_trader import constants as const
 from deep_space_trader.main_widget import MainWidget
 from deep_space_trader.utils import gameStoryDialog, showAboutDialog, SOURCE_DIR, IMAGE_DIR, ICON_PATH
 
@@ -116,7 +117,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             event.ignore()
 
-if __name__ == '__main__':
+def main(on_widget_created=None):
     app = QtWidgets.QApplication(sys.argv)
 
     app.setStyle('Fusion')
@@ -126,6 +127,10 @@ if __name__ == '__main__':
     app.setFont(font)
 
     win = MainWindow(app.primaryScreen())
+
+    if on_widget_created is not None:
+        on_widget_created(win)
+
     win.setWindowTitle("Deep Space Trader %s" % package_version)
     win.enableDarkTheme(True)
     win.show()
@@ -136,3 +141,14 @@ if __name__ == '__main__':
         config.config_store()
 
     sys.exit(app.exec_())
+
+def _tester_init(widget):
+    widget.state.battle_level = 10
+
+def tester_main():
+    const.INITIAL_MONEY = 666555444
+    main(on_widget_created=_tester_init)
+
+if __name__ == '__main__':
+    #tester_main()
+    main()
