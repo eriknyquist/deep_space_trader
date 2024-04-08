@@ -1,7 +1,5 @@
 .. sectnum::
 
-.. footer:: Page ###Page###
-
 Deep Space Trader 1.3.0
 -----------------------
 
