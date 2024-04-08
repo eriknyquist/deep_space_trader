@@ -75,7 +75,7 @@ MAX_BATTLE_LEVEL = 10
 MAX_SCOUT_LEVEL = 10
 
 # Planet exploration will initially yield some number of new planets in this range
-PLANET_DISCOVERY_RANGE = (4, 8000)
+PLANET_DISCOVERY_RANGE = (4, 8)
 
 # Number of warehouse retrieval operations allowed per day
 WAREHOUSE_GETS_PER_DAY = 1
