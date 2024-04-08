@@ -1,6 +1,6 @@
 .. sectnum::
 
-Deep Space Trader 1.3.0
+Deep Space Trader 1.3.1
 -----------------------
 
 .. image:: images/readme_image.png
