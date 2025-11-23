@@ -36,7 +36,7 @@ class PlanetExploration(StoreItem):
 
     def use(self, parent):
         if len(parent.state.planets) > const.MAX_PLANETS_ALLOWED:
-            errorDialog(parent, "Error", "Too many planets, you need to destroy "
+            errorDialog(parent, "Sorry!", "Too many planets, you need to destroy "
                                          "some planets before you can discover more")
             return False
 
@@ -81,7 +81,7 @@ class PlanetExplorationUpgrade(StoreItem):
 
     def use(self, parent):
         if parent.state.scout_level >= parent.state.max_scout_level:
-            errorDialog(parent, "Error", "You cannot upgrade your scout fleet "
+            errorDialog(parent, "Sorry!", "You cannot upgrade your scout fleet "
                                          "any further")
             return False
 
@@ -112,7 +112,7 @@ class PlanetDestruction(StoreItem):
 
     def use(self, parent):
         if len(parent.state.planets) == 1:
-            errorDialog(parent, "Error", message="The only planet available is "
+            errorDialog(parent, "Sorry!", message="The only planet available is "
                                          "the one you are currently on")
             return False
 
@@ -184,7 +184,7 @@ class BattleFleetUpgrade(StoreItem):
             return False
 
         if parent.state.battle_level >= parent.state.max_battle_level:
-            errorDialog(parent, "Error", message="You cannot upgrade your battle "
+            errorDialog(parent, "Sorry!", message="You cannot upgrade your battle "
                                                  "fleet anymore")
             return False
 
@@ -345,16 +345,16 @@ class Store(QtWidgets.QDialog):
 
     def buyItem(self, item):
         if self.parent.state.store_purchases >= self.parent.state.max_store_purchases_per_day:
-            errorDialog(self, message="You can only make %d store purchases per day. "
+            errorDialog(self, "Sorry!", "You can only make %d store purchases per day. "
                               "Come back tomorrow." % self.parent.state.max_store_purchases_per_day)
             return
 
         if item.price is None:
-            errorDialog(self, message="You cannot buy this item anymore")
+            errorDialog(self, "Sorry!", "You cannot buy this item anymore")
             return
 
         if self.parent.state.money < item.price:
-            errorDialog(self, message="You don't have enough money to buy '%s'" % item.name)
+            errorDialog(self, "Sorry!", "You don't have enough money to buy '%s'" % item.name)
             return
 
         proceed = item.use(self.parent)
@@ -381,7 +381,7 @@ class Store(QtWidgets.QDialog):
     def buyButtonClicked(self):
         selectedRow = self.table.currentRow()
         if selectedRow < 0:
-            errorDialog(self, message="Please select an item first")
+            errorDialog(self, "Oops!", "Please select an item first")
             return
 
         item = store_items[selectedRow]

@@ -91,8 +91,7 @@ def yesNoDialog(parent, header="", message="Are you sure?"):
 def errorDialog(parent, heading="Error", message="Unrecoverable error occurred"):
     msg = QtWidgets.QMessageBox(parent)
     msg.setIcon(QtWidgets.QMessageBox.Critical)
-    msg.setText(heading)
-    msg.setInformativeText(message)
+    msg.setText(heading + "<br><br>" + message)
     msg.setWindowTitle("Error")
     msg.setWindowIcon(QtGui.QIcon(ICON_PATH))
     msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
