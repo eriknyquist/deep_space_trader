@@ -33,25 +33,98 @@ rare_item_types = [
 ]
 
 
-class Items(object):
-    initial_variance_percent = 5.0
-    daily_variance_percent = 2.0
+class Scarcity:
+    EXTREMELY_SCARCE = 0
+    VERY_SCARCE = 1
+    MODERATELY_SCARCE = 2
+    PLENTIFUL = 3
+    MODERATELY_PLENTIFUL = 4
+    VERY_PLENTIFUL = 5
+    EXTREMELY_PLENTIFUL = 6
 
+    @classmethod
+    def score(cls, quantity):
+        quantity = int(quantity)
+        if quantity < 100:
+            return cls.EXTREMELY_SCARCE
+        elif quantity < 1000:
+            return cls.VERY_SCARCE
+        elif quantity < 10000:
+            return cls.MODERATELY_SCARCE
+        elif quantity < 100000:
+            return cls.PLENTIFUL
+        elif quantity < 1000000:
+            return cls.MODERATELY_PLENTIFUL
+        elif quantity < 10000000:
+            return cls.VERY_PLENTIFUL
+
+        return cls.EXTREMELY_PLENTIFUL
+
+
+scarcity_price_offsets = {
+    Scarcity.EXTREMELY_SCARCE: 0.5,
+    Scarcity.VERY_SCARCE: 0.4,
+    Scarcity.MODERATELY_SCARCE: 0.3,
+    Scarcity.PLENTIFUL: 0.2,
+    Scarcity.MODERATELY_PLENTIFUL: 0.15,
+    Scarcity.VERY_PLENTIFUL: 0.1,
+    Scarcity.EXTREMELY_PLENTIFUL: 0.0
+}
+
+scarcity_price_init_factors = {
+    Scarcity.EXTREMELY_SCARCE: 1.0,
+    Scarcity.VERY_SCARCE: 0.75,
+    Scarcity.MODERATELY_SCARCE: 0.5,
+    Scarcity.PLENTIFUL: 0.0,
+    Scarcity.MODERATELY_PLENTIFUL: -0.1,
+    Scarcity.VERY_PLENTIFUL: -0.25,
+    Scarcity.EXTREMELY_PLENTIFUL: -0.5
+}
+
+class Items(object):
     def __init__(self, itemtype, quantity, value=None):
         self.type = itemtype
-        self.quantity = quantity
+        self._scarcity = 0.0
+        self._quantity = quantity
+        self._daily_variance = random.uniform(0.0, 1.5)
 
         if value is None:
-            self.value = itemtype.base_value
+            self_value = float(itemtype.base_value)
         else:
-            self.value = value
+            self._value = float(value)
 
-        # 15 percent of initial value
-        variance = (float(self.value) / 100.0) * self.initial_variance_percent
+        init_factor = scarcity_price_init_factors[Scarcity.score(quantity)]
+        self._value += (self._value * init_factor)
+        variance = 1.0
 
         # Initial slope value
         self.value_slope = random.uniform(-variance, variance)
         self.value_history = [self.value]
+
+    @property
+    def quantity(self):
+        return self._quantity
+
+    @quantity.setter
+    def quantity(self, new):
+        slope_add = scarcity_price_offsets[Scarcity.score(new)]
+
+        if new > self._quantity:
+            # Becoming more plentiful
+            self.value_slope -= random.uniform(0.0, slope_add)
+        elif new < self._quantity:
+            # Becoming more scarce
+            self.value_slope += random.uniform(0.0, slope_add)
+
+        self._quantity = new
+
+    @property
+    def value(self):
+        return int(self._value)
+
+    @value.setter
+    def value(self, new):
+        self._value = float(self._value)
 
     @property
     def total_value(self):
@@ -59,16 +132,14 @@ class Items(object):
 
     def update_value(self):
         # Random value within range for daily variance
-        variance = (float(self.value) / 100.0) * self.daily_variance_percent
+        change = random.uniform(-self._daily_variance, self._daily_variance)
 
-        change = random.uniform(-variance, variance)
+        # Update current slope
+        self.value_slope += change
 
-        if (float(self.value) + self.value_slope + change) >= 0.0:
-            # Update current slope
-            self.value_slope += change
-
+        if (self._value + self.value_slope) > 1.0:
             # Update value with current slope
-            self.value += int(self.value_slope)
+            self._value += self.value_slope
 
         # Update value history
         self.value_history.append(self.value)
@@ -95,7 +166,7 @@ class Items(object):
         itemtype = random.choice(choices)
         quantity = random.randrange(quantity_range[0], quantity_range[1] + 1)
         quantity *= quantity_multiplier
-        
+
         value = random.randrange(int(itemtype.base_value / 2), int(itemtype.base_value * 2))
         value *= value_multiplier
 
