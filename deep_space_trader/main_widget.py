@@ -31,7 +31,7 @@ class MainWidget(QtWidgets.QDialog):
         super(MainWidget, self).__init__()
         self.main = mainWindow
         self.primary_screen = primaryScreen
-        self.state = State()
+        self.state = State(self)
         load_store_items()
         self.pending_price_anomaly = None
         self.temporary_price_change = None

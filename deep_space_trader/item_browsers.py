@@ -262,6 +262,81 @@ class PlayerItemBrowser(ItemBrowser):
             self.addRow(name)
 
 
+def planet_item_browser_setup_header(browser):
+    browser.table.setColumnCount(4)
+    browser.table.setHorizontalHeaderLabels(['Item type', 'Quantity available', 'Cost', 'Base price delta'])
+    header = browser.table.horizontalHeader()
+    header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+    header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+    header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
+
+def planet_item_browser_add_row(browser, planet, itemname):
+    nextFreeRow = browser.table.rowCount()
+    browser.table.insertRow(nextFreeRow)
+    collection = planet.items
+
+    base_value = collection.items[itemname].type.base_value
+    value = collection.items[itemname].value
+    delta = float(value - base_value) / (float(base_value) / 100.0)
+
+    item1 = QtWidgets.QTableWidgetItem(itemname)
+    item2 = QtWidgets.QTableWidgetItem('{:,}'.format(collection.items[itemname].quantity))
+    item3 = QtWidgets.QTableWidgetItem(str(collection.items[itemname].value))
+    item4 = QtWidgets.QTableWidgetItem('{:.1f}%'.format(delta))
+    item2.setTextAlignment(QtCore.Qt.AlignHCenter)
+    item3.setTextAlignment(QtCore.Qt.AlignHCenter)
+    item4.setTextAlignment(QtCore.Qt.AlignHCenter)
+
+    browser.table.setItem(nextFreeRow, 0, item1)
+    browser.table.setItem(nextFreeRow, 1, item2)
+    browser.table.setItem(nextFreeRow, 2, item3)
+    browser.table.setItem(nextFreeRow, 3, item4)
+
+def planet_item_browser_populate_table(browser, planet):
+    browser.table.setRowCount(0)
+    for name in planet.items.items:
+        browser.addRow(name)
+
+
+class TradingConsolePlanetDisplay(QtWidgets.QWidget):
+    def __init__(self, parent, planet):
+        super(TradingConsolePlanetDisplay, self).__init__(parent)
+
+        self.planet = planet
+        self.parent = parent
+        self.mainLayout = QtWidgets.QVBoxLayout(self)
+        self.buttonLayout = QtWidgets.QHBoxLayout()
+
+        self.table = QtWidgets.QTableWidget()
+        self.table.verticalHeader().setVisible(False)
+        self.table.horizontalHeader().setSectionsClickable(False)
+        self.table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
+        self.table.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
+        self.table.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
+        self.table.setFocusPolicy(QtCore.Qt.NoFocus)
+
+        self.setupHeader()
+        self.populateTable()
+        self.mainLayout.addLayout(self.buttonLayout)
+        self.mainLayout.addWidget(self.table)
+
+        self.table.resizeColumnsToContents()
+        self.update()
+
+    def setupHeader(self):
+        planet_item_browser_setup_header(self)
+
+    def update(self):
+        self.populateTable()
+        super(TradingConsolePlanetDisplay, self).update()
+
+    def addRow(self, itemname):
+        planet_item_browser_add_row(self, self.planet, itemname)
+
+    def populateTable(self):
+        planet_item_browser_populate_table(self, self.planet)
+
+
 class PlanetItemBrowser(ItemBrowser):
     def __init__(self,  *args, **kwargs):
         super(PlanetItemBrowser, self).__init__(*args, **kwargs)
@@ -269,13 +344,7 @@ class PlanetItemBrowser(ItemBrowser):
         self.add_button("Buy item", self.buyButtonClicked)
 
     def setupHeader(self):
-        self.table.setColumnCount(4)
-        self.table.setHorizontalHeaderLabels(['Item type', 'Quantity available', 'Cost', 'Base price delta'])
-        header = self.table.horizontalHeader()
-        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
-
+        planet_item_browser_setup_header(self)
         self.table.doubleClicked.connect(self.onDoubleClick)
 
     def keyPressEvent(self, event: QtGui.QKeyEvent):
@@ -309,31 +378,10 @@ class PlanetItemBrowser(ItemBrowser):
         dialog.exec_()
 
     def addRow(self, itemname):
-        nextFreeRow = self.table.rowCount()
-        self.table.insertRow(nextFreeRow)
-        collection = self.parent.state.current_planet.items
-
-        base_value = collection.items[itemname].type.base_value
-        value = collection.items[itemname].value
-        delta = float(value - base_value) / (float(base_value) / 100.0)
-
-        item1 = QtWidgets.QTableWidgetItem(itemname)
-        item2 = QtWidgets.QTableWidgetItem('{:,}'.format(collection.items[itemname].quantity))
-        item3 = QtWidgets.QTableWidgetItem(str(collection.items[itemname].value))
-        item4 = QtWidgets.QTableWidgetItem('{:.1f}%'.format(delta))
-        item2.setTextAlignment(QtCore.Qt.AlignHCenter)
-        item3.setTextAlignment(QtCore.Qt.AlignHCenter)
-        item4.setTextAlignment(QtCore.Qt.AlignHCenter)
-
-        self.table.setItem(nextFreeRow, 0, item1)
-        self.table.setItem(nextFreeRow, 1, item2)
-        self.table.setItem(nextFreeRow, 2, item3)
-        self.table.setItem(nextFreeRow, 3, item4)
+        planet_item_browser_add_row(self, self.parent.state.current_planet, itemname)
 
     def populateTable(self):
-        self.table.setRowCount(0)
-        for name in self.parent.state.current_planet.items.items:
-            self.addRow(name)
+        planet_item_browser_populate_table(self, self.parent.state.current_planet)
 
 
 class WarehouseItemBrowser(ItemBrowser):

@@ -6,7 +6,8 @@ from deep_space_trader import constants as const
 
 
 class State(object):
-    def __init__(self):
+    def __init__(self, main_widget):
+        self.main_widget = main_widget
         self.initialize()
 
     def initialize(self):
@@ -36,6 +37,7 @@ class State(object):
         self.current_planet = self.planets[0]
         self.current_planet.visited = True
         self.previous_planet = None
+        self.have_trading_console = False
 
         self.travel_log = []
         self.transaction_log = []
@@ -55,6 +57,10 @@ class State(object):
             9: 95.0,
             10: 99.0
         }
+
+    def enable_trading_console(self):
+        self.have_trading_console = True
+        self.main_widget.locationBrowser.enableTradingConsole()
 
     def net_worth(self, include_warehouse=False):
         ret = self.items.total_value + self.money
@@ -89,15 +95,19 @@ class State(object):
         win_chance_percent = self.battle_victory_chance_percentage()
         return random.randint(0, 100) <= win_chance_percent
 
-    def change_current_planet(self, planetname):
-        self.travel_log.append((planetname, self.day))
-
+    def get_planet_by_name(self, planetname):
         for p in self.planets:
             if p.full_name == planetname:
-                self.previous_planet = self.current_planet
-                self.current_planet = p
-                self.current_planet.visited = True
-                return
+                return p
+
+        return None
+
+    def change_current_planet(self, planetname):
+        self.travel_log.append((planetname, self.day))
+        new_planet = self.get_planet_by_name(planetname)
+        self.previous_planet = self.current_planet
+        self.current_planet = new_planet
+        self.current_planet.visited = True
 
     def record_sale(self, item_name, quantity, price):
         self.transaction_log.append(("sold", self.day, self.current_planet.full_name, item_name, quantity, price))

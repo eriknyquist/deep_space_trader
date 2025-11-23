@@ -1,8 +1,28 @@
 import random
 
 from deep_space_trader.utils import errorDialog, yesNoDialog, infoDialog
+from deep_space_trader.item_browsers import TradingConsolePlanetDisplay
 
 from PyQt5 import QtWidgets, QtCore, QtGui
+
+TRADING_CONSOLE_MESSAGE = ("You must buy the trading console from the store if "
+                           "you want to be able to see planet item prices without "
+                           "travelling to the planet")
+
+
+class TradingConsole(QtWidgets.QDialog):
+    def __init__(self, parent, planet):
+        super(TradingConsole, self).__init__(parent)
+
+        self.mainLayout = QtWidgets.QVBoxLayout(self)
+        self.mainLayout.addWidget(TradingConsolePlanetDisplay(parent, planet))
+        self.setLayout(self.mainLayout)
+        self.update()
+        self.adjustSize()
+        self.setWindowTitle("Item prices on " + planet.full_name)
+
+    def sizeHint(self):
+        return QtCore.QSize(600, 400)
 
 
 class LocationBrowser(QtWidgets.QWidget):
@@ -27,6 +47,12 @@ class LocationBrowser(QtWidgets.QWidget):
         self.previousButton.clicked.connect(self.previousButtonClicked)
         self.buttonLayout.addWidget(self.previousButton)
 
+        self.pricesButton = QtWidgets.QPushButton("See item prices on planet")
+        self.pricesButton.clicked.connect(self.pricesButtonClicked)
+        self.buttonLayout.addWidget(self.pricesButton)
+        self.pricesButton.setToolTip(TRADING_CONSOLE_MESSAGE)
+        self.pricesButton.setEnabled(self.parent.state.have_trading_console)
+
         self.table = QtWidgets.QTableWidget()
         self.table.setColumnCount(2)
         self.table.setHorizontalHeaderLabels(['Planet', 'visited?'])
@@ -47,6 +73,18 @@ class LocationBrowser(QtWidgets.QWidget):
 
         self.table.resizeColumnsToContents()
         self.update()
+
+    def enableTradingConsole(self):
+        self.pricesButton.setEnabled(True)
+        self.pricesButton.setToolTip(None)
+
+    def keyPressEvent(self, event: QtGui.QKeyEvent):
+        if event.key() == QtCore.Qt.Key_Return:
+            if self.parent.state.have_trading_console:
+                planetname = self.table.item(self.table.currentRow(), 0).text()
+                self.openTradingConsole(planetname)
+            else:
+                errorDialog(self, message=TRADING_CONSOLE_MESSAGE)
 
     def planetSearchTextChanged(self, newText):
         if not newText:
@@ -140,6 +178,19 @@ class LocationBrowser(QtWidgets.QWidget):
         self.parent.planetItemBrowser.update()
         self.parent.infoBar.update()
 
+    def openTradingConsole(self, planetname):
+        planet = self.parent.state.get_planet_by_name(planetname)
+        trading_console = TradingConsole(self.parent, planet)
+        trading_console.exec_()
+
+    def pricesButtonClicked(self):
+        selectedRow = self.table.currentRow()
+        if selectedRow < 0:
+            errorDialog(self, message="Please select a planet first!")
+            return
+
+        planetname = self.table.item(selectedRow, 0).text()
+        self.openTradingConsole(planetname)
 
     def travelButtonClicked(self):
         selectedRow = self.table.currentRow()

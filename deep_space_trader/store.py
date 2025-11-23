@@ -230,6 +230,31 @@ class WarehouseSpeedIncrease(StoreItem):
 
         return True
 
+class TradingConsole(StoreItem):
+    def __init__(self):
+        price = const.TRADING_CONSOLE_COST
+        name = "Trading console"
+        desc = (
+            "Allows you to see current item prices on any planet without travelling"
+        )
+
+        super(TradingConsole, self).__init__(name, desc, price)
+
+    def use(self, parent):
+        if not yesNoDialog(parent, "Are you sure?",
+                           message="Are you sure want to buy the trading console?"):
+            return False
+
+        parent.state.enable_trading_console()
+
+        infoDialog(parent, "Success", message="Trading console successfully purchased")
+
+        return True
+
+    def after_use(self, parent):
+        self.description = "You have already purchased this item"
+        self.price = None
+
 
 def load_store_items():
     store_items.clear()
@@ -239,7 +264,8 @@ def load_store_items():
         PlanetDestruction(),
         PlanetExplorationUpgrade(),
         BattleFleetUpgrade(),
-        WarehouseSpeedIncrease()
+        WarehouseSpeedIncrease(),
+        TradingConsole()
     ])
 
 
