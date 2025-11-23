@@ -30,8 +30,8 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             self.allButton.setEnabled(False)
 
         self.table = QtWidgets.QTableWidget()
-        self.table.setColumnCount(1)
-        self.table.setHorizontalHeaderLabels(['Discovered planets'])
+        self.table.setColumnCount(2)
+        self.table.setHorizontalHeaderLabels(['Planet name', 'Planet value'])
         self.table.verticalHeader().setVisible(False)
         self.table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
         self.table.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
@@ -40,6 +40,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
 
         header = self.table.horizontalHeader()
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
 
         self.mainLayout.addLayout(self.buttonLayout)
         self.mainLayout.addWidget(self.table)
@@ -58,7 +59,11 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
 
         item1 = QtWidgets.QTableWidgetItem(planet.full_name)
         item1.setTextAlignment(QtCore.Qt.AlignHCenter)
+        item2 = QtWidgets.QTableWidgetItem("{:,}".format(planet.items.total_value))
+        item2.setTextAlignment(QtCore.Qt.AlignHCenter)
+
         self.table.setItem(nextFreeRow, 0, item1)
+        self.table.setItem(nextFreeRow, 1, item2)
 
     def populateTable(self):
         self.table.setRowCount(0)
