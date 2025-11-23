@@ -168,12 +168,19 @@ in the bottom left area of the main game window.
   section in this document for more details about this window).
 
 * **Item display table**: Displays all items available for purchase on the current planet.
-  Consists of three columns: The rightmost column, labelled "Cost", displays the cost of 1
-  item. The middle column, labelled "Quantity available", shows the number of items available
-  for purchase on the current planet. The leftmost column, labelled "Item type", shows the
-  item name. The player can attempt to buy an item by double-clicking on the item name
+  Consists of four columns:
+
+  * **"Base price delta"** shows the difference between the cost of the item on the current
+    planet and the base price of the item (shown in the `"Prices" window`_), as a percentage.
+  * **"Cost"** shows the cost of 1 item on the current planet.
+  * **"Quantity available"** shows the quantity of an item available for purchase on the
+    current planet.
+  * **"Item type"** shows the name of the item.
+
+  The player can attempt to buy an item by double-clicking on the item name
   within the item display table. Pressing enter with an item selected will display a new
-  window showing the item price over time (from day 1 until the current day).
+  window showing the item price over time, from day 1 until the current day
+  (see `Item price history window`_).
 
 
 **"Items on your ship" section**
@@ -417,9 +424,9 @@ window is displayed when the player clicks the "Retrieve items" button in the `"
 
 .. image:: images/price_graph_window.png
 
-The price graph window shows the changing price of an item on a particular planet over time
-(from day 1 until the current day). The price graph window is displayed when the player selects
-an item in the `"Planets" section`_ and presses enter.
+The item price history window shows the changing price of an item on a particular planet over time
+(from day 1 until the current day). The item price history window is displayed when the player selects
+an item in the `"Items on current planet" section`_ and presses enter.
 
 **"High score sharing" window**
 ###############################
@@ -481,6 +488,26 @@ Ctrl-T.
 
 The "Transaction log" shows all material sales/purchases made by the player, in chronological order, along
 with the day on which the transaction occurred and the planet involved in the transaction.
+
+**Rumours**
+###########
+
+A window like this may appear from time to time, informing you of a rumour that a particular
+item will be unusually expensive or unusually cheap on a particular planet on the following day:
+
+.. image:: images/rumour.png
+
+These rumours are sometimes true, and sometimes not. If an item is rumoured to be unusually
+cheap, then you may want to travel to the planet mentioned and stock up on the cheap item
+once you arrive. If an item is rumoured to be unusually expensive, you may want to stock
+up on that item on your current planet, then travel to the planet mentioned and sell
+off the item once you arrive. Of course, if the rumour turns out to be false, then you
+will have wasted time/money.
+
+If you choose to follow the rumour, then you will see a window like this after travelling
+to the mentioned planet, letting you know whether the rumour was true or not:
+
+.. image:: images/rumour_result.png
 
 **Miscellaneous details**
 #########################
