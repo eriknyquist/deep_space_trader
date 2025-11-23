@@ -269,8 +269,8 @@ class PlanetItemBrowser(ItemBrowser):
         self.add_button("Buy item", self.buyButtonClicked)
 
     def setupHeader(self):
-        self.table.setColumnCount(3)
-        self.table.setHorizontalHeaderLabels(['Item type', 'Quantity available', 'Cost'])
+        self.table.setColumnCount(4)
+        self.table.setHorizontalHeaderLabels(['Item type', 'Quantity available', 'Cost', 'Base price delta'])
         header = self.table.horizontalHeader()
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
         header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
@@ -313,16 +313,22 @@ class PlanetItemBrowser(ItemBrowser):
         self.table.insertRow(nextFreeRow)
         collection = self.parent.state.current_planet.items
 
+        base_value = collection.items[itemname].type.base_value
+        value = collection.items[itemname].value
+        delta = float(value - base_value) / (float(base_value) / 100.0)
+
         item1 = QtWidgets.QTableWidgetItem(itemname)
         item2 = QtWidgets.QTableWidgetItem('{:,}'.format(collection.items[itemname].quantity))
         item3 = QtWidgets.QTableWidgetItem(str(collection.items[itemname].value))
-
+        item4 = QtWidgets.QTableWidgetItem('{:.1f}%'.format(delta))
         item2.setTextAlignment(QtCore.Qt.AlignHCenter)
         item3.setTextAlignment(QtCore.Qt.AlignHCenter)
+        item4.setTextAlignment(QtCore.Qt.AlignHCenter)
 
         self.table.setItem(nextFreeRow, 0, item1)
         self.table.setItem(nextFreeRow, 1, item2)
         self.table.setItem(nextFreeRow, 2, item3)
+        self.table.setItem(nextFreeRow, 3, item4)
 
     def populateTable(self):
         self.table.setRowCount(0)
