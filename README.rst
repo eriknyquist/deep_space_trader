@@ -145,6 +145,11 @@ left area of the main game window.
   directly before the current planet. Travelling to a planet costs 100 of the player's money,
   and advances the current day by 1.
 
+* **"See item prices on planet" button**: Opens the trading console, which allows current item prices
+  on the selected planet to be seen without travelling to the planet. Pressing the Enter key while a
+  planet is selected will also open the trading console. The trading console can only be used if the
+  "Trading console" item has been purchased from the `"Store" window`_.
+
 * **Planet display table**: shows a list of all planets available to the player. Consists of two
   columns: The rightmost column, labelled "visited?", shows "yes" or "no" indicating whether
   the player has travelled to the planet. The leftmost column, labelled "Planet", shows the
@@ -322,6 +327,10 @@ purchases can be made per day, but this number is increased when the player reac
 
 * **Increase warehouse limit**: Buying this item will increase by 1 the number of warehouse trips
   that the player can make in a single day.
+
+* **Trading console**: Buying this item will enable the "See item prices on planet" button
+  in the `"Planets" section`_, allowing you to see current item prices on any planet without
+  travelling.
 
 **"Buy item" window**
 #####################
