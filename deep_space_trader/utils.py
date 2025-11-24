@@ -90,7 +90,14 @@ def yesNoDialog(parent, header="", message="Are you sure?"):
 
 def errorDialog(parent, heading="Error", message="Unrecoverable error occurred"):
     msg = QtWidgets.QMessageBox(parent)
-    msg.setIcon(QtWidgets.QMessageBox.Critical)
+
+    # Set icon pixmap directly-- if we use the "setIcon" method on the message
+    # box, the message box will make an annoying bell noise when it opens
+    style = msg.style()
+    iconSize = style.pixelMetric(QtWidgets.QStyle.PM_MessageBoxIconSize)
+    icon = style.standardIcon(QtWidgets.QStyle.SP_MessageBoxWarning)
+    msg.setIconPixmap(icon.pixmap(iconSize, iconSize))
+
     msg.setText(heading + "<br><br>" + message)
     msg.setWindowTitle("Error")
     msg.setWindowIcon(QtGui.QIcon(ICON_PATH))
@@ -99,7 +106,14 @@ def errorDialog(parent, heading="Error", message="Unrecoverable error occurred")
 
 def infoDialog(parent, heading="", message=""):
     msg = QtWidgets.QMessageBox(parent)
-    msg.setIcon(QtWidgets.QMessageBox.Information)
+
+    # Set icon pixmap directly-- if we use the "setIcon" method on the message
+    # box, the message box will make an annoying bell noise when it opens
+    style = msg.style()
+    iconSize = style.pixelMetric(QtWidgets.QStyle.PM_MessageBoxIconSize)
+    icon = style.standardIcon(QtWidgets.QStyle.SP_MessageBoxInformation)
+    msg.setIconPixmap(icon.pixmap(iconSize, iconSize))
+
     msg.setText(heading + "<br><br>" + message)
     msg.setWindowTitle("Information")
     msg.setWindowIcon(QtGui.QIcon(ICON_PATH))
