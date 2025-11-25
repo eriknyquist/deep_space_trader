@@ -96,17 +96,17 @@ class LocationBrowser(QtWidgets.QWidget):
                 errorDialog(self, message=TRADING_CONSOLE_MESSAGE)
 
     def planetSearchTextChanged(self, newText):
-        if not newText:
+        if not newText.strip():
+            self.update()
             return
 
         text = newText.strip().lower()
-        numRows = self.table.rowCount()
+        self.table.setRowCount(0)
+        for planet in self.parent.state.planets:
+            if text in planet.full_name.lower():
+                self.addRow(planet)
 
-        for row in range(numRows):
-            planetName = self.table.item(row, 0).text()
-            if planetName.lower().startswith(text):
-                self.table.selectRow(row)
-                return
+        super(LocationBrowser, self).update()
 
     def addRow(self, planet):
         nextFreeRow = self.table.rowCount()
@@ -212,8 +212,9 @@ class LocationBrowser(QtWidgets.QWidget):
         self.travelToPlanet(planetname)
 
     def onDoubleClick(self, signal):
-        planet = self.parent.state.planets[signal.row()]
-        self.travelToPlanet(planet.full_name)
+        selectedRow = self.table.currentRow()
+        planetname = self.table.item(selectedRow, 0).text()
+        self.travelToPlanet(planetname)
 
     def previousButtonClicked(self):
         if self.parent.state.previous_planet is None:
