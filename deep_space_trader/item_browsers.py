@@ -21,6 +21,15 @@ class ItemBrowser(QtWidgets.QWidget):
         self.buttonLayout = QtWidgets.QHBoxLayout()
 
         self.table = QtWidgets.QTableWidget()
+
+        # Set alternating row colors, but keep default highlight color...
+        default_palette = self.table.palette()
+        default_highlight = default_palette.color(QtGui.QPalette.Highlight)
+        self.table.setAlternatingRowColors(True)
+        palette = self.table.palette()
+        palette.setColor(QtGui.QPalette.Highlight, default_highlight)
+        self.table.setPalette(palette)
+
         self.table.verticalHeader().setVisible(False)
         self.table.horizontalHeader().setSectionsClickable(False)
         self.table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
@@ -308,6 +317,15 @@ class TradingConsolePlanetDisplay(QtWidgets.QWidget):
         self.buttonLayout = QtWidgets.QHBoxLayout()
 
         self.table = QtWidgets.QTableWidget()
+
+        # Set alternating row colors, but keep default highlight color...
+        default_palette = self.table.palette()
+        default_highlight = default_palette.color(QtGui.QPalette.Highlight)
+        self.table.setAlternatingRowColors(True)
+        palette = self.table.palette()
+        palette.setColor(QtGui.QPalette.Highlight, default_highlight)
+        self.table.setPalette(palette)
+
         self.table.verticalHeader().setVisible(False)
         self.table.horizontalHeader().setSectionsClickable(False)
         self.table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)

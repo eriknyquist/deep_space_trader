@@ -30,6 +30,15 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             self.allButton.setEnabled(False)
 
         self.table = QtWidgets.QTableWidget()
+
+        # Set alternating row colors, but keep default highlight color...
+        default_palette = self.table.palette()
+        default_highlight = default_palette.color(QtGui.QPalette.Highlight)
+        self.table.setAlternatingRowColors(True)
+        palette = self.table.palette()
+        palette.setColor(QtGui.QPalette.Highlight, default_highlight)
+        self.table.setPalette(palette)
+
         self.table.setColumnCount(2)
         self.table.setHorizontalHeaderLabels(['Planet name', 'Planet value'])
         self.table.verticalHeader().setVisible(False)
