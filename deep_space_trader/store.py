@@ -29,7 +29,7 @@ class PlanetExploration(StoreItem):
         price = const.PLANET_EXPLORATION_COST
         name = "Scout expedition"
         desc = (
-            "Allows you to mount an expedition to discover new planets"
+            "Fund an expedition to discover new planets"
         )
 
         super(PlanetExploration, self).__init__(name, desc, price)
@@ -61,7 +61,7 @@ class PlanetExplorationUpgrade(StoreItem):
         price = const.PLANET_EXPLORATION_UPGRADE_COST
         name = "Upgrade scout fleet"
         self.desc_fmt = (
-            "Upgrades your planet scouting fleet, increasing the max. "
+            "Upgrade your planet scouting fleet, increasing the max. "
             "number of planets you can discover in a single scout expedition to %d"
         )
 
@@ -105,7 +105,7 @@ class PlanetDestruction(StoreItem):
         price = const.PLANET_DESTRUCTION_COST
         name = "Planet destruction kit"
         desc = (
-            "Allows you to destroy a planet and gain all of its resources"
+            "Destroy planets and gain all of their resources"
         )
 
         super(PlanetDestruction, self).__init__(name, desc, price)
@@ -136,7 +136,7 @@ class CapacityIncrease(StoreItem):
         self.incr = const.CAPACITY_INCREASE
         price = const.CAPACITY_INCREASE_COST
         name = "Increase item capacity"
-        desc = "Doubles your item capacity"
+        desc = "Double the item capacity on your ship"
 
         super(CapacityIncrease, self).__init__(name, desc, price)
 
@@ -165,7 +165,7 @@ class BattleFleetUpgrade(StoreItem):
         name = "Buy battle fleet"
 
         self.desc_fmt = ("%s battle fleet. Gives you a better chance of defeating "
-                        "planets that resist destruction.")
+                         "pirate fleets, or planets that resist destruction.")
 
         desc = self.desc_fmt % "Buy a"
 
@@ -177,7 +177,7 @@ class BattleFleetUpgrade(StoreItem):
             bought_str = "upgraded"
         else:
             check_str = "buy a"
-            bought_str = "puchased"
+            bought_str = "purchased"
 
         if not yesNoDialog(parent, "Are you sure?",
                            message="Are you sure want to %s battle fleet?" % check_str):
@@ -212,7 +212,7 @@ class WarehouseSpeedIncrease(StoreItem):
         price = const.WAREHOUSE_SPEED_INCREASE_COST
         name = "Increase warehouse limit"
         desc = (
-            "Increases your engine power, allowing you to make one more trip to "
+            "Increase your engine power, allowing you to make one more trip to "
             "the warehouse per day."
         )
 
@@ -235,7 +235,7 @@ class TradingConsole(StoreItem):
         price = const.TRADING_CONSOLE_COST
         name = "Trading console"
         desc = (
-            "Allows you to see current item prices on any planet without travelling"
+            "Enable viewing current item prices on any planet without travelling"
         )
 
         super(TradingConsole, self).__init__(name, desc, price)
