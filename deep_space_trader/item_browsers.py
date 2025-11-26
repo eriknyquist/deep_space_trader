@@ -12,6 +12,49 @@ from deep_space_trader.utils import errorDialog, yesNoDialog, infoDialog, checkF
 from PyQt5 import QtWidgets, QtCore, QtGui
 
 
+class SortableTableWidgetItem(QtWidgets.QTableWidgetItem):
+    """
+    Abstract class for a QTableWidget that allows custom sorting behaviour
+    by allowing a new method, valueToCompare, to be defined that returns the
+    value to use for comparison while sorting
+    """
+    def valueToCompare(self):
+        raise NotImplementedError()
+
+    def __lt__(self, other):
+        if isinstance(other, SortableTableWidgetItem):
+            try:
+                this_value = self.valueToCompare()
+                other_value = other.valueToCompare()
+            except ValueError:
+                pass
+            else:
+                return this_value < other_value
+
+        return super(SortableTableWidgetItem, self).__lt__(other)
+
+class TableWidgetStringInt(SortableTableWidgetItem):
+    """
+    Sortable QTableWidgetItem for cells containing an integer as a string
+    """
+    def valueToCompare(self):
+        return int(self.data(QtCore.Qt.EditRole))
+
+class TableWidgetStringIntCommas(SortableTableWidgetItem):
+    """
+    Sortable QTableWidgetItem for cells containing an integer as a string with commas
+    """
+    def valueToCompare(self):
+        return int(self.data(QtCore.Qt.EditRole).replace(",", ""))
+
+class TableWidgetPercentage(SortableTableWidgetItem):
+    """
+    Sortable QTableWidgetItem for cells containing a percentage as a string
+    """
+    def valueToCompare(self):
+        return float(self.data(QtCore.Qt.EditRole).rstrip("%"))
+
+
 class ItemBrowser(QtWidgets.QWidget):
     def __init__(self, parent):
         super(ItemBrowser, self).__init__(parent)
@@ -31,7 +74,8 @@ class ItemBrowser(QtWidgets.QWidget):
         self.table.setPalette(palette)
 
         self.table.verticalHeader().setVisible(False)
-        self.table.horizontalHeader().setSectionsClickable(False)
+        self.table.horizontalHeader().setSectionsClickable(True)
+        self.table.setSortingEnabled(True)
         self.table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
         self.table.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.table.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
@@ -258,7 +302,7 @@ class PlayerItemBrowser(ItemBrowser):
         collection = self.parent.state.items
 
         item1 = QtWidgets.QTableWidgetItem(itemname)
-        item2 = QtWidgets.QTableWidgetItem('{:,}'.format(collection.items[itemname].quantity))
+        item2 = TableWidgetStringIntCommas('{:,}'.format(collection.items[itemname].quantity))
 
         item2.setTextAlignment(QtCore.Qt.AlignHCenter)
 
@@ -289,9 +333,9 @@ def planet_item_browser_add_row(browser, planet, itemname):
     delta = float(value - base_value) / (float(base_value) / 100.0)
 
     item1 = QtWidgets.QTableWidgetItem(itemname)
-    item2 = QtWidgets.QTableWidgetItem('{:,}'.format(collection.items[itemname].quantity))
-    item3 = QtWidgets.QTableWidgetItem(str(collection.items[itemname].value))
-    item4 = QtWidgets.QTableWidgetItem('{:.1f}%'.format(delta))
+    item2 = TableWidgetStringIntCommas('{:,}'.format(collection.items[itemname].quantity))
+    item3 = TableWidgetStringInt(str(collection.items[itemname].value))
+    item4 = TableWidgetPercentage('{:.1f}%'.format(delta))
     item2.setTextAlignment(QtCore.Qt.AlignHCenter)
     item3.setTextAlignment(QtCore.Qt.AlignHCenter)
     item4.setTextAlignment(QtCore.Qt.AlignHCenter)
@@ -327,11 +371,12 @@ class TradingConsolePlanetDisplay(QtWidgets.QWidget):
         self.table.setPalette(palette)
 
         self.table.verticalHeader().setVisible(False)
-        self.table.horizontalHeader().setSectionsClickable(False)
+        self.table.horizontalHeader().setSectionsClickable(True)
         self.table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
         self.table.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
         self.table.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
         self.table.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.table.setSortingEnabled(True)
 
         self.setupHeader()
         self.populateTable()
@@ -516,7 +561,7 @@ class WarehouseItemBrowser(ItemBrowser):
         collection = self.parent.state.warehouse
 
         item1 = QtWidgets.QTableWidgetItem(itemname)
-        item2 = QtWidgets.QTableWidgetItem('{:,}'.format(collection.items[itemname].quantity))
+        item2 = TableWidgetStringIntCommas('{:,}'.format(collection.items[itemname].quantity))
 
         item2.setTextAlignment(QtCore.Qt.AlignHCenter)
 
