@@ -281,7 +281,7 @@ class PlayerItemBrowser(ItemBrowser):
             errorDialog(self, "No items", "You have no items to put in the warehouse.")
             return
 
-        if self.parent.state.warehouse_puts == self.parent.state.warehouse_puts_per_day:
+        if self.parent.state.warehouse_trips == self.parent.state.warehouse_trips_per_day:
             errorDialog(self, "Warehouse", message="You cannot put anything else "
                                                    "in the warehouse until tomorrow")
             return
@@ -498,7 +498,7 @@ class WarehouseItemBrowser(ItemBrowser):
             errorDialog(self, "Warehouse", message="There is nothing in your warehouse to retrieve.")
             return
 
-        if self.parent.state.warehouse_gets == self.parent.state.warehouse_gets_per_day:
+        if self.parent.state.warehouse_trips == self.parent.state.warehouse_trips_per_day:
             errorDialog(self, "Warehouse", message="You cannot take anything else "
                                                    "from the warehouse until tomorrow.")
             return
@@ -528,7 +528,7 @@ class WarehouseItemBrowser(ItemBrowser):
             self.parent.state.items.add_items(name, self.parent.state.warehouse, quantity)
             itemcount -= quantity
 
-        self.parent.state.warehouse_gets += 1
+        self.parent.state.warehouse_trips += 1
         self.parent.warehouseItemBrowser.update()
         self.parent.playerItemBrowser.update()
         self.parent.updatePlayerItemsLabel()
@@ -536,10 +536,10 @@ class WarehouseItemBrowser(ItemBrowser):
     def removeButtonClicked(self):
         totalitemcount = self.parent.state.warehouse.count()
         if totalitemcount == 0:
-            errorDialog(self, "Warehouse", message="There is nothing in your warehouse to retrieve.")
+            errorDialog(self, "Warehouse", message="There is nothing in your warehouse to remove.")
             return
 
-        if self.parent.state.warehouse_gets == self.parent.state.warehouse_gets_per_day:
+        if self.parent.state.warehouse_trips == self.parent.state.warehouse_trips_per_day:
             errorDialog(self, "Warehouse", message="You cannot take anything else "
                                                    "from the warehouse until tomorrow")
             return

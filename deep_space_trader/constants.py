@@ -78,11 +78,8 @@ MAX_SCOUT_LEVEL = 10
 # Planet exploration will initially yield some number of new planets in this range
 PLANET_DISCOVERY_RANGE = (4, 8)
 
-# Number of warehouse retrieval operations allowed per day
-WAREHOUSE_GETS_PER_DAY = 1
-
-# Number of warehouse storage operations allowed per day
-WAREHOUSE_PUTS_PER_DAY = 1
+# Initial number of warehouse trips allowed per day
+WAREHOUSE_TRIPS_PER_DAY = 2
 
 # Amount to increase capacity by
 CAPACITY_INCREASE = 100

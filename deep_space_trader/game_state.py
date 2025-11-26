@@ -17,8 +17,7 @@ class State(object):
         self.capacity = const.INITIAL_ITEM_CAPACITY
         self.items = ItemCollection()
         self.warehouse = ItemCollection()
-        self.warehouse_gets_per_day = const.WAREHOUSE_GETS_PER_DAY
-        self.warehouse_puts_per_day = const.WAREHOUSE_PUTS_PER_DAY
+        self.warehouse_trips_per_day = const.WAREHOUSE_TRIPS_PER_DAY
         self.planet_discovery_range = const.PLANET_DISCOVERY_RANGE
         self.max_store_purchases_per_day = const.MAX_STORE_PURCHASES_PER_DAY
         self.max_days = const.INITIAL_MAX_DAYS
@@ -31,8 +30,7 @@ class State(object):
         self.day = 1
         self.level = 1
 
-        self.warehouse_puts = 0
-        self.warehouse_gets = 0
+        self.warehouse_trips = 0
         self.expand_planets(const.INITIAL_PLANET_COUNT)
         self.current_planet = self.planets[0]
         self.current_planet.visited = True
@@ -131,8 +129,7 @@ class State(object):
             return False
 
         self.day += 1
-        self.warehouse_puts = 0
-        self.warehouse_gets = 0
+        self.warehouse_trips = 0
         self.store_purchases = 0
         return True
 

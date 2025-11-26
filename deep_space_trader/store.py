@@ -212,7 +212,7 @@ class WarehouseSpeedIncrease(StoreItem):
         price = const.WAREHOUSE_SPEED_INCREASE_COST
         name = "Increase warehouse limit"
         desc = (
-            "Increase your engine power, allowing you to make one more trip to "
+            "Increase your engine power, allowing you to make two more trip to "
             "the warehouse per day."
         )
 
@@ -223,8 +223,7 @@ class WarehouseSpeedIncrease(StoreItem):
                            message="Are you sure want to increase the warehouse limit?"):
             return False
 
-        parent.state.warehouse_gets_per_day += 1
-        parent.state.warehouse_puts_per_day += 1
+        parent.state.warehouse_trips_per_day += 2
 
         infoDialog(parent, "Success", message="Number of warehouse trips per day successfully increased.")
 

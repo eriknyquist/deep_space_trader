@@ -151,7 +151,7 @@ class PlayerToWarehouse(TransactionDialog):
         self.setWindowTitle("Move to warehouse")
 
     def acceptTransaction(self, quantity):
-        self.parent.state.warehouse_puts += 1
+        self.parent.state.warehouse_trips += 1
         self.parent.state.warehouse.add_items(self.itemName,
                                               self.parent.state.items,
                                               quantity)
@@ -175,7 +175,7 @@ class WarehouseToPlayer(TransactionDialog):
         self.setWindowTitle("Retrieve from warehouse")
 
     def acceptTransaction(self, quantity):
-        self.parent.state.warehouse_gets += 1
+        self.parent.state.warehouse_trips += 1
         self.parent.state.items.add_items(self.itemName,
                                           self.parent.state.warehouse,
                                           quantity)
