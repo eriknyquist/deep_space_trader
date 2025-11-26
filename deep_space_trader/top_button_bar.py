@@ -35,6 +35,11 @@ class ButtonBar(QtWidgets.QWidget):
         self.parent.reset()
 
     def storeButtonClicked(self):
+        if self.parent.state.store_purchases >= self.parent.state.max_store_purchases_per_day:
+            errorDialog(self, "Sorry!", "You can only make %d store purchases per day. "
+                              "Come back tomorrow." % self.parent.state.max_store_purchases_per_day)
+            return
+
         dialog = Store(self.parent)
         dialog.setWindowModality(QtCore.Qt.ApplicationModal)
         dialog.exec_()
