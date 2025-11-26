@@ -5,9 +5,9 @@ from deep_space_trader import __version__ as package_version
 
 
 # ------ Initial values for player data on day 1 ------
-INITIAL_MONEY = 2000
+INITIAL_MONEY = 2000000000
 INITIAL_TRAVEL_COST = 100
-INITIAL_ITEM_CAPACITY = 100
+INITIAL_ITEM_CAPACITY = 10000000000000
 INITIAL_PLANET_COUNT = 8
 INITIAL_MAX_DAYS = 30
 
@@ -123,7 +123,7 @@ GAME_COMPLETE_TEXT = (
 # Text shown in the Help->About dialog
 GAME_ABOUT_TEXT = (
     ("Deep Space Trader %s<br><br>" % (package_version)) +
-    ("Created by %s (%s)<br><br>" % (package_author, author_email)) +
+    GAME_INTRO_TEXT +
     ("<ul>Recommended strategy: <br>" +
      "<li>Buy the 'Increase item capacity' upgrade from the store as early and as " +
      " frequently as possible</li><br>" +
@@ -135,10 +135,5 @@ GAME_ABOUT_TEXT = (
      "<li>Watch out for pirates and planets that resist destruction; buy the " +
      "Battle Fleet from the store and upgrade it as often as you can to increase " +
      "your chances of winning battles against pirate fleets and planet defense fleets.</li></ul><br><br>" +
-     "Deep Space Trader is written in python! Play it on any system that " +
-     "supports Python 3.<br><br>" +
-     "Install from Pypi:<br>" +
-     "&nbsp;&nbsp;pip install deep_space_trader<br><br>" +
-     "Run the installed package as a module:<br>" +
-     "&nbsp;&nbsp;python -m deep_space_trader")
+    ("Created by %s (%s)" % (package_author, author_email)))
 )
