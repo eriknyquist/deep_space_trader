@@ -47,10 +47,9 @@ class LocationBrowser(QtWidgets.QWidget):
         self.previousButton.clicked.connect(self.previousButtonClicked)
         self.buttonLayout.addWidget(self.previousButton)
 
-        self.pricesButton = QtWidgets.QPushButton("See item prices on planet")
+        self.pricesButton = QtWidgets.QPushButton("Trading console")
         self.pricesButton.clicked.connect(self.pricesButtonClicked)
         self.buttonLayout.addWidget(self.pricesButton)
-        self.pricesButton.setToolTip(TRADING_CONSOLE_MESSAGE)
         self.pricesButton.setEnabled(self.parent.state.have_trading_console)
 
         self.table = QtWidgets.QTableWidget()
@@ -80,12 +79,31 @@ class LocationBrowser(QtWidgets.QWidget):
         self.mainLayout.addLayout(self.buttonLayout)
         self.mainLayout.addWidget(self.table)
 
+        self.tradingConsoleTooltip = TRADING_CONSOLE_MESSAGE
+        self.tooltipsEnabled = True
+        self.setTooltips()
         self.table.resizeColumnsToContents()
         self.update()
 
+    def enableTooltips(self, enabled):
+        self.tooltipsEnabled = enabled
+        self.setTooltips()
+
+    def setTooltips(self):
+        if self.tooltipsEnabled:
+            self.travelButton.setToolTip("travel to the selected planet")
+            self.previousButton.setToolTip("travel back to the planet you were on before the current planet")
+            self.pricesButton.setToolTip(self.tradingConsoleTooltip)
+        else:
+            self.travelButton.setToolTip(None)
+            self.previousButton.setToolTip(None)
+            self.pricesButton.setToolTip(None)
+
     def enableTradingConsole(self):
         self.pricesButton.setEnabled(True)
-        self.pricesButton.setToolTip(None)
+        self.tradingConsoleTooltip = ("opens the trading console for the selected planet, "
+                                      "allowing you to see item prices without travelling there")
+        self.pricesButton.setToolTip(self.tradingConsoleTooltip)
 
     def keyPressEvent(self, event: QtGui.QKeyEvent):
         if event.key() == QtCore.Qt.Key_Return:

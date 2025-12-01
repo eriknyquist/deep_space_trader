@@ -25,6 +25,23 @@ class ButtonBar(QtWidgets.QWidget):
         self.dayButton.clicked.connect(self.dayButtonClicked)
         self.mainLayout.addWidget(self.dayButton)
 
+        self.tooltipsEnabled = True
+        self.setTooltips()
+
+    def enableTooltips(self, enabled):
+        self.tooltipsEnabled = enabled
+        self.setTooltips()
+
+    def setTooltips(self):
+        if self.tooltipsEnabled:
+            self.resetButton.setToolTip("clears the current game progress and starts a new game")
+            self.storeButton.setToolTip("opens the store window")
+            self.dayButton.setToolTip("advances to the next day without travelling")
+        else:
+            self.resetButton.setToolTip(None)
+            self.storeButton.setToolTip(None)
+            self.dayButton.setToolTip(None)
+
     def resetButtonClicked(self):
         proceed = yesNoDialog(self, "Are you sure?",
                               message="Are you sure you want to reset the game and "

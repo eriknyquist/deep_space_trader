@@ -85,8 +85,23 @@ class ItemBrowser(QtWidgets.QWidget):
         self.mainLayout.addLayout(self.buttonLayout)
         self.mainLayout.addWidget(self.table)
 
+        self.buttons = []
+        self.tooltipsEnabled = True
+
         self.table.resizeColumnsToContents()
         self.update()
+
+    def enableTooltips(self, enabled):
+        self.tooltipsEnabled = enabled
+        self.setTooltips()
+
+    def setTooltips(self):
+        if self.tooltipsEnabled:
+            for button, tooltip in self.buttons:
+                button.setToolTip(tooltip)
+        else:
+            for button, _ in self.buttons:
+                button.setToolTip(None)
 
     def setupHeader(self):
         self.table.setColumnCount(2)
@@ -99,10 +114,12 @@ class ItemBrowser(QtWidgets.QWidget):
         self.populateTable()
         super(ItemBrowser, self).update()
 
-    def add_button(self, text, on_click):
+    def add_button(self, text, on_click, tooltip):
         b = QtWidgets.QPushButton(text)
         b.clicked.connect(on_click)
+        b.setToolTip(tooltip)
         self.buttonLayout.addWidget(b)
+        self.buttons.append([b, tooltip])
 
     def addRow(self, itemname):
         raise NotImplementedError()
@@ -115,11 +132,13 @@ class PlayerItemBrowser(ItemBrowser):
     def __init__(self,  *args, **kwargs):
         super(PlayerItemBrowser, self).__init__(*args, **kwargs)
 
-        self.add_button("Sell items", self.sellButtonClicked)
-        self.add_button("Sell all", self.sellAllButtonClicked)
-        self.add_button("Add to warehouse", self.warehouseButtonClicked)
-        self.add_button("Dump selected", self.dumpButtonClicked)
-        self.add_button("Dump all", self.dumpAllButtonClicked)
+        self.add_button("Sell items", self.sellButtonClicked, "sell one or more of the selected item to the current planet")
+        self.add_button("Sell all", self.sellAllButtonClicked, "sell all items on your ship to the current planet")
+        self.add_button("To warehouse", self.warehouseButtonClicked,
+                        "move one or more of the selected item from your ship to the warehouse")
+        self.add_button("Dump", self.dumpButtonClicked,
+                        "dump one or more of the selected item from your ship")
+        self.add_button("Dump all", self.dumpAllButtonClicked, "dump all items from your ship")
 
         self.table.doubleClicked.connect(self.onDoubleClick)
 
@@ -404,7 +423,8 @@ class PlanetItemBrowser(ItemBrowser):
     def __init__(self,  *args, **kwargs):
         super(PlanetItemBrowser, self).__init__(*args, **kwargs)
 
-        self.add_button("Buy item", self.buyButtonClicked)
+        self.add_button("Buy item", self.buyButtonClicked,
+                        "buy one or more of the selected item from the current planet")
 
     def setupHeader(self):
         planet_item_browser_setup_header(self)
@@ -452,10 +472,13 @@ class WarehouseItemBrowser(ItemBrowser):
         super(WarehouseItemBrowser, self).__init__(*args, **kwargs)
 
         self.table.doubleClicked.connect(self.onDoubleClick)
-        self.add_button("Retrieve items", self.removeButtonClicked)
-        self.add_button("Retrieve all", self.removeAllButtonClicked)
-        self.add_button("Dump selected", self.dumpButtonClicked)
-        self.add_button("Dump all", self.dumpAllButtonClicked)
+        self.add_button("Retrieve", self.removeButtonClicked,
+                        "move one or more of the selected item from the warehouse to your ship")
+        self.add_button("Retrieve all", self.removeAllButtonClicked,
+                        "move all items from the warehouse to your ship")
+        self.add_button("Dump", self.dumpButtonClicked,
+                        "dump one or more of the selected item from your warehouse")
+        self.add_button("Dump all", self.dumpAllButtonClicked, "dump all items from your warehouse")
 
     def onDoubleClick(self):
         self.removeButtonClicked()

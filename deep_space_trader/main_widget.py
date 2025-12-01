@@ -101,6 +101,14 @@ class MainWidget(QtWidgets.QDialog):
 
         config.config_load()
 
+    def enableTooltips(self, enabled):
+        self.infoBar.enableTooltips(enabled)
+        self.buttonBar.enableTooltips(enabled)
+        self.locationBrowser.enableTooltips(enabled)
+        self.playerItemBrowser.enableTooltips(enabled)
+        self.planetItemBrowser.enableTooltips(enabled)
+        self.warehouseItemBrowser.enableTooltips(enabled)
+
     def updatePlayerItemsLabel(self):
         self.playerItemBrowserGroup.setTitle("Items on your ship ({0:,}/{1:,})".format(
                                              self.state.items.count(),
@@ -267,4 +275,4 @@ class MainWidget(QtWidgets.QDialog):
         self.showHighScores()
 
     def sizeHint(self):
-        return QtCore.QSize(1920, 1080)
+        return QtCore.QSize(800, 600)

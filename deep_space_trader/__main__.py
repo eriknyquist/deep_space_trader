@@ -79,6 +79,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.darkThemeAction.setCheckable(True)
         self.darkThemeAction.setChecked(True)
 
+        self.tooltipsAction = QtWidgets.QAction("Show tooltips", self)
+        self.tooltipsAction.setShortcut("Ctrl+p")
+        self.tooltipsAction.setStatusTip("Enable/disable tooltips when hovering over game elements")
+        self.tooltipsAction.triggered.connect(self.toggleTooltips)
+        self.tooltipsAction.setCheckable(True)
+        self.tooltipsAction.setChecked(True)
+
         # Build menu bar
         menu = self.menuBar()
         fileMenu = menu.addMenu("File")
@@ -93,6 +100,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         viewMenu = menu.addMenu("View")
         viewMenu.addAction(self.darkThemeAction)
+        viewMenu.addAction(self.tooltipsAction)
 
         helpMenu = menu.addMenu("Help")
         helpMenu.addAction(self.aboutAction)
@@ -110,6 +118,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def toggleDarkTheme(self):
         self.enableDarkTheme(self.darkThemeAction.isChecked())
+
+    def toggleTooltips(self):
+        self.widget.enableTooltips(self.tooltipsAction.isChecked())
 
     def closeEvent(self, event):
         if self.widget.warningBeforeQuit():

@@ -12,8 +12,8 @@ class InfoBar(QtWidgets.QWidget):
         super(InfoBar, self).__init__(parent)
 
         self.parent = parent
-
         planetLayout = QtWidgets.QVBoxLayout()
+        self.tooltipsEnabled = True
 
         self.planetImage = PlanetImage(self.parent)
         planetLayout.addWidget(self.planetImage)
@@ -22,91 +22,128 @@ class InfoBar(QtWidgets.QWidget):
         self.planetLabel.setAlignment(QtCore.Qt.AlignCenter)
         planetLayout.addWidget(self.planetLabel)
 
-        planetGroup = QtWidgets.QGroupBox("Current planet")
-        planetGroup.setStyleSheet(GROUPBOX_STYLE)
-        planetGroup.setAlignment(QtCore.Qt.AlignCenter)
-        planetGroup.setLayout(planetLayout)
+        self.planetGroup = QtWidgets.QGroupBox("Current planet")
+        self.planetGroup.setStyleSheet(GROUPBOX_STYLE)
+        self.planetGroup.setAlignment(QtCore.Qt.AlignCenter)
+        self.planetGroup.setLayout(planetLayout)
 
         dayLayout = QtWidgets.QHBoxLayout()
         self.dayLabel = QtWidgets.QLabel("")
         self.dayLabel.setStyleSheet(LABEL_STYLE)
         self.dayLabel.setAlignment(QtCore.Qt.AlignCenter)
         dayLayout.addWidget(self.dayLabel)
-        dayGroup = QtWidgets.QGroupBox("Current day")
-        dayGroup.setStyleSheet(GROUPBOX_STYLE)
-        dayGroup.setAlignment(QtCore.Qt.AlignCenter)
-        dayGroup.setLayout(dayLayout)
+        self.dayGroup = QtWidgets.QGroupBox("Current day")
+        self.dayGroup.setStyleSheet(GROUPBOX_STYLE)
+        self.dayGroup.setAlignment(QtCore.Qt.AlignCenter)
+        self.dayGroup.setLayout(dayLayout)
 
         moneyLayout = QtWidgets.QHBoxLayout()
         self.moneyLabel = QtWidgets.QLabel("")
         self.moneyLabel.setStyleSheet(LABEL_STYLE)
         self.moneyLabel.setAlignment(QtCore.Qt.AlignCenter)
         moneyLayout.addWidget(self.moneyLabel)
-        moneyGroup = QtWidgets.QGroupBox("Money")
-        moneyGroup.setStyleSheet(GROUPBOX_STYLE)
-        moneyGroup.setAlignment(QtCore.Qt.AlignCenter)
-        moneyGroup.setLayout(moneyLayout)
+        self.moneyGroup = QtWidgets.QGroupBox("Money")
+        self.moneyGroup.setStyleSheet(GROUPBOX_STYLE)
+        self.moneyGroup.setAlignment(QtCore.Qt.AlignCenter)
+        self.moneyGroup.setLayout(moneyLayout)
+
+        dayMoneyLayout = QtWidgets.QVBoxLayout()
+        dayMoneyLayout.addWidget(self.dayGroup)
+        dayMoneyLayout.addWidget(self.moneyGroup)
 
         purchasesLayout = QtWidgets.QHBoxLayout()
         self.purchasesLabel = QtWidgets.QLabel("")
         self.purchasesLabel.setStyleSheet(LABEL_STYLE)
         self.purchasesLabel.setAlignment(QtCore.Qt.AlignCenter)
         purchasesLayout.addWidget(self.purchasesLabel)
-        purchasesGroup = QtWidgets.QGroupBox("Purchases")
-        purchasesGroup.setStyleSheet(GROUPBOX_STYLE)
-        purchasesGroup.setAlignment(QtCore.Qt.AlignCenter)
-        purchasesGroup.setLayout(purchasesLayout)
+        self.purchasesGroup = QtWidgets.QGroupBox("Purchases")
+        self.purchasesGroup.setStyleSheet(GROUPBOX_STYLE)
+        self.purchasesGroup.setAlignment(QtCore.Qt.AlignCenter)
+        self.purchasesGroup.setLayout(purchasesLayout)
 
         warehouseTripsLayout = QtWidgets.QHBoxLayout()
         self.warehouseTripsLabel = QtWidgets.QLabel("")
         self.warehouseTripsLabel.setStyleSheet(LABEL_STYLE)
         self.warehouseTripsLabel.setAlignment(QtCore.Qt.AlignCenter)
         warehouseTripsLayout.addWidget(self.warehouseTripsLabel)
-        warehouseTripsGroup = QtWidgets.QGroupBox("Warehouse trips")
-        warehouseTripsGroup.setStyleSheet(GROUPBOX_STYLE)
-        warehouseTripsGroup.setAlignment(QtCore.Qt.AlignCenter)
-        warehouseTripsGroup.setLayout(warehouseTripsLayout)
+        self.warehouseTripsGroup = QtWidgets.QGroupBox("Warehouse trips")
+        self.warehouseTripsGroup.setStyleSheet(GROUPBOX_STYLE)
+        self.warehouseTripsGroup.setAlignment(QtCore.Qt.AlignCenter)
+        self.warehouseTripsGroup.setLayout(warehouseTripsLayout)
+
+        purchasesWarehouseLayout = QtWidgets.QVBoxLayout()
+        purchasesWarehouseLayout.addWidget(self.purchasesGroup)
+        purchasesWarehouseLayout.addWidget(self.warehouseTripsGroup)
 
         planetCountLayout = QtWidgets.QHBoxLayout()
         self.planetCountLabel = QtWidgets.QLabel("")
         self.planetCountLabel.setStyleSheet(LABEL_STYLE)
         self.planetCountLabel.setAlignment(QtCore.Qt.AlignCenter)
         planetCountLayout.addWidget(self.planetCountLabel)
-        planetCountGroup = QtWidgets.QGroupBox("Planets discovered")
-        planetCountGroup.setStyleSheet(GROUPBOX_STYLE)
-        planetCountGroup.setAlignment(QtCore.Qt.AlignCenter)
-        planetCountGroup.setLayout(planetCountLayout)
+        self.planetCountGroup = QtWidgets.QGroupBox("Planets discovered")
+        self.planetCountGroup.setStyleSheet(GROUPBOX_STYLE)
+        self.planetCountGroup.setAlignment(QtCore.Qt.AlignCenter)
+        self.planetCountGroup.setLayout(planetCountLayout)
 
         scoutFleetLayout = QtWidgets.QHBoxLayout()
         self.scoutFleetLabel = QtWidgets.QLabel("")
         self.scoutFleetLabel.setStyleSheet(LABEL_STYLE)
         self.scoutFleetLabel.setAlignment(QtCore.Qt.AlignCenter)
         scoutFleetLayout.addWidget(self.scoutFleetLabel)
-        scoutFleetGroup = QtWidgets.QGroupBox("Scout fleet level")
-        scoutFleetGroup.setStyleSheet(GROUPBOX_STYLE)
-        scoutFleetGroup.setAlignment(QtCore.Qt.AlignCenter)
-        scoutFleetGroup.setLayout(scoutFleetLayout)
+        self.scoutFleetGroup = QtWidgets.QGroupBox("Scout fleet level")
+        self.scoutFleetGroup.setStyleSheet(GROUPBOX_STYLE)
+        self.scoutFleetGroup.setAlignment(QtCore.Qt.AlignCenter)
+        self.scoutFleetGroup.setLayout(scoutFleetLayout)
 
         battleFleetLayout = QtWidgets.QHBoxLayout()
         self.battleFleetLabel = QtWidgets.QLabel("")
         self.battleFleetLabel.setStyleSheet(LABEL_STYLE)
         self.battleFleetLabel.setAlignment(QtCore.Qt.AlignCenter)
         battleFleetLayout.addWidget(self.battleFleetLabel)
-        battleFleetGroup = QtWidgets.QGroupBox("Battle fleet level")
-        battleFleetGroup.setStyleSheet(GROUPBOX_STYLE)
-        battleFleetGroup.setAlignment(QtCore.Qt.AlignCenter)
-        battleFleetGroup.setLayout(battleFleetLayout)
+        self.battleFleetGroup = QtWidgets.QGroupBox("Battle fleet level")
+        self.battleFleetGroup.setStyleSheet(GROUPBOX_STYLE)
+        self.battleFleetGroup.setAlignment(QtCore.Qt.AlignCenter)
+        self.battleFleetGroup.setLayout(battleFleetLayout)
+
+        scoutBattleLayout = QtWidgets.QVBoxLayout()
+        scoutBattleLayout.addWidget(self.scoutFleetGroup)
+        scoutBattleLayout.addWidget(self.battleFleetGroup)
 
         self.mainLayout = QtWidgets.QHBoxLayout(self)
-        self.mainLayout.addWidget(planetGroup)
-        self.mainLayout.addWidget(dayGroup)
-        self.mainLayout.addWidget(moneyGroup)
-        self.mainLayout.addWidget(purchasesGroup)
-        self.mainLayout.addWidget(warehouseTripsGroup)
-        self.mainLayout.addWidget(planetCountGroup)
-        self.mainLayout.addWidget(scoutFleetGroup)
-        self.mainLayout.addWidget(battleFleetGroup)
+        self.mainLayout.addWidget(self.planetGroup)
+        self.mainLayout.addLayout(dayMoneyLayout)
+        self.mainLayout.addLayout(purchasesWarehouseLayout)
+        self.mainLayout.addLayout(scoutBattleLayout)
+        self.mainLayout.addWidget(self.planetCountGroup)
+
         self.update()
+
+    def enableTooltips(self, enabled):
+        self.tooltipsEnabled = enabled
+        self.setTooltips()
+
+    def setTooltips(self):
+        if self.tooltipsEnabled:
+            self.planetGroup.setToolTip("the planet you are currently on")
+            self.moneyGroup.setToolTip("how much money you currently have")
+            self.planetCountGroup.setToolTip("how many planets you have discovered since day 1")
+            self.dayGroup.setToolTip('%d days remaining' % (self.parent.state.max_days - self.parent.state.day))
+            self.purchasesGroup.setToolTip('%d store purchases remaining today' %
+                                           (self.parent.state.max_store_purchases_per_day - self.parent.state.store_purchases))
+            self.warehouseTripsGroup.setToolTip('%d warehouse trips remaining today' %
+                                                (self.parent.state.warehouse_trips_per_day - self.parent.state.warehouse_trips))
+            upper, lower = self.parent.state.planet_discovery_range
+            self.scoutFleetGroup.setToolTip("{0:,} - {1:,} new planets per scout expedition".format(upper, lower))
+            self.battleFleetGroup.setToolTip('%d%% chance of winning battles' % int(self.parent.state.battle_victory_chance_percentage()))
+        else:
+            self.planetGroup.setToolTip(None)
+            self.moneyGroup.setToolTip(None)
+            self.planetCountGroup.setToolTip(None)
+            self.dayGroup.setToolTip(None)
+            self.purchasesGroup.setToolTip(None)
+            self.warehouseTripsGroup.setToolTip(None)
+            self.scoutFleetGroup.setToolTip(None)
+            self.battleFleetGroup.setToolTip(None)
 
     def update(self):
         self.planetLabel.setText(self.parent.state.current_planet.full_name)
@@ -122,15 +159,9 @@ class InfoBar(QtWidgets.QWidget):
         else:
             battle_label_txt = '%d/%d' % (self.parent.state.battle_level, self.parent.state.max_battle_level)
 
-        battle_label_txt += '<br>(%d%% chance of<br>winning battles)' % int(self.parent.state.battle_victory_chance_percentage())
-
-        scout_label_text = '%d/%d' % (self.parent.state.scout_level, self.parent.state.max_scout_level)
-
-        upper, lower = self.parent.state.planet_discovery_range
-        scout_label_text += ("<br>Scout expedition<br>yields between<br>{0:,} - {1:,}"
-                             "<br>new planets)".format(upper, lower))
-
-        self.scoutFleetLabel.setText(scout_label_text)
         self.battleFleetLabel.setText(battle_label_txt)
 
+        self.scoutFleetLabel.setText('%d/%d' % (self.parent.state.scout_level, self.parent.state.max_scout_level))
+
+        self.setTooltips()
         super(InfoBar, self).update()
