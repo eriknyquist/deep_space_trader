@@ -171,7 +171,8 @@ class LocationBrowser(QtWidgets.QWidget):
                                    "between planets!<br><br>Your battle fleet must defeat them if " +
                                    "you want to continue.<br><br>If you do not fight, then the only other " +
                                    "option is surrender; you will not die, but you may lose some of " +
-                                   "your money and resources.<br><br>Do you want to fight?")
+                                   "your money and resources.<br><br>Do you want to fight?",
+                                   cancelable=False)
             if accepted:
                 if self.parent.state.battle_won():
                     infoDialog(self, "Battle won!", "You have defeated the pirate fleet, " +
@@ -179,6 +180,7 @@ class LocationBrowser(QtWidgets.QWidget):
                 else:
                     infoDialog(self, "Battle lost!", "You have been defeated by the pirate fleet." +
                                "<br><br>You are dead.")
+                    self.parent.checkHighScore()
                     self.parent.reset()
                     return
             else:

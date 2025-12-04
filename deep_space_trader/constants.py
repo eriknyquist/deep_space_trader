@@ -7,7 +7,7 @@ from deep_space_trader import __version__ as package_version
 # ------ Initial values for player data on day 1 ------
 INITIAL_MONEY = 2000000000
 INITIAL_TRAVEL_COST = 100
-INITIAL_ITEM_CAPACITY = 10000000000000
+INITIAL_ITEM_CAPACITY = 100
 INITIAL_PLANET_COUNT = 8
 INITIAL_MAX_DAYS = 30
 

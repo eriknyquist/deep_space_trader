@@ -79,12 +79,17 @@ def gameStoryDialog():
     dialog.exec_()
     return dialog.dont_show_again
 
-def yesNoDialog(parent, header="", message="Are you sure?"):
+def yesNoDialog(parent, header="", message="Are you sure?", cancelable=True):
+    if cancelable:
+        buttons = (QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Cancel)
+        default_button = QtWidgets.QMessageBox.Cancel
+    else:
+        buttons = (QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+        default_button = QtWidgets.QMessageBox.No
+
     reply = QtWidgets.QMessageBox.question(parent, header, message,
-                                           (QtWidgets.QMessageBox.Yes |
-                                           QtWidgets.QMessageBox.No |
-                                           QtWidgets.QMessageBox.Cancel),
-                                           QtWidgets.QMessageBox.Cancel)
+                                           buttons,
+                                           default_button)
 
     return reply == QtWidgets.QMessageBox.Yes
 

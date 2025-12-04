@@ -248,7 +248,8 @@ class MainWidget(QtWidgets.QDialog):
         proceed = yesNoDialog(self, "High score!",
                               message="You have achieved a high score ({:,}) ! "
                                       "would you like to enter your name? (high "
-                                      "scores are only stored locally)".format(self.state.money))
+                                      "scores are only stored locally)".format(self.state.money),
+                              cancelable=False)
 
         if not proceed:
             return
