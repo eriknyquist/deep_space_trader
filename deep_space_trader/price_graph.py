@@ -13,6 +13,8 @@ class PriceHistoryGraph(QtWidgets.QDialog):
         self.setLayout(self.mainLayout)
 
         self.graph = pyqtgraph.PlotWidget()
+        self.graph.plotItem.vb.setMouseEnabled(x=False, y=False)
+
         self.graph.setLabel('left', "<span style=\"font-size:30px\">Price</span>")
         self.graph.setLabel('bottom', "<span style=\"font-size:30px\">Days</span>")
         self.mainLayout.addWidget(self.graph)
@@ -25,4 +27,4 @@ class PriceHistoryGraph(QtWidgets.QDialog):
         range_start = (self.parent.state.day - len(self.item.value_history)) + 1
 
         x_axis = list(range(range_start, range_end))
-        self.graph.plot(x_axis, self.item.value_history)
+        self.graph.plot(x_axis, self.item.value_history, pen='g')
