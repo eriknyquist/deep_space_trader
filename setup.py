@@ -34,7 +34,7 @@ setup(
     license='Apache 2.0',
     install_requires=dependencies,
     packages=['deep_space_trader'],
-    package_data={'deep_space_trader':['images/*']},
+    package_data={'deep_space_trader':['images/*', 'audio/*']},
     include_package_data=True,
     zip_safe=False
 )

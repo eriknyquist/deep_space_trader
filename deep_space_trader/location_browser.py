@@ -197,6 +197,7 @@ class LocationBrowser(QtWidgets.QWidget):
                 infoDialog(self, "Surrender", "You decide not to fight the pirate fleet. " +
                            "<br><br>The pirates spare your life, but they rob you of everything you've got!")
 
+        self.parent.audio.play(self.parent.audio.TravelSound)
         self.parent.state.change_current_planet(planetname)
         self.parent.advanceDay()
 

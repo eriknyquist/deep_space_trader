@@ -18,6 +18,7 @@ from deep_space_trader.high_scores import HighScoreTable, HighScoreSharing
 from deep_space_trader.item_browsers import PlayerItemBrowser, PlanetItemBrowser, WarehouseItemBrowser
 from deep_space_trader.item_prices import PricesTable
 from deep_space_trader.information_bar import InfoBar
+from deep_space_trader.sounds import AudioPlayer
 
 
 # Set checkbox state without triggering the stateChanged signal
@@ -35,6 +36,7 @@ class MainWidget(QtWidgets.QDialog):
         load_store_items()
         self.pending_price_anomaly = None
         self.temporary_price_change = None
+        self.audio = AudioPlayer()
 
         middleColumnLayout = QtWidgets.QHBoxLayout()
 
@@ -100,6 +102,9 @@ class MainWidget(QtWidgets.QDialog):
         self.mainLayout.addLayout(lastColumnLayout)
 
         config.config_load()
+
+    def enableSounds(self, enabled):
+        self.audio.setEnabled(enabled)
 
     def enableTooltips(self, enabled):
         self.infoBar.enableTooltips(enabled)

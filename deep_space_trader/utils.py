@@ -16,6 +16,7 @@ if getattr(sys, 'frozen', False):
 else:
     SOURCE_DIR = os.path.dirname(__file__)
 
+AUDIO_DIR = os.path.join(SOURCE_DIR, 'audio')
 IMAGE_DIR = os.path.join(SOURCE_DIR, 'images')
 ICON_PATH = os.path.join(IMAGE_DIR, 'icon.png')
 

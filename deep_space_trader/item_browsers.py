@@ -288,6 +288,7 @@ class PlayerItemBrowser(ItemBrowser):
             planet.items.add_items(name, self.parent.state.items, quantity)
             self.parent.state.record_sale(name, quantity, planet.items.items[name].value)
 
+        self.parent.audio.play(self.parent.audio.SellSound)
         self.parent.state.money += gain
         checkForMoneyBonus(self.parent)
         self.parent.infoBar.update()

@@ -98,6 +98,7 @@ class Buy(TransactionDialog):
                                           self.parent.state.current_planet.items,
                                           quantity, delete_empty=False)
 
+        self.parent.audio.play(self.parent.audio.BuySound)
         self.parent.state.money -= self.value * quantity
         self.parent.state.record_purchase(self.itemName, quantity, self.value)
 
@@ -130,6 +131,7 @@ class Sell(TransactionDialog):
 
         self.parent.state.money += self.value * quantity
         self.parent.state.record_sale(self.itemName, quantity, self.value)
+        self.parent.audio.play(self.parent.audio.SellSound)
         checkForMoneyBonus(self.parent)
 
     def valueChanged(self):

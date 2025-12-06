@@ -86,6 +86,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tooltipsAction.setCheckable(True)
         self.tooltipsAction.setChecked(True)
 
+        self.audioAction = QtWidgets.QAction("Sounds", self)
+        self.audioAction.setShortcut("Ctrl+h")
+        self.audioAction.setStatusTip("Enable/disable game sounds")
+        self.audioAction.triggered.connect(self.toggleSounds)
+        self.audioAction.setCheckable(True)
+        self.audioAction.setChecked(True)
+
         # Build menu bar
         menu = self.menuBar()
         fileMenu = menu.addMenu("File")
@@ -98,9 +105,10 @@ class MainWindow(QtWidgets.QMainWindow):
         toolMenu.addAction(self.travelLogAction)
         toolMenu.addAction(self.transactionLogAction)
 
-        viewMenu = menu.addMenu("View")
-        viewMenu.addAction(self.darkThemeAction)
-        viewMenu.addAction(self.tooltipsAction)
+        prefMenu = menu.addMenu("Preferences")
+        prefMenu.addAction(self.darkThemeAction)
+        prefMenu.addAction(self.tooltipsAction)
+        prefMenu.addAction(self.audioAction)
 
         helpMenu = menu.addMenu("Help")
         helpMenu.addAction(self.aboutAction)
@@ -121,6 +129,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def toggleTooltips(self):
         self.widget.enableTooltips(self.tooltipsAction.isChecked())
+
+    def toggleSounds(self):
+        self.widget.enableSounds(self.audioAction.isChecked())
 
     def closeEvent(self, event):
         if self.widget.warningBeforeQuit():
