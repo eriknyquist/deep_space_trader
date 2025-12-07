@@ -187,11 +187,13 @@ class MainWidget(QtWidgets.QDialog):
                         item.value -= int((float(item.value) / 100.0) * float(change_percentage))
 
                     if planet is self.state.current_planet:
+                        self.audio.play(self.audio.RumourTrueSound)
                         infoDialog(self, "Rumour was true!",
                                    "The rumour you heard about %s was true!<br><br>%s prices are %s."
                                    % (itemname, itemname, "through the roof" if increase else "at an all-time low"))
             else:
                 if planet is self.state.current_planet:
+                    self.audio.play(self.audio.FailureSound)
                     infoDialog(self, "Rumour was false",
                                      "The rumour you heard about %s on %s was false!" % (itemname, planet.full_name))
 
@@ -226,6 +228,7 @@ class MainWidget(QtWidgets.QDialog):
             % (itemname, adj, descriptor, planet.full_name)
         )
 
+        self.audio.play(self.audio.RumourSound)
         infoDialog(self, "Rumour overheard!", msg)
         self.pending_price_anomaly = (planet, itemname, increase)
 

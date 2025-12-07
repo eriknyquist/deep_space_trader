@@ -12,6 +12,13 @@ class AudioPlayer:
     BattleSound = QSound(os.path.join(AUDIO_DIR, "battle.wav"))
     FailureSound = QSound(os.path.join(AUDIO_DIR, "failure.wav"))
     VictorySound = QSound(os.path.join(AUDIO_DIR, "victory.wav"))
+    BattleUpgradeSound = QSound(os.path.join(AUDIO_DIR, "battle_upgrade.wav"))
+    ScoutUpgradeSound = QSound(os.path.join(AUDIO_DIR, "scout_upgrade.wav"))
+    PlanetDestructionSound = QSound(os.path.join(AUDIO_DIR, "planet_destruction.wav"))
+    TradingConsoleSound = QSound(os.path.join(AUDIO_DIR, "trading_console.wav"))
+    WarehouseTripsUpgradeSound = QSound(os.path.join(AUDIO_DIR, "warehouse_trips_upgrade.wav"))
+    RumourSound = QSound(os.path.join(AUDIO_DIR, "rumour.wav"))
+    RumourTrueSound = QSound(os.path.join(AUDIO_DIR, "rumour_true.wav"))
 
     def __init__(self):
         self.enabled = True

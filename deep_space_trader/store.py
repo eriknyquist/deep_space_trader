@@ -94,6 +94,7 @@ class PlanetExplorationUpgrade(StoreItem):
         self.parent.state.scout_level += 1
         self.parent.state.planet_discovery_range = (self.range[0] * 2, self.range[1] * 2)
         self.range = self.parent.state.planet_discovery_range
+        self.parent.audio.play(self.parent.audio.ScoutUpgradeSound)
         infoDialog(self.parent, "Exploration fleet successfully upgraded")
         return True
 
@@ -198,6 +199,7 @@ class BattleFleetUpgrade(StoreItem):
             self.name = "Upgrade battle fleet"
             self.description = self.desc_fmt % "Upgrades your"
 
+        self.parent.audio.play(self.parent.audio.BattleUpgradeSound)
         infoDialog(self.parent, "Success", message="Battle fleet successfully %s." % bought_str)
 
         return True
@@ -215,7 +217,7 @@ class WarehouseSpeedIncrease(StoreItem):
         price = const.WAREHOUSE_SPEED_INCREASE_COST
         name = "Increase warehouse limit"
         desc = (
-            "Increase your engine power, allowing you to make two more trip to "
+            "Increase your engine power, allowing you to make two more trips to "
             "the warehouse per day."
         )
 
@@ -228,6 +230,7 @@ class WarehouseSpeedIncrease(StoreItem):
 
         self.parent.state.warehouse_trips_per_day += 2
 
+        self.parent.audio.play(self.parent.audio.WarehouseTripsUpgradeSound)
         infoDialog(self.parent, "Success", message="Number of warehouse trips per day successfully increased.")
 
         return True
@@ -249,6 +252,7 @@ class TradingConsole(StoreItem):
 
         self.parent.state.enable_trading_console()
 
+        self.parent.audio.play(self.parent.audio.TradingConsoleSound)
         infoDialog(self.parent, "Success", message="Trading console successfully purchased")
 
         return True

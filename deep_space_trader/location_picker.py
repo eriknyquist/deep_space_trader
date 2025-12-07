@@ -180,8 +180,9 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
 
         self.close()
 
+        self.parent.audio.play(self.parent.audio.PlanetDestructionSound)
         infoDialog(self.parent, "Success",
-                   message="Your destruction of all planets is complete.")
+                   message="Destruction of all planets is complete.")
 
     def selectButtonClicked(self):
         selectedRow = self.table.currentRow()
@@ -215,7 +216,8 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         self.close()
         self.accepted = True
 
-        infoDialog(self.parent, "Success", message="Your destruction of %s is complete."
+        self.parent.audio.play(self.parent.audio.PlanetDestructionSound)
+        infoDialog(self.parent, "Success", message="Destruction of %s is complete."
                                                    % planet.full_name)
 
     def sizeHint(self):
