@@ -211,6 +211,7 @@ class PlayerItemBrowser(ItemBrowser):
         if not proceed:
             return
 
+        self.parent.audio.play(self.parent.audio.DumpSound)
         self.parent.state.items.remove_all_items()
         self.parent.updatePlayerItemsLabel()
         self.update()
@@ -504,6 +505,7 @@ class WarehouseItemBrowser(ItemBrowser):
         if not proceed:
             return
 
+        self.parent.audio.play(self.parent.audio.DumpSound)
         self.parent.state.warehouse.remove_all_items()
         self.update()
 

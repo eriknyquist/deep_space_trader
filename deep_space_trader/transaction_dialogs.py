@@ -208,8 +208,8 @@ class DumpWarehouseItem(TransactionDialog):
         if not proceed:
             return
 
+        self.parent.audio.play(self.parent.audio.DumpSound)
         self.parent.state.warehouse.remove_items(self.itemName, quantity)
-        infoDialog(self, "Success!", message="Items have been removed")
 
     def valueChanged(self):
         self.spinboxLabel.setText("Dump quantity")
@@ -235,8 +235,8 @@ class DumpPlayerItem(TransactionDialog):
         if not proceed:
             return
 
+        self.parent.audio.play(self.parent.audio.DumpSound)
         self.parent.state.items.remove_items(self.itemName, quantity)
-        infoDialog(self, "Success!", message="Items have been removed")
 
     def valueChanged(self):
         self.spinboxLabel.setText("Dump quantity")

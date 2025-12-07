@@ -19,6 +19,7 @@ class AudioPlayer:
     WarehouseTripsUpgradeSound = QSound(os.path.join(AUDIO_DIR, "warehouse_trips_upgrade.wav"))
     RumourSound = QSound(os.path.join(AUDIO_DIR, "rumour.wav"))
     RumourTrueSound = QSound(os.path.join(AUDIO_DIR, "rumour_true.wav"))
+    DumpSound = QSound(os.path.join(AUDIO_DIR, "dump.wav"))
 
     def __init__(self):
         self.enabled = True
