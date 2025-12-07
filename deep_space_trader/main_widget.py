@@ -33,10 +33,10 @@ class MainWidget(QtWidgets.QDialog):
         self.main = mainWindow
         self.primary_screen = primaryScreen
         self.state = State(self)
-        load_store_items()
+        self.audio = AudioPlayer()
+        load_store_items(self)
         self.pending_price_anomaly = None
         self.temporary_price_change = None
-        self.audio = AudioPlayer()
 
         middleColumnLayout = QtWidgets.QHBoxLayout()
 
@@ -148,7 +148,7 @@ class MainWidget(QtWidgets.QDialog):
         return yesNoDialog(self, "Are you sure?", "Are you sure you want to quit?")
 
     def reset(self):
-        load_store_items()
+        load_store_items(self)
         self.state.initialize()
         self.infoBar.update()
         self.locationBrowser.update()

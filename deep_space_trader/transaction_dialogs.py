@@ -98,7 +98,7 @@ class Buy(TransactionDialog):
                                           self.parent.state.current_planet.items,
                                           quantity, delete_empty=False)
 
-        self.parent.audio.play(self.parent.audio.BuySound)
+        self.parent.audio.play(self.parent.audio.WhooshPopSound)
         self.parent.state.money -= self.value * quantity
         self.parent.state.record_purchase(self.itemName, quantity, self.value)
 
@@ -153,6 +153,7 @@ class PlayerToWarehouse(TransactionDialog):
         self.setWindowTitle("Move to warehouse")
 
     def acceptTransaction(self, quantity):
+        self.parent.audio.play(self.parent.audio.WhooshPopSound)
         self.parent.state.warehouse_trips += 1
         self.parent.state.warehouse.add_items(self.itemName,
                                               self.parent.state.items,
@@ -177,6 +178,7 @@ class WarehouseToPlayer(TransactionDialog):
         self.setWindowTitle("Retrieve from warehouse")
 
     def acceptTransaction(self, quantity):
+        self.parent.audio.play(self.parent.audio.WhooshPopSound)
         self.parent.state.warehouse_trips += 1
         self.parent.state.items.add_items(self.itemName,
                                           self.parent.state.warehouse,

@@ -552,10 +552,12 @@ class WarehouseItemBrowser(ItemBrowser):
             self.parent.state.items.add_items(name, self.parent.state.warehouse, quantity)
             itemcount -= quantity
 
+        self.parent.audio.play(self.parent.audio.WhooshPopSound)
         self.parent.state.warehouse_trips += 1
         self.parent.warehouseItemBrowser.update()
         self.parent.playerItemBrowser.update()
         self.parent.updatePlayerItemsLabel()
+        self.parent.infoBar.update()
 
     def removeButtonClicked(self):
         totalitemcount = self.parent.state.warehouse.count()

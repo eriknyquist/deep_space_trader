@@ -11,52 +11,54 @@ store_items = []
 
 
 class StoreItem(object):
-    def __init__(self, name, description, price):
+    def __init__(self, parent, name, description, price):
         self.died = False
         self.name = name
         self.description = description
         self.price = price
+        self.parent = parent
 
-    def use(self, parent):
+    def use(self):
         raise NotImplementedError()
 
-    def after_use(self, parent):
+    def after_use(self):
         pass
 
 
 class PlanetExploration(StoreItem):
-    def __init__(self):
+    def __init__(self, parent):
         price = const.PLANET_EXPLORATION_COST
         name = "Scout expedition"
         desc = (
             "Fund an expedition to discover new planets"
         )
 
-        super(PlanetExploration, self).__init__(name, desc, price)
+        super(PlanetExploration, self).__init__(parent, name, desc, price)
 
-    def use(self, parent):
-        if len(parent.state.planets) > const.MAX_PLANETS_ALLOWED:
-            errorDialog(parent, "Sorry!", "Too many planets, you need to destroy "
+    def use(self):
+        if len(self.parent.state.planets) > const.MAX_PLANETS_ALLOWED:
+            errorDialog(self.parent, "Sorry!", "Too many planets, you need to destroy "
                                          "some planets before you can discover more")
             return False
 
-        if not yesNoDialog(parent, "Are you sure?",
+        if not yesNoDialog(self.parent, "Are you sure?",
                            message="Are you sure you want to buy a %s?" % self.name):
             return False
 
-        num_new = random.randrange(*parent.state.planet_discovery_range)
-        parent.state.expand_planets(num_new)
+        num_new = random.randrange(*self.parent.state.planet_discovery_range)
+        self.parent.state.expand_planets(num_new)
 
-        infoDialog(parent, "%d new planets with intelligent life have "
+        self.parent.audio.play(self.parent.audio.PlanetDiscoverySound)
+        infoDialog(self.parent, "%d new planets with intelligent life have "
                          "been discovered!" % num_new)
 
-        parent.infoBar.update()
-        parent.locationBrowser.update()
+        self.parent.infoBar.update()
+        self.parent.locationBrowser.update()
         return True
 
 
 class PlanetExplorationUpgrade(StoreItem):
-    def __init__(self):
+    def __init__(self, parent):
         self.range = const.PLANET_DISCOVERY_RANGE
         price = const.PLANET_EXPLORATION_UPGRADE_COST
         name = "Upgrade scout fleet"
@@ -67,10 +69,10 @@ class PlanetExplorationUpgrade(StoreItem):
 
         desc = self.desc_fmt % (self.range[1] * 2)
 
-        super(PlanetExplorationUpgrade, self).__init__(name, desc, price)
+        super(PlanetExplorationUpgrade, self).__init__(parent, name, desc, price)
 
-    def _update_desc(self, parent):
-        if parent.state.scout_level >= parent.state.max_scout_level:
+    def _update_desc(self):
+        if self.parent.state.scout_level >=self. parent.state.max_scout_level:
             desc = "You cannot buy this item anymore"
             self.price = None
         else:
@@ -79,44 +81,44 @@ class PlanetExplorationUpgrade(StoreItem):
 
         self.description = desc
 
-    def use(self, parent):
-        if parent.state.scout_level >= parent.state.max_scout_level:
-            errorDialog(parent, "Sorry!", "You cannot upgrade your scout fleet "
+    def use(self):
+        if self.parent.state.scout_level >= self.parent.state.max_scout_level:
+            errorDialog(self.parent, "Sorry!", "You cannot upgrade your scout fleet "
                                          "any further")
             return False
 
-        if not yesNoDialog(parent, "Are you sure?",
+        if not yesNoDialog(self.parent, "Are you sure?",
                            message="Are you sure you want to upgrade your scout fleet?"):
             return False
 
-        parent.state.scout_level += 1
-        parent.state.planet_discovery_range = (self.range[0] * 2, self.range[1] * 2)
-        self.range = parent.state.planet_discovery_range
-        infoDialog(parent, "Exploration fleet successfully upgraded")
+        self.parent.state.scout_level += 1
+        self.parent.state.planet_discovery_range = (self.range[0] * 2, self.range[1] * 2)
+        self.range = self.parent.state.planet_discovery_range
+        infoDialog(self.parent, "Exploration fleet successfully upgraded")
         return True
 
-    def after_use(self, parent):
+    def after_use(self):
         self.price *= 2
-        self._update_desc(parent)
+        self._update_desc()
 
 
 class PlanetDestruction(StoreItem):
-    def __init__(self):
+    def __init__(self, parent):
         price = const.PLANET_DESTRUCTION_COST
         name = "Planet destruction kit"
         desc = (
             "Destroy planets and gain all of their resources"
         )
 
-        super(PlanetDestruction, self).__init__(name, desc, price)
+        super(PlanetDestruction, self).__init__(parent, name, desc, price)
 
-    def use(self, parent):
-        if len(parent.state.planets) == 1:
-            errorDialog(parent, "Sorry!", message="The only planet available is "
+    def use(self):
+        if len(self.parent.state.planets) == 1:
+            errorDialog(self.parent, "Sorry!", message="The only planet available is "
                                          "the one you are currently on")
             return False
 
-        dialog = PlanetDestructionPicker(parent, self)
+        dialog = PlanetDestructionPicker(self.parent, self)
         dialog.setWindowModality(QtCore.Qt.ApplicationModal)
         dialog.exec_()
 
@@ -126,40 +128,41 @@ class PlanetDestruction(StoreItem):
         self.died = dialog.died
         return dialog.accepted
 
-    def after_use(self, parent):
-        parent.locationBrowser.update()
-        parent.warehouseItemBrowser.update()
+    def after_use(self):
+        self.parent.locationBrowser.update()
+        self.parent.warehouseItemBrowser.update()
 
 
 class CapacityIncrease(StoreItem):
-    def __init__(self):
+    def __init__(self, parent):
         self.incr = const.CAPACITY_INCREASE
         price = const.CAPACITY_INCREASE_COST
         name = "Increase item capacity"
         desc = "Double the item capacity on your ship"
 
-        super(CapacityIncrease, self).__init__(name, desc, price)
+        super(CapacityIncrease, self).__init__(parent, name, desc, price)
 
-    def use(self, parent):
-        if not yesNoDialog(parent, "Are you sure?",
+    def use(self):
+        if not yesNoDialog(self.parent, "Are you sure?",
                            message="Are you sure want to increase your capacity?"):
             return False
 
-        parent.state.capacity += self.incr
-        parent.infoBar.update()
-        parent.updatePlayerItemsLabel()
-        infoDialog(parent, "Success", message="Capacity successfully increased. "
-                                      "New capacity is {:,}.".format(parent.state.capacity))
+        self.parent.audio.play(self.parent.audio.ShipUpgradeSound)
+        self.parent.state.capacity += self.incr
+        self.parent.infoBar.update()
+        self.parent.updatePlayerItemsLabel()
+        infoDialog(self.parent, "Success", message="Capacity successfully increased. "
+                                      "New capacity is {:,}.".format(self.parent.state.capacity))
 
         return True
 
-    def after_use(self, parent):
+    def after_use(self):
         self.incr *= 2
         self.price *= 2
 
 
 class BattleFleetUpgrade(StoreItem):
-    def __init__(self):
+    def __init__(self, parent):
         self.used = False
         price = const.BATTLE_UPGRADE_COST
         name = "Buy battle fleet"
@@ -169,9 +172,9 @@ class BattleFleetUpgrade(StoreItem):
 
         desc = self.desc_fmt % "Buy a"
 
-        super(BattleFleetUpgrade, self).__init__(name, desc, price)
+        super(BattleFleetUpgrade, self).__init__(parent, name, desc, price)
 
-    def use(self, parent):
+    def use(self):
         if self.used:
             check_str = "upgrade your"
             bought_str = "upgraded"
@@ -179,28 +182,28 @@ class BattleFleetUpgrade(StoreItem):
             check_str = "buy a"
             bought_str = "purchased"
 
-        if not yesNoDialog(parent, "Are you sure?",
+        if not yesNoDialog(self.parent, "Are you sure?",
                            message="Are you sure want to %s battle fleet?" % check_str):
             return False
 
-        if parent.state.battle_level >= parent.state.max_battle_level:
-            errorDialog(parent, "Sorry!", message="You cannot upgrade your battle "
+        if self.parent.state.battle_level >= self.parent.state.max_battle_level:
+            errorDialog(self.parent, "Sorry!", message="You cannot upgrade your battle "
                                                  "fleet anymore")
             return False
 
-        parent.state.battle_level += 1
+        self.parent.state.battle_level += 1
 
         if not self.used:
             self.used = True
             self.name = "Upgrade battle fleet"
             self.description = self.desc_fmt % "Upgrades your"
 
-        infoDialog(parent, "Success", message="Battle fleet successfully %s." % bought_str)
+        infoDialog(self.parent, "Success", message="Battle fleet successfully %s." % bought_str)
 
         return True
 
-    def after_use(self, parent):
-        if parent.state.battle_level >= parent.state.max_battle_level:
+    def after_use(self):
+        if self.parent.state.battle_level >= self.parent.state.max_battle_level:
             self.description = "You cannot buy this item anymore"
             self.price = None
         else:
@@ -208,7 +211,7 @@ class BattleFleetUpgrade(StoreItem):
 
 
 class WarehouseSpeedIncrease(StoreItem):
-    def __init__(self):
+    def __init__(self, parent):
         price = const.WAREHOUSE_SPEED_INCREASE_COST
         name = "Increase warehouse limit"
         desc = (
@@ -216,55 +219,55 @@ class WarehouseSpeedIncrease(StoreItem):
             "the warehouse per day."
         )
 
-        super(WarehouseSpeedIncrease, self).__init__(name, desc, price)
+        super(WarehouseSpeedIncrease, self).__init__(parent, name, desc, price)
 
-    def use(self, parent):
-        if not yesNoDialog(parent, "Are you sure?",
+    def use(self):
+        if not yesNoDialog(self.parent, "Are you sure?",
                            message="Are you sure want to increase the warehouse limit?"):
             return False
 
-        parent.state.warehouse_trips_per_day += 2
+        self.parent.state.warehouse_trips_per_day += 2
 
-        infoDialog(parent, "Success", message="Number of warehouse trips per day successfully increased.")
+        infoDialog(self.parent, "Success", message="Number of warehouse trips per day successfully increased.")
 
         return True
 
 class TradingConsole(StoreItem):
-    def __init__(self):
+    def __init__(self, parent):
         price = const.TRADING_CONSOLE_COST
         name = "Trading console"
         desc = (
             "Enable viewing current item prices on any planet without travelling"
         )
 
-        super(TradingConsole, self).__init__(name, desc, price)
+        super(TradingConsole, self).__init__(parent, name, desc, price)
 
-    def use(self, parent):
-        if not yesNoDialog(parent, "Are you sure?",
+    def use(self):
+        if not yesNoDialog(self.parent, "Are you sure?",
                            message="Are you sure want to buy the trading console?"):
             return False
 
-        parent.state.enable_trading_console()
+        self.parent.state.enable_trading_console()
 
-        infoDialog(parent, "Success", message="Trading console successfully purchased")
+        infoDialog(self.parent, "Success", message="Trading console successfully purchased")
 
         return True
 
-    def after_use(self, parent):
+    def after_use(self):
         self.description = "You have already purchased this item"
         self.price = None
 
 
-def load_store_items():
+def load_store_items(parent):
     store_items.clear()
     store_items.extend([
-        CapacityIncrease(),
-        PlanetExploration(),
-        PlanetDestruction(),
-        PlanetExplorationUpgrade(),
-        BattleFleetUpgrade(),
-        WarehouseSpeedIncrease(),
-        TradingConsole()
+        CapacityIncrease(parent),
+        PlanetExploration(parent),
+        PlanetDestruction(parent),
+        PlanetExplorationUpgrade(parent),
+        BattleFleetUpgrade(parent),
+        WarehouseSpeedIncrease(parent),
+        TradingConsole(parent)
     ])
 
 
@@ -365,9 +368,10 @@ class Store(QtWidgets.QDialog):
             errorDialog(self, "Sorry!", "You don't have enough money to buy '%s'" % item.name)
             return
 
-        proceed = item.use(self.parent)
+        proceed = item.use()
 
         if item.died:
+            self.parent.checkHighScore()
             self.parent.reset()
             self.close()
             return
@@ -379,7 +383,7 @@ class Store(QtWidgets.QDialog):
         self.parent.state.money -= item.price
         self.parent.infoBar.update()
 
-        item.after_use(self.parent)
+        item.after_use()
         self.update()
 
     def onDoubleClick(self, signal):

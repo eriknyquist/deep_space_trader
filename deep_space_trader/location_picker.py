@@ -94,11 +94,11 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         # Otherwise, just calculate a numerical percentage representing the chance
         # That one of the planets in the list would resist. There is a 0.005% chance
         # that any single planet will be able to resist us and possibly stop us from destroying it.
-        percentage_chance_per_planet = 0.05
+        percentage_chance_per_planet = 5.0
 
-        percentage_total_chance = int(min(100, percentage_chance_per_planet * len(planets_to_destroy)))
+        percentage_total_chance = int(min(100.0, percentage_chance_per_planet * len(planets_to_destroy)))
 
-        resistance = (random.randint(0, 100) <= percentage_total_chance)
+        resistance = (random.uniform(0.0, 100.0) <= percentage_total_chance)
 
         if resistance:
             return random.choice(planets_to_destroy)
@@ -129,8 +129,10 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
 
         msg += "<br><br>Do you want to fight?"
 
+        self.parent.audio.play(self.parent.audio.BattleSound)
         proceed = yesNoDialog(self, "Planet is resisting!", msg)
         if not proceed:
+            self.parent.audio.play(self.parent.audio.FailureSound)
             infoDialog(self.parent, "Chickened out!",
                        message="You have declined to fight %s. They win, this time." % resisting_planet.full_name)
 
@@ -138,9 +140,11 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             return [p for p in planets_to_destroy if id(p) != id(resisting_planet)]
 
         if self.state.battle_won():
+            self.parent.audio.play(self.parent.audio.VictorySound)
             infoDialog(self.parent, "Victory!",
                        message="You have defeated %s!" % resisting_planet.full_name)
         else:
+            self.parent.audio.play(self.parent.audio.DeathSound)
             infoDialog(self.parent, "Defeat!",
                        message="You have been defeated in battle by %s."
                                "<br><br><br>You are dead :(" % resisting_planet.full_name)

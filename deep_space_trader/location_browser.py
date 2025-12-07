@@ -166,6 +166,7 @@ class LocationBrowser(QtWidgets.QWidget):
         self.parent.state.money -= self.parent.state.travel_cost
 
         if random.randint(0, 100) <= self.parent.state.chance_of_being_robbed_in_transit():
+            self.parent.audio.play(self.parent.audio.BattleSound)
             accepted = yesNoDialog(self, "Attacked by pirates!",
                                    "You have encountered a pirate fleet while travelling " +
                                    "between planets!<br><br>Your battle fleet must defeat them if " +
@@ -175,9 +176,11 @@ class LocationBrowser(QtWidgets.QWidget):
                                    cancelable=False)
             if accepted:
                 if self.parent.state.battle_won():
+                    self.parent.audio.play(self.parent.audio.VictorySound)
                     infoDialog(self, "Battle won!", "You have defeated the pirate fleet, " +
                                "and can continue with your travels.")
                 else:
+                    self.parent.audio.play(self.parent.audio.DeathSound)
                     infoDialog(self, "Battle lost!", "You have been defeated by the pirate fleet." +
                                "<br><br>You are dead.")
                     self.parent.checkHighScore()
@@ -194,6 +197,7 @@ class LocationBrowser(QtWidgets.QWidget):
                 self.parent.playerItemBrowser.update()
                 self.parent.infoBar.update()
 
+                self.parent.audio.play(self.parent.audio.FailureSound)
                 infoDialog(self, "Surrender", "You decide not to fight the pirate fleet. " +
                            "<br><br>The pirates spare your life, but they rob you of everything you've got!")
 
