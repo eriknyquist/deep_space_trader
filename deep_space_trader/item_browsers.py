@@ -457,6 +457,13 @@ class PlanetItemBrowser(ItemBrowser):
                         (self.parent.state.current_planet.full_name, itemname))
             return
 
+        if self.parent.state.capacity == self.parent.state.items.count():
+            errorDialog(self, "Maximum capacity",
+                        message="You have no more room on your ship. You need to increase your ship "
+                                "capacity, or sell some items, or dump some items, or move some items to "
+                                "the warehouse before you can buy more.")
+            return
+
         dialog = Buy(self.parent, itemname)
         dialog.setWindowModality(QtCore.Qt.ApplicationModal)
         dialog.exec_()
