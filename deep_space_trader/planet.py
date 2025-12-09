@@ -42,10 +42,16 @@ class Planet(object):
             'per', 'pir', 'pera', 'par', 'sta', 'mor', 'kur', 'ker', 'ni'
             'ler', 'der', 'ber', 'shar', 'sher', 'mer', 'wer', 'fer', 'fra'
             'gra', 'bra', 'zir', 'dir', 'tir', 'sir', 'mir', 'nir', 'por',
-            'lir', 'bir', 'dra', 'tha', 'the', 'tho'
+            'lir', 'bir', 'dra', 'tha', 'the', 'tho', 'kan', 'lan', 'narn',
+            'karn', 'barn', 'darn', 'gern', 'yurn', 'zorn', 'forn', 'worn',
+            'gorn', 'bur', 'dur', 'fur', 'gur', 'jur', 'lur', 'mur', 'nur',
+            'pur', 'rur', 'sur', 'tur'
         ],
         [
-            'ta', 'te', 'ti', 'to', 'tu', 'ba', 'be', 'bi', 'bo', 'tis', 'ris',
+            'ta', 'te', 'ti', 'to', 'tu', 'ba', 'be', 'bi', 'bo', 'ca', 'ce',
+            'ci', 'co', 'tis', 'ris', 'tar', 'ter', 'tir', 'tor', 'tur', 'gi',
+            'go', 'ha', 'he', 'hi', 'ho', 'hu', 'har', 'her', 'hir', 'hor',
+            'hur', 'wa', 'we', 'wo', 'wu', 'war', 'wer', 'wir', 'wor', 'wur',
             'beur', 'bu', 'cu', 'lur', 'mur', 'da', 'de', 'di', 'do', 'ka',
             'ke', 'ki', 'ko', 'ku', 'la', 'le', 'li', 'lo', 'lu', 'loo', 'koo',
             'lee', 'kee', 'du', 'lor', 'der', 'ser', 'per', 'fu', 'fer', 'ler',
@@ -53,21 +59,27 @@ class Planet(object):
             've', 'vi', 'vo', 'vu', 'bre', 'dre', 'pre', 'tre', 're', 'ge',
             'ga', 'gu', 'mu', 'nu', 'ru', 'mi', 'ni', 'su', 'fa', 'fe', 'fi',
             'fo', 'fis', 'sa', 'se', 'si', 'so', 'pa', 'pe', 'pi', 'po', 'pu',
-            'ma', 'me', 'mo', 'moo', 'mee', 'see', 'pee', 'nee'
+            'ma', 'me', 'mo', 'moo', 'mee', 'see', 'pee', 'nee', 'ja', 'je',
+            'ji', 'jo', 'ju'
         ],
         [
             'res', 'lia', 'gese', 'naise', 'bler', 'pler', 'teres', 'tere',
             'ter', 'pules', 'ner', 'yer', 'prer', 'padia', 'dium', 'dum', 'rem',
-            'tem', 'dem', 'ratis', 'cus', 'tus', 'rus', 'muth', 'yuth', 'reth',
-            'doth', 'rath', 'bath', 'tath', 'path', 'sadia', 'adia', 'radia',
+            'tem', 'dem', 'ratis', 'latis', 'matis', 'natis', 'cus', 'tus',
+            'rus', 'muth', 'yuth', 'reth', 'doth', 'rath', 'bath', 'tath',
+            'path', 'sadia', 'adia', 'radia', 'tadia', 'vadia', 'madia',
+            'nadia', 'badia', 'cadia', 'dadia', 'varn', 'vern', 'nath', 'math',
             'anus', 'nus', 'ban', 'tan', 'lan', 'dan', 'man', 'nan', 'xan',
-            'zan', 'pan', 'ius', 'rious', 'tius', 'bius', 'sius', 'sise',
-            'suse', 'pus', 'dus', 'mus', 'bus', 'puth', 'suth', 'duth', 'tuth',
-            'na', 'da', 'tair', 'taire', 'fair', 'tare', 'tar', 'bar', 'lar',
-            'kar', 'thar', 'mar', 'to', 'ko', 'ba', 'ta', 'sha', 'ra', 'wa',
-            'ka', 'ni', 'di', 'bi', 'ti', 'shi', 'ri', 'la', 'le', 'li', 'lo',
-            'lu', 'car', 'dar', 'far', 'gar', 'har', 'jar', 'nar', 'par', 'rar',
-            'sar', 'var'
+            'zan', 'pan', 'ius', 'rious', 'tius', 'bius', 'sius', 'vius',
+            'cius', 'gius', 'hius', 'kare', 'karr', 'tarr', 'marr', 'sarr',
+            'sise', 'suse', 'pus', 'dus', 'mus', 'bus', 'puth', 'suth', 'duth',
+            'tuth', 'na', 'da', 'tair', 'taire', 'fair', 'tare', 'tar', 'bar',
+            'lar', 'kar', 'thar', 'mar', 'to', 'ko', 'ba', 'ta', 'sha', 'ra',
+            'wa', 'ka', 'ni', 'di', 'bi', 'ti', 'shi', 'ri', 'la', 'le', 'li',
+            'lo', 'lu', 'car', 'dar', 'far', 'gar', 'har', 'jar', 'nar', 'par',
+            'rar', 'sar', 'var', 'buan', 'cuan', 'duan', 'fuan', 'huan', 'juan',
+            'kuan', 'luan', 'muan', 'nuan', 'puan', 'suan', 'ruan', 'tuan',
+            'vuan'
         ],
     ]
 
