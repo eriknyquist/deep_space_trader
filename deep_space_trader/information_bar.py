@@ -111,6 +111,8 @@ class InfoBar(QtWidgets.QWidget):
         self.healthBar.setRange(0, 100)
         self.healthBar.setValue(100)
         self.healthBar.setFixedWidth(20)
+        self.healthBar.setStyleSheet("QProgressBar::chunk { background-color: #00FF00; }")
+        self.healthBar.setFormat(None)
         healthLayout.addWidget(self.healthBar)
         self.healthGroup = QtWidgets.QGroupBox("Health")
         self.healthGroup.setStyleSheet(GROUPBOX_STYLE)
@@ -132,6 +134,34 @@ class InfoBar(QtWidgets.QWidget):
         self.mainLayout.addWidget(self.healthGroup)
 
         self.update()
+
+    def interpColor(self, start, end, percent):
+        r_span = start[0] - end[0] if start[0] > end[0] else end[0] - start[0]
+        g_span = start[1] - end[1] if start[1] > end[1] else end[1] - start[1]
+        b_span = start[2] - end[2] if start[2] > end[2] else end[2] - start[2]
+
+        r_delta = (float(r_span) / 100.0) * float(percent)
+        g_delta = (float(g_span) / 100.0) * float(percent)
+        b_delta = (float(b_span) / 100.0) * float(percent)
+
+        return [
+            int(float(start[0]) + r_delta if start[0] < end[0] else start[0] - r_delta),
+            int(float(start[1]) + g_delta if start[1] < end[1] else start[1] - g_delta),
+            int(float(start[2]) + b_delta if start[2] < end[2] else start[2] - b_delta)
+        ]
+
+    def setHealthBarColor(self):
+        highColor = [0, 255, 0]    # Green
+        medColor = [255, 237, 41]  # Yellow
+        lowColor = [255, 0, 0]     # Red
+
+        if self.parent.state.health >= 50.0:
+            color = self.interpColor(medColor, highColor, (self.parent.state.health - 50.0) * 2.0)
+        else:
+            color = self.interpColor(lowColor, medColor, self.parent.state.health * 2.0)
+
+        colorstr = "{:02X}{:02X}{:02X}".format(color[0], color[1], color[2])
+        self.healthBar.setStyleSheet("QProgressBar::chunk {{ background-color: #{}; }}".format(colorstr))
 
     def enableTooltips(self, enabled):
         self.tooltipsEnabled = enabled
@@ -191,6 +221,8 @@ class InfoBar(QtWidgets.QWidget):
         self.scoutFleetLabel.setText(scout_label_txt)
 
         self.healthBar.setValue(self.parent.state.health)
+        self.setHealthBarColor()
 
         self.setTooltips()
+
         super(InfoBar, self).update()

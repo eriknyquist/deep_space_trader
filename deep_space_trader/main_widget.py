@@ -236,6 +236,7 @@ class MainWidget(QtWidgets.QDialog):
         if self.state.next_day():
             # Days remaining, check health
             if self.state.health == 0:
+                self.audio.play(self.audio.DeathSound)
                 infoDialog(self, "Dead!", "You have starved to death.")
                 self.checkHighScore()
                 self.reset()
@@ -252,6 +253,9 @@ class MainWidget(QtWidgets.QDialog):
             self.reset()
 
     def checkHighScore(self):
+        if self.state.money == 0:
+            return
+
         scores = config.get_highscores()
 
         # High scores are sorted in descending order.
