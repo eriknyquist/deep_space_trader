@@ -25,7 +25,7 @@ class State(object):
         self.planets_discovered = 0
         self.battle_level = 0
         self.max_battle_level = const.MAX_BATTLE_LEVEL
-        self.scout_level = 1
+        self.scout_level = 0
         self.max_scout_level = const.MAX_SCOUT_LEVEL
         self.day = 1
         self.level = 1

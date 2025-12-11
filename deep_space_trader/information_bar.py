@@ -132,8 +132,13 @@ class InfoBar(QtWidgets.QWidget):
                                            (self.parent.state.max_store_purchases_per_day - self.parent.state.store_purchases))
             self.warehouseTripsGroup.setToolTip('%d warehouse trips remaining today' %
                                                 (self.parent.state.warehouse_trips_per_day - self.parent.state.warehouse_trips))
-            upper, lower = self.parent.state.planet_discovery_range
-            self.scoutFleetGroup.setToolTip("{0:,} - {1:,} new planets per scout expedition".format(upper, lower))
+
+            if self.parent.state.scout_level > 0:
+                upper, lower = self.parent.state.planet_discovery_range
+                self.scoutFleetGroup.setToolTip("{0:,} - {1:,} new planets per scout expedition".format(upper, lower))
+            else:
+                self.scoutFleetGroup.setToolTip("Scout expeditions are not possible")
+
             self.battleFleetGroup.setToolTip('%d%% chance of winning battles' % int(self.parent.state.battle_victory_chance_percentage()))
         else:
             self.planetGroup.setToolTip(None)
@@ -161,7 +166,12 @@ class InfoBar(QtWidgets.QWidget):
 
         self.battleFleetLabel.setText(battle_label_txt)
 
-        self.scoutFleetLabel.setText('%d/%d' % (self.parent.state.scout_level, self.parent.state.max_scout_level))
+        if self.parent.state.scout_level == 0:
+            scout_label_txt = "No scout fleet"
+        else:
+            scout_label_txt = '%d/%d' % (self.parent.state.scout_level, self.parent.state.max_scout_level)
+
+        self.scoutFleetLabel.setText(scout_label_txt)
 
         self.setTooltips()
         super(InfoBar, self).update()

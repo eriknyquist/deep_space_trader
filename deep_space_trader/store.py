@@ -37,6 +37,11 @@ class PlanetExploration(StoreItem):
         super(PlanetExploration, self).__init__(parent, name, desc, price)
 
     def use(self):
+        if self.parent.state.scout_level == 0:
+            errorDialog(self.parent, "Sorry!", "You need to buy a scout fleet for scout "
+                                               "expeditions to be possible")
+            return
+
         if len(self.parent.state.planets) > const.MAX_PLANETS_ALLOWED:
             errorDialog(self.parent, "Sorry!", "Too many planets, you need to destroy "
                                          "some planets before you can discover more")
@@ -56,52 +61,6 @@ class PlanetExploration(StoreItem):
         self.parent.infoBar.update()
         self.parent.locationBrowser.update()
         return True
-
-
-class PlanetExplorationUpgrade(StoreItem):
-    def __init__(self, parent):
-        self.range = const.PLANET_DISCOVERY_RANGE
-        price = const.PLANET_EXPLORATION_UPGRADE_COST
-        name = "Upgrade scout fleet"
-        self.desc_fmt = (
-            "Upgrade your planet scouting fleet, increasing the max. "
-            "number of planets you can discover in a single scout expedition to %d"
-        )
-
-        desc = self.desc_fmt % (self.range[1] * 2)
-
-        super(PlanetExplorationUpgrade, self).__init__(parent, name, desc, price)
-
-    def _update_desc(self):
-        if self.parent.state.scout_level >=self. parent.state.max_scout_level:
-            desc = "You cannot buy this item anymore"
-            self.price = None
-        else:
-            max_planets = self.range[1] * 2
-            desc = self.desc_fmt % max_planets
-
-        self.description = desc
-
-    def use(self):
-        if self.parent.state.scout_level >= self.parent.state.max_scout_level:
-            errorDialog(self.parent, "Sorry!", "You cannot upgrade your scout fleet "
-                                         "any further")
-            return False
-
-        if not yesNoDialog(self.parent, "Are you sure?",
-                           message="Are you sure you want to upgrade your scout fleet?"):
-            return False
-
-        self.parent.state.scout_level += 1
-        self.parent.state.planet_discovery_range = (self.range[0] * 2, self.range[1] * 2)
-        self.range = self.parent.state.planet_discovery_range
-        self.parent.audio.play(self.parent.audio.ScoutUpgradeSound)
-        infoDialog(self.parent, "Exploration fleet successfully upgraded")
-        return True
-
-    def after_use(self):
-        self.price *= 2
-        self._update_desc()
 
 
 class PlanetDestruction(StoreItem):
@@ -156,6 +115,60 @@ class CapacityIncrease(StoreItem):
     def after_use(self):
         self.incr *= 2
         self.price *= 2
+
+
+class ScoutFleetUpgrade(StoreItem):
+    def __init__(self, parent):
+        self.range = const.PLANET_DISCOVERY_RANGE
+        price = const.PLANET_EXPLORATION_UPGRADE_COST
+        name = "Buy scout fleet"
+        desc = (
+            "Buy a planet scouting fleet, allowing you to discover "
+            "new planets to trade with."
+        )
+
+        super(ScoutFleetUpgrade, self).__init__(parent, name, desc, price)
+
+    def _update_desc(self):
+        if self.parent.state.scout_level >= self. parent.state.max_scout_level:
+            desc = "You cannot buy this item anymore"
+            self.price = None
+        else:
+            max_planets = self.range[1] * 2
+            desc = ("Upgrade your planet scouting fleet, increasing the max. "
+                    "number of planets you can discover in a single scout expedition to %d" % max_planets)
+
+        self.description = desc
+
+    def use(self):
+        if self.parent.state.scout_level >= self.parent.state.max_scout_level:
+            errorDialog(self.parent, "Sorry!", "You cannot upgrade your scout fleet "
+                                         "any further")
+            return False
+
+        if self.parent.state.scout_level == 0:
+            check_desc = "buy a"
+            confirm_desc = "purchased"
+        else:
+            check_desc = "upgrade your"
+            confirm_desc = "upgraded"
+
+        if not yesNoDialog(self.parent, "Are you sure?",
+                           message="Are you sure you want to %s scout fleet?" % check_desc):
+            return False
+
+        if self.parent.state.scout_level > 0:
+            self.parent.state.planet_discovery_range = (self.range[0] * 2, self.range[1] * 2)
+
+        self.parent.state.scout_level += 1
+        self.range = self.parent.state.planet_discovery_range
+        self.parent.audio.play(self.parent.audio.ScoutUpgradeSound)
+        infoDialog(self.parent, "Scout fleet successfully %s" % confirm_desc)
+        return True
+
+    def after_use(self):
+        self.price *= 2
+        self._update_desc()
 
 
 class BattleFleetUpgrade(StoreItem):
@@ -265,7 +278,7 @@ def load_store_items(parent):
         CapacityIncrease(parent),
         PlanetExploration(parent),
         PlanetDestruction(parent),
-        PlanetExplorationUpgrade(parent),
+        ScoutFleetUpgrade(parent),
         BattleFleetUpgrade(parent),
         WarehouseSpeedIncrease(parent),
         TradingConsole(parent)
