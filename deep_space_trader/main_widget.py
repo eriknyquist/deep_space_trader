@@ -234,7 +234,13 @@ class MainWidget(QtWidgets.QDialog):
 
     def advanceDay(self):
         if self.state.next_day():
-            # Days remaining
+            # Days remaining, check health
+            if self.state.health == 0:
+                infoDialog(self, "Dead!", "You have starved to death.")
+                self.checkHighScore()
+                self.reset()
+                return
+
             self.runRandomNotifications()
             self.state.update_planet_item_prices()
             self.infoBar.update()

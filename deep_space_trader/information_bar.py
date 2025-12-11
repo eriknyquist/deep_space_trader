@@ -105,6 +105,20 @@ class InfoBar(QtWidgets.QWidget):
         self.battleFleetGroup.setAlignment(QtCore.Qt.AlignCenter)
         self.battleFleetGroup.setLayout(battleFleetLayout)
 
+        healthLayout = QtWidgets.QHBoxLayout()
+        self.healthBar = QtWidgets.QProgressBar(self)
+        self.healthBar.setOrientation(QtCore.Qt.Vertical)
+        self.healthBar.setRange(0, 100)
+        self.healthBar.setValue(100)
+        self.healthBar.setFixedWidth(20)
+        healthLayout.addWidget(self.healthBar)
+        self.healthGroup = QtWidgets.QGroupBox("Health")
+        self.healthGroup.setStyleSheet(GROUPBOX_STYLE)
+        self.healthGroup.setAlignment(QtCore.Qt.AlignCenter)
+        self.healthGroup.setLayout(healthLayout)
+        self.healthGroup.setFixedWidth(60)
+        healthLayout.setContentsMargins(5, 5, 5, 5)
+
         scoutBattleLayout = QtWidgets.QVBoxLayout()
         scoutBattleLayout.addWidget(self.scoutFleetGroup)
         scoutBattleLayout.addWidget(self.battleFleetGroup)
@@ -115,6 +129,7 @@ class InfoBar(QtWidgets.QWidget):
         self.mainLayout.addLayout(purchasesWarehouseLayout)
         self.mainLayout.addLayout(scoutBattleLayout)
         self.mainLayout.addWidget(self.planetCountGroup)
+        self.mainLayout.addWidget(self.healthGroup)
 
         self.update()
 
@@ -140,6 +155,7 @@ class InfoBar(QtWidgets.QWidget):
                 self.scoutFleetGroup.setToolTip("Scout expeditions are not possible")
 
             self.battleFleetGroup.setToolTip('%d%% chance of winning battles' % int(self.parent.state.battle_victory_chance_percentage()))
+            self.healthGroup.setToolTip("%d%%" % self.parent.state.health)
         else:
             self.planetGroup.setToolTip(None)
             self.moneyGroup.setToolTip(None)
@@ -149,6 +165,7 @@ class InfoBar(QtWidgets.QWidget):
             self.warehouseTripsGroup.setToolTip(None)
             self.scoutFleetGroup.setToolTip(None)
             self.battleFleetGroup.setToolTip(None)
+            self.healthGroup.setToolTip(None)
 
     def update(self):
         self.planetLabel.setText(self.parent.state.current_planet.full_name)
@@ -172,6 +189,8 @@ class InfoBar(QtWidgets.QWidget):
             scout_label_txt = '%d/%d' % (self.parent.state.scout_level, self.parent.state.max_scout_level)
 
         self.scoutFleetLabel.setText(scout_label_txt)
+
+        self.healthBar.setValue(self.parent.state.health)
 
         self.setTooltips()
         super(InfoBar, self).update()

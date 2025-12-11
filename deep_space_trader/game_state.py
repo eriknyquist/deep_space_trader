@@ -29,6 +29,8 @@ class State(object):
         self.max_scout_level = const.MAX_SCOUT_LEVEL
         self.day = 1
         self.level = 1
+        self.health = 100
+        self.daily_cost = const.DAILY_LIVING_COST
 
         self.warehouse_trips = 0
         self.expand_planets(const.INITIAL_PLANET_COUNT)
@@ -128,6 +130,11 @@ class State(object):
         if self.day == self.max_days:
             return False
 
+        new_money = max(0, self.money - self.daily_cost)
+        if (self.money == 0) and (new_money == 0):
+            self.health = max(0, self.health - 15)
+
+        self.money = new_money
         self.day += 1
         self.warehouse_trips = 0
         self.store_purchases = 0

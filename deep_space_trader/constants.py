@@ -5,7 +5,7 @@ from deep_space_trader import __version__ as package_version
 
 
 # ------ Initial values for player data on day 1 ------
-INITIAL_MONEY = 2000000000
+INITIAL_MONEY = 2000
 INITIAL_TRAVEL_COST = 100
 INITIAL_ITEM_CAPACITY = 100
 INITIAL_PLANET_COUNT = 8
@@ -60,6 +60,10 @@ PLANET_EXPLORATION_COST = 50000000
 PLANET_EXPLORATION_UPGRADE_COST = 750000
 BATTLE_UPGRADE_COST = 250000
 TRADING_CONSOLE_COST = 3000
+
+# ----- Daily costs -----
+
+DAILY_LIVING_COST = 200
 
 # ----- Misc. values -----
 
