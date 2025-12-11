@@ -111,11 +111,18 @@ MAX_HIGH_SCORES = 10
 
 # Text shown in the intro dialog
 GAME_INTRO_TEXT = (
-    "The year is 81899, and you are the owner of an inter-planetary commercial "
-    "trading vessel. You make your living by purchasing and harvesting "
-    "raw materials and resources from countless planets across the galaxy, and "
-    "selling them wherever you can.<br><br>"
-    "Make as much money as you possibly can before your time runs out."
+    "The year is 5208, and humanity has solved the problem of bridging the vast "
+    "distances between stars by bending the fabric of spacetime. Commerce between "
+    "thousands of newly colonized planets is now possible.<br><br>"
+    "You are the owner of an inter-planetary commercial trading vessel. You make "
+    "your living by purchasing and harvesting raw materials and resources from "
+    "countless planets across the universe, and selling them to other planets.<br><br>"
+    "If you encounter pirates and do not have sufficient weaponry to defend yourself, "
+    "you will be robbed, or you will die.<br><br>"
+    "If you don't make enough money to keep up with your daily costs, you will die.<br><br>"
+    "Your daily costs will increase as you purchase services that require daily "
+    "maintenance.<br><br>"
+    "Don't die, and make as much money as you possibly can before your time runs out."
 )
 
 # Text shown in the "game complete" dialog

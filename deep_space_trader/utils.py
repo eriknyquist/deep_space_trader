@@ -56,6 +56,7 @@ class InfoDialog(QtWidgets.QDialog):
         if cancelable:
             checkboxLabel = QtWidgets.QLabel("Don't show this message again")
             self.checkbox = QtWidgets.QCheckBox()
+            self.checkbox.setStyleSheet("QCheckBox::indicator::unchecked { border: 2px solid black }")
             self.checkbox.stateChanged.connect(self.checkboxClicked)
             self.checkboxLayout = QtWidgets.QHBoxLayout()
             self.checkboxLayout.addWidget(checkboxLabel)
