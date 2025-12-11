@@ -30,7 +30,8 @@ class PlanetExploration(StoreItem):
         price = const.PLANET_EXPLORATION_COST
         name = "Scout expedition"
         desc = (
-            "Fund an expedition to discover new planets"
+            "Send your planet scouting fleet on an expedition to discover new "
+            "planets that you can trade with"
         )
 
         super(PlanetExploration, self).__init__(parent, name, desc, price)
@@ -49,7 +50,7 @@ class PlanetExploration(StoreItem):
         self.parent.state.expand_planets(num_new)
 
         self.parent.audio.play(self.parent.audio.PlanetDiscoverySound)
-        infoDialog(self.parent, "%d new planets with intelligent life have "
+        infoDialog(self.parent, "%d new planets willing to do business with you have "
                          "been discovered!" % num_new)
 
         self.parent.infoBar.update()
@@ -108,7 +109,7 @@ class PlanetDestruction(StoreItem):
         price = const.PLANET_DESTRUCTION_COST
         name = "Planet destruction kit"
         desc = (
-            "Destroy planets and gain all of their resources"
+            "Destroy planets and transport all of their resources to your warehouse"
         )
 
         super(PlanetDestruction, self).__init__(parent, name, desc, price)
@@ -138,14 +139,14 @@ class CapacityIncrease(StoreItem):
     def __init__(self, parent):
         self.incr = const.CAPACITY_INCREASE
         price = const.CAPACITY_INCREASE_COST
-        name = "Increase item capacity"
-        desc = "Double the item capacity on your ship"
+        name = "Increase ship capacity"
+        desc = "Double the number of items your ship can hold"
 
         super(CapacityIncrease, self).__init__(parent, name, desc, price)
 
     def use(self):
         if not yesNoDialog(self.parent, "Are you sure?",
-                           message="Are you sure want to increase your capacity?"):
+                           message="Are you sure want to increase your ship's capacity?"):
             return False
 
         self.parent.audio.play(self.parent.audio.ShipUpgradeSound)
@@ -215,7 +216,7 @@ class BattleFleetUpgrade(StoreItem):
 class WarehouseSpeedIncrease(StoreItem):
     def __init__(self, parent):
         price = const.WAREHOUSE_SPEED_INCREASE_COST
-        name = "Increase warehouse limit"
+        name = "Increase max. warehouse trips per day"
         desc = (
             "Increase your engine power, allowing you to make two more trips to "
             "the warehouse per day."
@@ -225,13 +226,14 @@ class WarehouseSpeedIncrease(StoreItem):
 
     def use(self):
         if not yesNoDialog(self.parent, "Are you sure?",
-                           message="Are you sure want to increase the warehouse limit?"):
+                           message="Are you sure want to increase max. number of "
+                                   "warehouse trips per day?"):
             return False
 
         self.parent.state.warehouse_trips_per_day += 2
 
         self.parent.audio.play(self.parent.audio.WarehouseTripsUpgradeSound)
-        infoDialog(self.parent, "Success", message="Number of warehouse trips per day successfully increased.")
+        infoDialog(self.parent, "Success", message="Max. warehouse trips per day successfully increased.")
 
         return True
 
@@ -240,7 +242,7 @@ class TradingConsole(StoreItem):
         price = const.TRADING_CONSOLE_COST
         name = "Trading console"
         desc = (
-            "Enable viewing current item prices on any planet without travelling"
+            "Allows you to view current item prices on any planet without travelling"
         )
 
         super(TradingConsole, self).__init__(parent, name, desc, price)

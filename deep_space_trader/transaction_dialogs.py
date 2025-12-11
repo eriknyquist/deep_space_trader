@@ -230,7 +230,7 @@ class DumpPlayerItem(TransactionDialog):
     def acceptTransaction(self, quantity):
         proceed = yesNoDialog(self, "Dump items?",
                               message="Are you sure you want to dump {0:,} {1}? "
-                              "You will lose these items from your inventory, and you will "
+                              "these items will be removed from your ship, and you will "
                               "not be able to get them back.".format(quantity, self.itemName))
         if not proceed:
             return

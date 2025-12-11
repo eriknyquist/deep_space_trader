@@ -205,7 +205,7 @@ class PlayerItemBrowser(ItemBrowser):
 
         proceed = yesNoDialog(self, "Dump everything?",
                               message="Are you sure you want to dump all your items? You "
-                                      "will lose all the items in your inventory, and you "
+                                      "will lose all the items in your ship, and you "
                                       "will not be able to get them back.")
 
         if not proceed:
