@@ -27,16 +27,6 @@ class InfoBar(QtWidgets.QWidget):
         self.planetGroup.setAlignment(QtCore.Qt.AlignCenter)
         self.planetGroup.setLayout(planetLayout)
 
-        dayLayout = QtWidgets.QHBoxLayout()
-        self.dayLabel = QtWidgets.QLabel("")
-        self.dayLabel.setStyleSheet(LABEL_STYLE)
-        self.dayLabel.setAlignment(QtCore.Qt.AlignCenter)
-        dayLayout.addWidget(self.dayLabel)
-        self.dayGroup = QtWidgets.QGroupBox("Current day")
-        self.dayGroup.setStyleSheet(GROUPBOX_STYLE)
-        self.dayGroup.setAlignment(QtCore.Qt.AlignCenter)
-        self.dayGroup.setLayout(dayLayout)
-
         moneyLayout = QtWidgets.QHBoxLayout()
         self.moneyLabel = QtWidgets.QLabel("")
         self.moneyLabel.setStyleSheet(LABEL_STYLE)
@@ -47,9 +37,19 @@ class InfoBar(QtWidgets.QWidget):
         self.moneyGroup.setAlignment(QtCore.Qt.AlignCenter)
         self.moneyGroup.setLayout(moneyLayout)
 
-        dayMoneyLayout = QtWidgets.QVBoxLayout()
-        dayMoneyLayout.addWidget(self.dayGroup)
-        dayMoneyLayout.addWidget(self.moneyGroup)
+        dailyCostLayout = QtWidgets.QHBoxLayout()
+        self.dailyCostLabel = QtWidgets.QLabel("")
+        self.dailyCostLabel.setStyleSheet(LABEL_STYLE)
+        self.dailyCostLabel.setAlignment(QtCore.Qt.AlignCenter)
+        dailyCostLayout.addWidget(self.dailyCostLabel)
+        self.dailyCostGroup = QtWidgets.QGroupBox("Daily cost")
+        self.dailyCostGroup.setStyleSheet(GROUPBOX_STYLE)
+        self.dailyCostGroup.setAlignment(QtCore.Qt.AlignCenter)
+        self.dailyCostGroup.setLayout(dailyCostLayout)
+
+        moneyLayout = QtWidgets.QVBoxLayout()
+        moneyLayout.addWidget(self.dailyCostGroup)
+        moneyLayout.addWidget(self.moneyGroup)
 
         purchasesLayout = QtWidgets.QHBoxLayout()
         self.purchasesLabel = QtWidgets.QLabel("")
@@ -85,6 +85,20 @@ class InfoBar(QtWidgets.QWidget):
         self.planetCountGroup.setAlignment(QtCore.Qt.AlignCenter)
         self.planetCountGroup.setLayout(planetCountLayout)
 
+        dayLayout = QtWidgets.QHBoxLayout()
+        self.dayLabel = QtWidgets.QLabel("")
+        self.dayLabel.setStyleSheet(LABEL_STYLE)
+        self.dayLabel.setAlignment(QtCore.Qt.AlignCenter)
+        dayLayout.addWidget(self.dayLabel)
+        self.dayGroup = QtWidgets.QGroupBox("Current day")
+        self.dayGroup.setStyleSheet(GROUPBOX_STYLE)
+        self.dayGroup.setAlignment(QtCore.Qt.AlignCenter)
+        self.dayGroup.setLayout(dayLayout)
+
+        planetDayLayout = QtWidgets.QVBoxLayout()
+        planetDayLayout.addWidget(self.planetCountGroup)
+        planetDayLayout.addWidget(self.dayGroup)
+
         scoutFleetLayout = QtWidgets.QHBoxLayout()
         self.scoutFleetLabel = QtWidgets.QLabel("")
         self.scoutFleetLabel.setStyleSheet(LABEL_STYLE)
@@ -105,6 +119,10 @@ class InfoBar(QtWidgets.QWidget):
         self.battleFleetGroup.setAlignment(QtCore.Qt.AlignCenter)
         self.battleFleetGroup.setLayout(battleFleetLayout)
 
+        scoutBattleLayout = QtWidgets.QVBoxLayout()
+        scoutBattleLayout.addWidget(self.scoutFleetGroup)
+        scoutBattleLayout.addWidget(self.battleFleetGroup)
+
         healthLayout = QtWidgets.QHBoxLayout()
         self.healthBar = QtWidgets.QProgressBar(self)
         self.healthBar.setOrientation(QtCore.Qt.Vertical)
@@ -121,16 +139,12 @@ class InfoBar(QtWidgets.QWidget):
         self.healthGroup.setFixedWidth(60)
         healthLayout.setContentsMargins(5, 5, 5, 5)
 
-        scoutBattleLayout = QtWidgets.QVBoxLayout()
-        scoutBattleLayout.addWidget(self.scoutFleetGroup)
-        scoutBattleLayout.addWidget(self.battleFleetGroup)
-
         self.mainLayout = QtWidgets.QHBoxLayout(self)
         self.mainLayout.addWidget(self.planetGroup)
-        self.mainLayout.addLayout(dayMoneyLayout)
+        self.mainLayout.addLayout(moneyLayout)
         self.mainLayout.addLayout(purchasesWarehouseLayout)
         self.mainLayout.addLayout(scoutBattleLayout)
-        self.mainLayout.addWidget(self.planetCountGroup)
+        self.mainLayout.addLayout(planetDayLayout)
         self.mainLayout.addWidget(self.healthGroup)
 
         self.update()
@@ -186,6 +200,8 @@ class InfoBar(QtWidgets.QWidget):
 
             self.battleFleetGroup.setToolTip('%d%% chance of winning battles' % int(self.parent.state.battle_victory_chance_percentage()))
             self.healthGroup.setToolTip("%d%%" % self.parent.state.health)
+            self.dailyCostGroup.setToolTip("{:,} per day is required to feed yourself and "
+                                           "maintain all purchased services".format(self.parent.state.daily_cost))
         else:
             self.planetGroup.setToolTip(None)
             self.moneyGroup.setToolTip(None)
@@ -196,6 +212,7 @@ class InfoBar(QtWidgets.QWidget):
             self.scoutFleetGroup.setToolTip(None)
             self.battleFleetGroup.setToolTip(None)
             self.healthGroup.setToolTip(None)
+            self.dailyCostGroup.setToolTip(None)
 
     def update(self):
         self.planetLabel.setText(self.parent.state.current_planet.full_name)
@@ -219,6 +236,8 @@ class InfoBar(QtWidgets.QWidget):
             scout_label_txt = '%d/%d' % (self.parent.state.scout_level, self.parent.state.max_scout_level)
 
         self.scoutFleetLabel.setText(scout_label_txt)
+
+        self.dailyCostLabel.setText("{:,}".format(self.parent.state.daily_cost))
 
         self.healthBar.setValue(self.parent.state.health)
         self.setHealthBarColor()

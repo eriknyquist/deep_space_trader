@@ -124,7 +124,7 @@ class ScoutFleetUpgrade(StoreItem):
         name = "Buy scout fleet"
         desc = (
             "Buy a planet scouting fleet, allowing you to discover "
-            "new planets to trade with."
+            "new planets to trade with. Increases your daily costs by {:,}.".format(const.DAILY_SCOUT_FLEET_COST_PER_LEVEL)
         )
 
         super(ScoutFleetUpgrade, self).__init__(parent, name, desc, price)
@@ -136,8 +136,10 @@ class ScoutFleetUpgrade(StoreItem):
         else:
             max_planets = self.range[1] * 2
             desc = ("Upgrade your planet scouting fleet, increasing the max. "
-                    "number of planets you can discover in a single scout expedition to %d" % max_planets)
+                    "number of planets you can discover in a single scout expedition to {}. "
+                    "Increases your daily costs by {:,}. ".format(max_planets, const.DAILY_SCOUT_FLEET_COST_PER_LEVEL))
 
+        self.name = "Upgrade scout fleet"
         self.description = desc
 
     def use(self):
@@ -161,6 +163,7 @@ class ScoutFleetUpgrade(StoreItem):
             self.parent.state.planet_discovery_range = (self.range[0] * 2, self.range[1] * 2)
 
         self.parent.state.scout_level += 1
+        self.parent.state.daily_cost += const.DAILY_SCOUT_FLEET_COST_PER_LEVEL
         self.range = self.parent.state.planet_discovery_range
         self.parent.audio.play(self.parent.audio.ScoutUpgradeSound)
         infoDialog(self.parent, "Scout fleet successfully %s" % confirm_desc)
@@ -177,10 +180,11 @@ class BattleFleetUpgrade(StoreItem):
         price = const.BATTLE_UPGRADE_COST
         name = "Buy battle fleet"
 
-        self.desc_fmt = ("%s battle fleet. Gives you a better chance of defeating "
-                         "pirate fleets, or planets that resist destruction.")
+        self.desc_fmt = ("{} battle fleet. Gives you a better chance of defeating "
+                         "pirate fleets, or planets that resist destruction. "
+                         "Increases your daily costs by {:,}")
 
-        desc = self.desc_fmt % "Buy a"
+        desc = self.desc_fmt.format("Buy a", const.DAILY_BATTLE_FLEET_COST_PER_LEVEL)
 
         super(BattleFleetUpgrade, self).__init__(parent, name, desc, price)
 
@@ -202,11 +206,12 @@ class BattleFleetUpgrade(StoreItem):
             return False
 
         self.parent.state.battle_level += 1
+        self.parent.state.daily_cost += const.DAILY_BATTLE_FLEET_COST_PER_LEVEL
 
         if not self.used:
             self.used = True
             self.name = "Upgrade battle fleet"
-            self.description = self.desc_fmt % "Upgrades your"
+            self.description = self.desc_fmt.format("Upgrades your", const.DAILY_BATTLE_FLEET_COST_PER_LEVEL)
 
         self.parent.audio.play(self.parent.audio.BattleUpgradeSound)
         infoDialog(self.parent, "Success", message="Battle fleet successfully %s." % bought_str)
