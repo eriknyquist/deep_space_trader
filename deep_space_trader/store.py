@@ -115,11 +115,6 @@ class PlanetDestruction(StoreItem):
         super(PlanetDestruction, self).__init__(parent, name, desc, price)
 
     def use(self):
-        if len(self.parent.state.planets) == 1:
-            errorDialog(self.parent, "Sorry!", message="The only planet available is "
-                                         "the one you are currently on")
-            return False
-
         dialog = PlanetDestructionPicker(self.parent, self)
         dialog.setWindowModality(QtCore.Qt.ApplicationModal)
         dialog.exec_()
