@@ -31,7 +31,7 @@ class PlanetExploration(StoreItem):
         name = "Scout expedition"
         desc = (
             "Send your planet scouting fleet on an expedition to discover new "
-            "planets that you can trade with"
+            "planets that you can trade with."
         )
 
         super(PlanetExploration, self).__init__(parent, name, desc, price)
@@ -94,7 +94,7 @@ class CapacityIncrease(StoreItem):
         self.incr = const.CAPACITY_INCREASE
         price = const.CAPACITY_INCREASE_COST
         name = "Increase ship capacity"
-        desc = "Double the number of items your ship can hold"
+        desc = "Double the number of items your ship can hold."
 
         super(CapacityIncrease, self).__init__(parent, name, desc, price)
 
@@ -131,7 +131,7 @@ class ScoutFleetUpgrade(StoreItem):
 
     def _update_desc(self):
         if self.parent.state.scout_level >= self. parent.state.max_scout_level:
-            desc = "You cannot buy this item anymore"
+            desc = "You cannot buy this item anymore."
             self.price = None
         else:
             max_planets = self.range[1] * 2
@@ -166,7 +166,7 @@ class ScoutFleetUpgrade(StoreItem):
         self.parent.state.daily_cost += const.DAILY_SCOUT_FLEET_COST_PER_LEVEL
         self.range = self.parent.state.planet_discovery_range
         self.parent.audio.play(self.parent.audio.ScoutUpgradeSound)
-        infoDialog(self.parent, "Scout fleet successfully %s" % confirm_desc)
+        infoDialog(self.parent, "Scout fleet successfully %s." % confirm_desc)
         return True
 
     def after_use(self):
@@ -182,7 +182,7 @@ class BattleFleetUpgrade(StoreItem):
 
         self.desc_fmt = ("{} battle fleet. Gives you a better chance of defeating "
                          "pirate fleets, or planets that resist destruction. "
-                         "Increases your daily costs by {:,}")
+                         "Increases your daily costs by {:,}.")
 
         desc = self.desc_fmt.format("Buy a", const.DAILY_BATTLE_FLEET_COST_PER_LEVEL)
 
@@ -202,7 +202,7 @@ class BattleFleetUpgrade(StoreItem):
 
         if self.parent.state.battle_level >= self.parent.state.max_battle_level:
             errorDialog(self.parent, "Sorry!", message="You cannot upgrade your battle "
-                                                 "fleet anymore")
+                                                 "fleet anymore.")
             return False
 
         self.parent.state.battle_level += 1
@@ -220,7 +220,7 @@ class BattleFleetUpgrade(StoreItem):
 
     def after_use(self):
         if self.parent.state.battle_level >= self.parent.state.max_battle_level:
-            self.description = "You cannot buy this item anymore"
+            self.description = "You cannot buy this item anymore."
             self.price = None
         else:
             self.price *= 2
@@ -255,7 +255,8 @@ class TradingConsole(StoreItem):
         price = const.TRADING_CONSOLE_COST
         name = "Trading console"
         desc = (
-            "Allows you to view current item prices on any planet without travelling"
+            "Allows you to view current item prices on any planet without travelling. "
+            "Increases your daily costs by {:,}.".format(const.DAILY_TRADING_CONSOLE_COST)
         )
 
         super(TradingConsole, self).__init__(parent, name, desc, price)
@@ -266,14 +267,14 @@ class TradingConsole(StoreItem):
             return False
 
         self.parent.state.enable_trading_console()
-
+        self.parent.state.daily_cost += const.DAILY_TRADING_CONSOLE_COST
         self.parent.audio.play(self.parent.audio.TradingConsoleSound)
         infoDialog(self.parent, "Success", message="Trading console successfully purchased")
 
         return True
 
     def after_use(self):
-        self.description = "You have already purchased this item"
+        self.description = "You have already purchased this item."
         self.price = None
 
 

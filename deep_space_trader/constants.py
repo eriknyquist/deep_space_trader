@@ -5,6 +5,7 @@ from deep_space_trader import __version__ as package_version
 
 
 # ------ Initial values for player data on day 1 ------
+
 INITIAL_MONEY = 2000
 INITIAL_TRAVEL_COST = 100
 INITIAL_ITEM_CAPACITY = 100
@@ -66,6 +67,7 @@ TRADING_CONSOLE_COST = 3000
 DAILY_LIVING_COST = 200
 DAILY_BATTLE_FLEET_COST_PER_LEVEL = 10000
 DAILY_SCOUT_FLEET_COST_PER_LEVEL = 5000
+DAILY_TRADING_CONSOLE_COST = 100
 
 # ----- Misc. values -----
 
