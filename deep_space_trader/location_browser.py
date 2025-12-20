@@ -161,8 +161,14 @@ class LocationBrowser(QtWidgets.QWidget):
                     item = self.table.item(index, col)
                     item.setBackground(color)
 
-        # Set current planet color
+        # Set current planet "visited=yes"
         index = self.parent.state.planets.index(self.parent.state.current_planet)
+
+        item2 = QtWidgets.QTableWidgetItem("yes")
+        item2.setTextAlignment(QtCore.Qt.AlignHCenter)
+        self.table.setItem(index, 1, item2)
+
+        # Set current planet row color
         for col in range(columns):
             item = self.table.item(index, col)
             item.setBackground(QtGui.QColor(0, 0xAA, 0))
