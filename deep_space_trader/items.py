@@ -124,7 +124,7 @@ class Items(object):
 
     @value.setter
     def value(self, new):
-        self._value = float(self._value)
+        self._value = float(new)
 
     @property
     def total_value(self):

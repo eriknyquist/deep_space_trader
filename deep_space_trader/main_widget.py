@@ -178,6 +178,7 @@ class MainWidget(QtWidgets.QDialog):
 
             if random.randint(0, 100) <= const.TRADING_TIP_ACCURACY_PERCENTAGE:
                 if itemname in planet.items.items:
+                    planet.update_prices(self.state.day)
                     item = planet.items.items[itemname]
 
                     self.temporary_price_change = (planet, itemname, item.value)
@@ -190,6 +191,8 @@ class MainWidget(QtWidgets.QDialog):
                         # Decrease price by 70-90%
                         change_percentage = random.randint(80, 95)
                         item.value -= int((float(item.value) / 100.0) * float(change_percentage))
+
+                    item.value_history[-1] = item.value
 
                     if planet is self.state.current_planet:
                         self.audio.play(self.audio.RumourTrueSound)

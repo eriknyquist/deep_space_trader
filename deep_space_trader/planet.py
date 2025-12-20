@@ -158,7 +158,7 @@ class Planet(object):
 
     def update_prices(self, current_day):
         if self._last_prices_update_day == None:
-            num_updates = current_day
+            num_updates = current_day - 1
         else:
             num_updates = current_day - self._last_prices_update_day
 
