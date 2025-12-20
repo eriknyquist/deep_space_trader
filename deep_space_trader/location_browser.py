@@ -15,6 +15,7 @@ class TradingConsole(QtWidgets.QDialog):
         super(TradingConsole, self).__init__(parent)
 
         self.mainLayout = QtWidgets.QVBoxLayout(self)
+        planet.update_prices(parent.state.day)
         self.mainLayout.addWidget(TradingConsolePlanetDisplay(parent, planet))
         self.setLayout(self.mainLayout)
         self.update()
@@ -120,31 +121,78 @@ class LocationBrowser(QtWidgets.QWidget):
 
         text = newText.strip().lower()
         self.table.setRowCount(0)
+
+        planets = []
         for planet in self.parent.state.planets:
             if text in planet.full_name.lower():
-                self.addRow(planet)
+                planets.append(planet)
 
-        super(LocationBrowser, self).update()
+        self.populateTable(planets)
 
-    def addRow(self, planet):
-        nextFreeRow = self.table.rowCount()
-        self.table.insertRow(nextFreeRow)
+    def colorPreviousPlanets(self):
+        colors = [
+            QtGui.QColor(0, 0xAA, 0, 50),
+            QtGui.QColor(0, 0xAA, 0, 125),
+        ]
 
+        columns = self.table.columnCount()
+
+        if self.parent.state.previous_planets_tail is not None:
+            try:
+                index = self.parent.state.planets.index(self.parent.state.previous_planets_tail)
+            except ValueError:
+                pass
+            else:
+                for col in range(columns):
+                    item = self.table.item(index, col)
+                    item.setBackground(QtGui.QBrush())
+
+        self.table.setAlternatingRowColors(False)
+        self.table.setAlternatingRowColors(True)
+
+        for planet in self.parent.state.previous_planets:
+            try:
+                index = self.parent.state.planets.index(planet)
+            except ValueError:
+                continue
+            else:
+                color = colors.pop()
+                for col in range(columns):
+                    item = self.table.item(index, col)
+                    item.setBackground(color)
+
+        # Set current planet color
+        index = self.parent.state.planets.index(self.parent.state.current_planet)
+        for col in range(columns):
+            item = self.table.item(index, col)
+            item.setBackground(QtGui.QColor(0, 0xAA, 0))
+
+    def addRow(self, planet, row):
         item1 = QtWidgets.QTableWidgetItem(planet.full_name)
         item2 = QtWidgets.QTableWidgetItem("yes" if planet.visited else "no")
-
         item2.setTextAlignment(QtCore.Qt.AlignHCenter)
+        self.table.setItem(row, 0, item1)
+        self.table.setItem(row, 1, item2)
 
-        self.table.setItem(nextFreeRow, 0, item1)
-        self.table.setItem(nextFreeRow, 1, item2)
+    def populateTable(self, planets):
+        self.table.setUpdatesEnabled(False)
+        self.table.blockSignals(True)
+        self.table.setSortingEnabled(False)
 
-    def populateTable(self):
+        self.table.clearContents()
         self.table.setRowCount(0)
-        for planet in self.parent.state.planets:
-            self.addRow(planet)
+        self.table.setRowCount(len(planets))
+
+        for row in range(len(planets)):
+            self.addRow(planets[row], row)
+
+        self.table.setSortingEnabled(True)
+        self.table.blockSignals(False)
+        self.table.setUpdatesEnabled(True)
 
     def update(self):
-        self.populateTable()
+        self.populateTable(self.parent.state.planets)
+        self.colorPreviousPlanets()
         super(LocationBrowser, self).update()
 
     def travelToPlanet(self, planetname):
@@ -204,13 +252,7 @@ class LocationBrowser(QtWidgets.QWidget):
         self.parent.audio.play(self.parent.audio.TravelSound)
         self.parent.state.change_current_planet(planetname)
         self.parent.advanceDay()
-
-        currentRow = self.table.currentRow()
-        self.update()
-        self.table.selectRow(currentRow)
-
-        self.parent.planetItemBrowser.update()
-        self.parent.infoBar.update()
+        self.colorPreviousPlanets()
 
     def openTradingConsole(self, planetname):
         planet = self.parent.state.get_planet_by_name(planetname)

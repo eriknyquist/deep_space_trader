@@ -154,6 +154,19 @@ class Planet(object):
         self._resists_destruction = False
         self._items = ItemCollection()
         self._samples_today = []
+        self._last_prices_update_day = None
+
+    def update_prices(self, current_day):
+        if self._last_prices_update_day == None:
+            num_updates = current_day
+        else:
+            num_updates = current_day - self._last_prices_update_day
+
+        for _ in range(num_updates):
+            for item in self.items.iter_items():
+                item.update_value()
+
+        self._last_prices_update_day = current_day
 
     def neighbour(self):
         name = self._name

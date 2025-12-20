@@ -1,27 +1,47 @@
 import os
-from PyQt5.QtMultimedia import QSound
+from PyQt5.QtMultimedia import QSound, QSoundEffect
+from PyQt5.QtCore import QUrl
 from deep_space_trader.utils import AUDIO_DIR
 
 class AudioPlayer:
-    TravelSound = QSound(os.path.join(AUDIO_DIR, "rocket_launch.wav"))
-    SellSound = QSound(os.path.join(AUDIO_DIR, "cash_register.wav"))
-    WhooshPopSound = QSound(os.path.join(AUDIO_DIR, "whoosh_pop.wav"))
-    ShipUpgradeSound = QSound(os.path.join(AUDIO_DIR, "ship_upgrade.wav"))
-    DeathSound = QSound(os.path.join(AUDIO_DIR, "death.wav"))
-    PlanetDiscoverySound = QSound(os.path.join(AUDIO_DIR, "planet_discovery.wav"))
-    BattleSound = QSound(os.path.join(AUDIO_DIR, "battle.wav"))
-    FailureSound = QSound(os.path.join(AUDIO_DIR, "failure.wav"))
-    VictorySound = QSound(os.path.join(AUDIO_DIR, "victory.wav"))
-    BattleUpgradeSound = QSound(os.path.join(AUDIO_DIR, "battle_upgrade.wav"))
-    ScoutUpgradeSound = QSound(os.path.join(AUDIO_DIR, "scout_upgrade.wav"))
-    PlanetDestructionSound = QSound(os.path.join(AUDIO_DIR, "planet_destruction.wav"))
-    TradingConsoleSound = QSound(os.path.join(AUDIO_DIR, "trading_console.wav"))
-    WarehouseTripsUpgradeSound = QSound(os.path.join(AUDIO_DIR, "warehouse_trips_upgrade.wav"))
-    RumourSound = QSound(os.path.join(AUDIO_DIR, "rumour.wav"))
-    RumourTrueSound = QSound(os.path.join(AUDIO_DIR, "rumour_true.wav"))
-    DumpSound = QSound(os.path.join(AUDIO_DIR, "dump.wav"))
 
     def __init__(self):
+        self.TravelSound = QSoundEffect()
+        self.SellSound = QSoundEffect()
+        self.WhooshPopSound = QSoundEffect()
+        self.ShipUpgradeSound = QSoundEffect()
+        self.DeathSound = QSoundEffect()
+        self.PlanetDiscoverySound = QSoundEffect()
+        self.BattleSound = QSoundEffect()
+        self.FailureSound = QSoundEffect()
+        self.VictorySound = QSoundEffect()
+        self.BattleUpgradeSound = QSoundEffect()
+        self.ScoutUpgradeSound = QSoundEffect()
+        self.PlanetDestructionSound = QSoundEffect()
+        self.TradingConsoleSound = QSoundEffect()
+        self.WarehouseTripsUpgradeSound = QSoundEffect()
+        self.RumourSound = QSoundEffect()
+        self.RumourTrueSound = QSoundEffect()
+        self.DumpSound = QSoundEffect()
+
+        self.TravelSound.setSource(QUrl.fromLocalFile(os.path.join(AUDIO_DIR, "rocket_launch.wav")))
+        self.SellSound.setSource(QUrl.fromLocalFile(os.path.join(AUDIO_DIR, "cash_register.wav")))
+        self.WhooshPopSound.setSource(QUrl.fromLocalFile(os.path.join(AUDIO_DIR, "whoosh_pop.wav")))
+        self.ShipUpgradeSound.setSource(QUrl.fromLocalFile(os.path.join(AUDIO_DIR, "ship_upgrade.wav")))
+        self.DeathSound.setSource(QUrl.fromLocalFile(os.path.join(AUDIO_DIR, "death.wav")))
+        self.PlanetDiscoverySound.setSource(QUrl.fromLocalFile(os.path.join(AUDIO_DIR, "planet_discovery.wav")))
+        self.BattleSound.setSource(QUrl.fromLocalFile(os.path.join(AUDIO_DIR, "battle.wav")))
+        self.FailureSound.setSource(QUrl.fromLocalFile(os.path.join(AUDIO_DIR, "failure.wav")))
+        self.VictorySound.setSource(QUrl.fromLocalFile(os.path.join(AUDIO_DIR, "victory.wav")))
+        self.BattleUpgradeSound.setSource(QUrl.fromLocalFile(os.path.join(AUDIO_DIR, "battle_upgrade.wav")))
+        self.ScoutUpgradeSound.setSource(QUrl.fromLocalFile(os.path.join(AUDIO_DIR, "scout_upgrade.wav")))
+        self.PlanetDestructionSound.setSource(QUrl.fromLocalFile(os.path.join(AUDIO_DIR, "planet_destruction.wav")))
+        self.TradingConsoleSound.setSource(QUrl.fromLocalFile(os.path.join(AUDIO_DIR, "trading_console.wav")))
+        self.WarehouseTripsUpgradeSound.setSource(QUrl.fromLocalFile(os.path.join(AUDIO_DIR, "warehouse_trips_upgrade.wav")))
+        self.RumourSound.setSource(QUrl.fromLocalFile(os.path.join(AUDIO_DIR, "rumour.wav")))
+        self.RumourTrueSound.setSource(QUrl.fromLocalFile(os.path.join(AUDIO_DIR, "rumour_true.wav")))
+        self.DumpSound.setSource(QUrl.fromLocalFile(os.path.join(AUDIO_DIR, "dump.wav")))
+
         self.enabled = True
 
     def setEnabled(self, enabled):

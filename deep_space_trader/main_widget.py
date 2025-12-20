@@ -66,6 +66,7 @@ class MainWidget(QtWidgets.QDialog):
         infoGroup.setStyleSheet("QGroupBox{ font-weight: bold; }")
         infoGroup.setAlignment(QtCore.Qt.AlignCenter)
         infoGroup.setLayout(infoLayout)
+        infoGroup.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
 
         buttonLayout = QtWidgets.QHBoxLayout()
         self.buttonBar = ButtonBar(self)
@@ -243,7 +244,7 @@ class MainWidget(QtWidgets.QDialog):
                 return
 
             self.runRandomNotifications()
-            self.state.update_planet_item_prices()
+            self.state.current_planet.update_prices(self.state.day)
             self.infoBar.update()
             self.planetItemBrowser.update()
         else:

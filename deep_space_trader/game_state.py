@@ -1,4 +1,5 @@
 import random
+from collections import deque
 
 from deep_space_trader.planet import Planet
 from deep_space_trader.items import ItemCollection
@@ -31,12 +32,14 @@ class State(object):
         self.level = 1
         self.health = 100
         self.daily_cost = const.DAILY_LIVING_COST
+        self.previous_planets = deque(maxlen=2)
 
         self.warehouse_trips = 0
         self.expand_planets(const.INITIAL_PLANET_COUNT)
         self.current_planet = self.planets[0]
         self.current_planet.visited = True
         self.previous_planet = None
+        self.previous_planets_tail = None
         self.have_trading_console = False
 
         self.travel_log = []
@@ -104,7 +107,12 @@ class State(object):
 
     def change_current_planet(self, planetname):
         self.travel_log.append((planetname, self.day))
+
+        if len(self.previous_planets) == self.previous_planets.maxlen:
+            self.previous_planets_tail = self.previous_planets[-1]
+
         new_planet = self.get_planet_by_name(planetname)
+        self.previous_planets.appendleft(self.current_planet)
         self.previous_planet = self.current_planet
         self.current_planet = new_planet
         self.current_planet.visited = True
@@ -139,13 +147,6 @@ class State(object):
         self.warehouse_trips = 0
         self.store_purchases = 0
         return True
-
-    def update_planet_item_prices(self):
-        # Update prices of all items on all discovered planets
-        for planet in self.planets:
-            planet.clear_samples_today()
-            for item in planet.items.iter_items():
-                item.update_value()
 
     def expand_planets(self, num_new=None):
         if num_new is None:

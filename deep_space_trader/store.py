@@ -42,7 +42,7 @@ class PlanetExploration(StoreItem):
                                                "expeditions to be possible")
             return
 
-        if len(self.parent.state.planets) > const.MAX_PLANETS_ALLOWED:
+        if len(self.parent.state.planets) == const.MAX_PLANETS_ALLOWED:
             errorDialog(self.parent, "Sorry!", "Too many planets, you need to destroy "
                                          "some planets before you can discover more")
             return False
@@ -52,6 +52,9 @@ class PlanetExploration(StoreItem):
             return False
 
         num_new = random.randrange(*self.parent.state.planet_discovery_range)
+        if (num_new + len(self.parent.state.planets)) > const.MAX_PLANETS_ALLOWED:
+            num_new = const.MAX_PLANETS_ALLOWED - len(self.parent.state.planets)
+
         self.parent.state.expand_planets(num_new)
 
         self.parent.audio.play(self.parent.audio.PlanetDiscoverySound)
