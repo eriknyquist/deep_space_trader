@@ -88,7 +88,6 @@ class PlanetDestruction(StoreItem):
         return dialog.accepted
 
     def after_use(self):
-        self.parent.locationBrowser.update()
         self.parent.warehouseItemBrowser.update()
 
 

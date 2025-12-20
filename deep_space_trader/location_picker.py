@@ -84,22 +84,26 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
     def onDoubleClick(self):
         self.selectButtonClicked()
 
-    def addRow(self, planet):
-        nextFreeRow = self.table.rowCount()
-        self.table.insertRow(nextFreeRow)
-
-        item1 = QtWidgets.QTableWidgetItem(planet.full_name)
-        item1.setTextAlignment(QtCore.Qt.AlignHCenter)
-        item2 = QtWidgets.QTableWidgetItem("{:,}".format(planet.items.total_value))
-        item2.setTextAlignment(QtCore.Qt.AlignHCenter)
-
-        self.table.setItem(nextFreeRow, 0, item1)
-        self.table.setItem(nextFreeRow, 1, item2)
-
     def populateTable(self):
+        self.table.setUpdatesEnabled(False)
+        self.table.blockSignals(True)
+        self.table.setSortingEnabled(False)
+
+        self.table.clearContents()
         self.table.setRowCount(0)
-        for planet in self.state.planets:
-            self.addRow(planet)
+        self.table.setRowCount(len(self.state.planets))
+
+        for row in range(len(self.state.planets)):
+            planet = self.state.planets[row]
+            item1 = QtWidgets.QTableWidgetItem(planet.full_name)
+            item2 = QtWidgets.QTableWidgetItem("yes" if planet.visited else "no")
+            item2.setTextAlignment(QtCore.Qt.AlignHCenter)
+            self.table.setItem(row, 0, item1)
+            self.table.setItem(row, 1, item2)
+
+        self.table.setSortingEnabled(True)
+        self.table.blockSignals(False)
+        self.table.setUpdatesEnabled(True)
 
     def update(self):
         self.populateTable()
@@ -216,18 +220,15 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         destroyed_desc = ""
 
         if len(planets) == 1:
-            destroyed_desc = planets[0].full_name
             msg = ("Are you sure you want to destroy the planet {0}? {0} will cease to exist, and "
                    "all tradeable items that currrently exist on {0} will be shipped to your "
                    "warehouse.".format(planets[0].full_name))
         elif len(planets) < 6:
             planets_desc = ", ".join(p.full_name for p in planets[:-1]) + " and " + planets[-1].full_name
-            destroyed_desc = planets_desc
             msg = ("Are you sure you want to destroy {0}? These planets will cease to exist, and "
                    "all tradeable items that currrently exist on these planets will be shipped to your "
                    "warehouse.".format(planets_desc))
         else:
-            destroyed_desc = "{:,} planets".format(len(planets))
             msg = ("Are you sure you want to destroy {:,} planets? These planets will cease to exist, and "
                    "all tradeable items that currrently exist on these planets will be shipped to your "
                    "warehouse.".format(len(planets)))
@@ -249,10 +250,21 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
 
         for planet in planets_to_destroy:
             self.parent.state.warehouse.add_all_items(planet.items)
+            index = self.parent.state.planets.index(planet)
             self.parent.state.planets.remove(planet)
+            self.parent.locationBrowser.table.removeRow(index)
 
         self.close()
         self.accepted = True
+
+        if len(planets_to_destroy) == 1:
+            destroyed_desc = planets_to_destroy[0].full_name
+        elif len(planets_to_destroy) < 6:
+            destroyed_desc = (", ".join(p.full_name for p in planets_to_destroy[:-1]) + " and "
+                                        + planets_to_destroy[-1].full_name)
+        else:
+            destroyed_desc = "{:,} planets".format(len(planets_to_destroy))
+
 
         self.parent.audio.play(self.parent.audio.PlanetDestructionSound)
         infoDialog(self.parent, "Success", message="Destruction of %s is complete."
