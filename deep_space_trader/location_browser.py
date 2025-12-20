@@ -196,6 +196,8 @@ class LocationBrowser(QtWidgets.QWidget):
         self.table.blockSignals(False)
         self.table.setUpdatesEnabled(True)
 
+        self.parent.updatePlanetsGroupBoxTitle(len(planets))
+
     def update(self):
         self.populateTable(self.parent.state.planets)
         self.colorPreviousPlanets()

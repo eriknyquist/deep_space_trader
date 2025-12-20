@@ -56,13 +56,13 @@ class PlanetExploration(StoreItem):
             num_new = const.MAX_PLANETS_ALLOWED - len(self.parent.state.planets)
 
         self.parent.state.expand_planets(num_new)
+        self.parent.infoBar.update()
+        self.parent.locationBrowser.update()
 
         self.parent.audio.play(self.parent.audio.PlanetDiscoverySound)
         infoDialog(self.parent, "%d new planets willing to do business with you have "
                          "been discovered!" % num_new)
 
-        self.parent.infoBar.update()
-        self.parent.locationBrowser.update()
         return True
 
 
@@ -88,6 +88,7 @@ class PlanetDestruction(StoreItem):
         return dialog.accepted
 
     def after_use(self):
+        self.parent.updatePlanetsGroupBoxTitle()
         self.parent.warehouseItemBrowser.update()
 
 

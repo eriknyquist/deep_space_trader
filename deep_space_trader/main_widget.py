@@ -40,14 +40,14 @@ class MainWidget(QtWidgets.QDialog):
 
         middleColumnLayout = QtWidgets.QHBoxLayout()
 
+        self.locationBrowserGroup = QtWidgets.QGroupBox("Planets ({:,})".format(len(self.state.planets)))
+        self.locationBrowserGroup.setStyleSheet("QGroupBox{ font-weight: bold; }")
         planetsLayout = QtWidgets.QHBoxLayout()
         self.locationBrowser = LocationBrowser(self)
         planetsLayout.addWidget(self.locationBrowser)
-        locationBrowserGroup = QtWidgets.QGroupBox("Planets")
-        locationBrowserGroup.setStyleSheet("QGroupBox{ font-weight: bold; }")
-        locationBrowserGroup.setLayout(planetsLayout)
-        locationBrowserGroup.setAlignment(QtCore.Qt.AlignCenter)
-        middleColumnLayout.addWidget(locationBrowserGroup)
+        self.locationBrowserGroup.setLayout(planetsLayout)
+        self.locationBrowserGroup.setAlignment(QtCore.Qt.AlignCenter)
+        middleColumnLayout.addWidget(self.locationBrowserGroup)
 
         playerItemsLayout = QtWidgets.QHBoxLayout()
         self.playerItemBrowser = PlayerItemBrowser(self)
@@ -103,6 +103,10 @@ class MainWidget(QtWidgets.QDialog):
         self.mainLayout.addLayout(lastColumnLayout)
 
         config.config_load()
+
+    def updatePlanetsGroupBoxTitle(self, count=None):
+        num_planets = len(self.state.planets) if count is None else count
+        self.locationBrowserGroup.setTitle("Planets ({:,})".format(num_planets))
 
     def enableSounds(self, enabled):
         self.audio.setEnabled(enabled)
