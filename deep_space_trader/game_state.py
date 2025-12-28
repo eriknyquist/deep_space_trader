@@ -39,9 +39,9 @@ class State(object):
         self.max_days = const.INITIAL_MAX_DAYS
         self.store_purchases = 0
         self.planets_discovered = 0
-        self.battle_level = 10
+        self.battle_level = 0
         self.max_battle_level = const.MAX_BATTLE_LEVEL
-        self.scout_level = 10
+        self.scout_level = 0
         self.max_scout_level = const.MAX_SCOUT_LEVEL
         self.day = 1
         self.level = 1
