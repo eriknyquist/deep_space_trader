@@ -224,18 +224,28 @@ class LocationBrowser(QtWidgets.QWidget):
         if random.randint(0, 100) <= self.parent.state.chance_of_being_robbed_in_transit():
             self.parent.audio.play(self.parent.audio.BattleSound)
             accepted = yesNoDialog(self, "Attacked by pirates!",
-                                   "You have encountered a pirate fleet while travelling " +
-                                   "between planets!<br><br>Your battle fleet must defeat them if " +
-                                   "you want to continue.<br><br>If you do not fight, then the only other " +
-                                   "option is surrender; you will not die, but you may lose some of " +
-                                   "your money and resources.<br><br>Do you want to fight?",
+                                   "You have encountered a pirate fleet while travelling "
+                                   "between planets!<br><br>Your battle fleet must defeat them if "
+                                   "you want to continue.<br><br>"
+                                   "If you fight and lose, you will die.<br><br>"
+                                   "If you fight and win, you you will lose some health, but you will "
+                                   "be able to continue your travels and will not lose any money"
+                                   "or resources.<br><br>"
+                                   "If you do not fight, then the only other "
+                                   "option is surrender; you will not die or lose any health, but you "
+                                   "may lose some of your money and resources.<br><br>Do you want to fight?",
                                    cancelable=False)
             if accepted:
-                if self.parent.state.battle_won():
-                    self.parent.audio.play(self.parent.audio.VictorySound)
-                    infoDialog(self, "Battle won!", "You have defeated the pirate fleet, " +
-                               "and can continue with your travels.")
-                else:
+                battle_won = self.parent.state.battle_won()
+                if battle_won:
+                    self.parent.state.lost_health_from_battle()
+                    self.parent.state.disable_health_recovery_today()
+                    if self.parent.state.health > 0:
+                        self.parent.audio.play(self.parent.audio.VictorySound)
+                        infoDialog(self, "Battle won!", "You have defeated the pirate fleet, " +
+                                   "and can continue with your travels.")
+
+                if (not battle_won) or (self.parent.state.health == 0):
                     self.parent.audio.play(self.parent.audio.DeathSound)
                     infoDialog(self, "Battle lost!", "You have been defeated by the pirate fleet." +
                                "<br><br>You are dead.")

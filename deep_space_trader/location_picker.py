@@ -145,7 +145,8 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             "dispatched, and is prepared to defend the planet if you try to destroy it. " +
             "You must defeat them if you want to continue with the destruction of {0}." +
             "<br><br>If you fight and lose, you will die and the game will be over." +
-            "<br><br>If you fight and win, you will destroy this planet and gain its materials." +
+            "<br><br>If you fight and win, you will destroy this planet and gain its materials, " +
+            "but you will lose some health."
             "<br><br>If you choose not to fight, you will not be able to destroy this planet, " +
             "but will continue unscathed."
         ).format(resisting_planet.full_name)
@@ -165,11 +166,15 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             # Remove resisting planet from list of planets to destroy
             return [p for p in planets_to_destroy if id(p) != id(resisting_planet)]
 
-        if self.state.battle_won():
+        battle_won = self.state.battle_won()
+        if battle_won:
             self.parent.audio.play(self.parent.audio.VictorySound)
-            infoDialog(self.parent, "Victory!",
-                       message="You have defeated %s!" % resisting_planet.full_name)
-        else:
+            self.parent.state.lost_health_from_battle()
+            if self.parent.state.health > 0:
+                infoDialog(self.parent, "Victory!",
+                           message="You have defeated %s!" % resisting_planet.full_name)
+
+        if (not battle_won) or (self.parent.state.health == 0):
             self.parent.audio.play(self.parent.audio.DeathSound)
             infoDialog(self.parent, "Defeat!",
                        message="You have been defeated in battle by %s."
@@ -254,7 +259,6 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             self.parent.state.planets.remove(planet)
             self.parent.locationBrowser.table.removeRow(index)
 
-        self.close()
         self.accepted = True
 
         if len(planets_to_destroy) == 1:
@@ -276,7 +280,8 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
                                                      "you were on, and killed yourself.<br><br>"
                                                      "You are dead.")
             self.died = True
-            self.close()
+
+        self.close()
 
     def sizeHint(self):
         return QtCore.QSize(600, 400)

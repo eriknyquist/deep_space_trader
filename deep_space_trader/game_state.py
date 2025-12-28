@@ -5,6 +5,21 @@ from deep_space_trader.planet import Planet
 from deep_space_trader.items import ItemCollection
 from deep_space_trader import constants as const
 
+# Ranges of possible health loss during battle, by battle level number
+health_loss_ranges_by_battle_level = [
+    (7, 10),  # battle level 0
+    (7, 9),   # battle level 1
+    (6, 9),   # battle level 2
+    (5, 8),   # battle level 3
+    (4, 7),   # battle level 4
+    (4, 6),   # battle level 5
+    (3, 5),   # battle level 6
+    (2, 4),   # battle level 7
+    (1, 3),   # battle level 8
+    (0, 3),   # battle level 9
+    (0, 2),   # battle level 10
+]
+
 
 class State(object):
     def __init__(self, main_widget):
@@ -24,9 +39,9 @@ class State(object):
         self.max_days = const.INITIAL_MAX_DAYS
         self.store_purchases = 0
         self.planets_discovered = 0
-        self.battle_level = 0
+        self.battle_level = 10
         self.max_battle_level = const.MAX_BATTLE_LEVEL
-        self.scout_level = 0
+        self.scout_level = 10
         self.max_scout_level = const.MAX_SCOUT_LEVEL
         self.day = 1
         self.level = 1
@@ -41,6 +56,7 @@ class State(object):
         self.previous_planet = None
         self.previous_planets_tail = None
         self.have_trading_console = False
+        self.no_health_recovery = False
 
         self.travel_log = []
         self.transaction_log = []
@@ -141,12 +157,26 @@ class State(object):
         new_money = max(0, self.money - self.daily_cost)
         if (self.money == 0) and (new_money == 0):
             self.health = max(0, self.health - 15)
+        else:
+            if self.no_health_recovery:
+                self.no_health_recovery = False
+            else:
+                self.health = min(100, self.health + 15)
 
         self.money = new_money
         self.day += 1
         self.warehouse_trips = 0
         self.store_purchases = 0
         return True
+
+    def disable_health_recovery_today(self):
+        self.no_health_recovery = True
+
+    def lost_health_from_battle(self):
+        # Randomly reduce health (higher battle level means less potential for loss)
+        lower, upper = health_loss_ranges_by_battle_level[self.battle_level]
+        health_loss = random.randrange(lower, upper)
+        self.health = max(self.health - (health_loss * 10), 0)
 
     def expand_planets(self, num_new=None):
         if num_new is None:
