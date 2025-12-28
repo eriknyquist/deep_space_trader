@@ -203,10 +203,12 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         if not planets_to_destroy:
             return
 
-        for p in planets_to_destroy:
-            self.state.warehouse.add_all_items(p.items)
+        for planet in planets_to_destroy:
+            self.state.warehouse.add_all_items(planet.items)
+            index = self.parent.state.planets.index(planet)
+            self.parent.state.planets.remove(planet)
+            self.parent.locationBrowser.table.removeRow(index)
 
-        self.state.planets = [p for p in self.state.planets if p not in planets_to_destroy]
         self.final_price = self.all_planets_cost
 
         self.close()
