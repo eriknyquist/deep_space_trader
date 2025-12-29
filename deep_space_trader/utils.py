@@ -12,7 +12,7 @@ PWD_ITER = 72
 PWD = b'g\x54n70erew feasf90s gf\xff\x0f\x290780 9\x02ng7804\x00>:": k'
 
 if getattr(sys, 'frozen', False):
-    SOURCE_DIR = os.path.dirname(sys.executable)
+    SOURCE_DIR = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
 else:
     SOURCE_DIR = os.path.dirname(__file__)
 
