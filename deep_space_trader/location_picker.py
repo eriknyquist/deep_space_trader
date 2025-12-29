@@ -136,7 +136,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         successful = True
         resisting_planet = self.checkForResistingPlanet(planets_to_destroy)
         if resisting_planet is None:
-            return planets_to_destroy
+            return planets_to_destroy, None
 
         resisting_planet.resists_destruction = True
 
@@ -164,7 +164,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
                        message="You have declined to fight %s. They win, this time." % resisting_planet.full_name)
 
             # Remove resisting planet from list of planets to destroy
-            return [p for p in planets_to_destroy if id(p) != id(resisting_planet)]
+            return [p for p in planets_to_destroy if id(p) != id(resisting_planet)], resisting_planet
 
         battle_won = self.state.battle_won()
         if battle_won:
@@ -182,9 +182,9 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             planets_to_destroy = None
             self.died = True
             self.close()
-            return []
+            return [], None
 
-        return planets_to_destroy
+        return planets_to_destroy, resisting_planet
 
     def allButtonClicked(self):
         proceed = yesNoDialog(self, "Are you sure?",
@@ -199,15 +199,18 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         self.accepted = True
         planets_to_destroy = [p for p in self.state.planets if id(p) != id(self.state.current_planet)]
 
-        planets_to_destroy = self.handlePlanetResistance(planets_to_destroy)
+        planets_to_destroy, resisting_planet = self.handlePlanetResistance(planets_to_destroy)
         if not planets_to_destroy:
             return
 
         for planet in planets_to_destroy:
             self.state.warehouse.add_all_items(planet.items)
-            index = self.parent.state.planets.index(planet)
-            self.parent.state.planets.remove(planet)
-            self.parent.locationBrowser.table.removeRow(index)
+
+        self.parent.state.planets = [self.parent.state.current_planet]
+        if resisting_planet is not None:
+            self.parent.state.planets.append(resisting_planet)
+
+        self.parent.locationBrowser.update()
 
         self.final_price = self.all_planets_cost
 
@@ -251,7 +254,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         if not proceed:
             return
 
-        planets_to_destroy = self.handlePlanetResistance(planets)
+        planets_to_destroy, resisting_planet = self.handlePlanetResistance(planets)
         if not planets_to_destroy:
             return
 
