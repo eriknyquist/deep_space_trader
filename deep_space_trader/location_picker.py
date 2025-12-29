@@ -174,6 +174,8 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
                 infoDialog(self.parent, "Victory!",
                            message="You have defeated %s!" % resisting_planet.full_name)
 
+                resisting_planet = None
+
         if (not battle_won) or (self.parent.state.health == 0):
             self.parent.audio.play(self.parent.audio.DeathSound)
             infoDialog(self.parent, "Defeat!",

@@ -39,9 +39,9 @@ class State(object):
         self.max_days = const.INITIAL_MAX_DAYS
         self.store_purchases = 0
         self.planets_discovered = 0
-        self.battle_level = 0
+        self.battle_level = const.INITIAL_BATTLE_LEVEL
         self.max_battle_level = const.MAX_BATTLE_LEVEL
-        self.scout_level = 0
+        self.scout_level = const.INITIAL_SCOUT_LEVEL
         self.max_scout_level = const.MAX_SCOUT_LEVEL
         self.day = 1
         self.level = 1
@@ -132,6 +132,7 @@ class State(object):
         self.previous_planet = self.current_planet
         self.current_planet = new_planet
         self.current_planet.visited = True
+        self.current_planet.clear_samples_today()
 
     def record_sale(self, item_name, quantity, price):
         self.transaction_log.append(("sold", self.day, self.current_planet.full_name, item_name, quantity, price))
@@ -167,6 +168,7 @@ class State(object):
         self.day += 1
         self.warehouse_trips = 0
         self.store_purchases = 0
+        self.current_planet.clear_samples_today()
         return True
 
     def disable_health_recovery_today(self):
