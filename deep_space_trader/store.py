@@ -17,6 +17,7 @@ class StoreItem(object):
         self.description = description
         self.price = price
         self.parent = parent
+        self.final_price = None
 
     def use(self):
         raise NotImplementedError()
@@ -82,7 +83,7 @@ class PlanetDestruction(StoreItem):
         dialog.exec_()
 
         if dialog.accepted:
-            self.price = dialog.final_price
+            self.final_price = dialog.final_price
 
         self.died = dialog.died
         return dialog.accepted
@@ -393,18 +394,25 @@ class Store(QtWidgets.QDialog):
 
         proceed = item.use()
 
+        if not proceed:
+            return
+
+        if item.final_price is not None:
+            price = item.final_price
+            item.final_price = None
+        else:
+            price = item.price
+
+        self.parent.state.store_purchases += 1
+        self.parent.state.money -= price
+        self.parent.infoBar.update()
+        self.updateMoneyLabel()
+
         if item.died:
             self.parent.checkHighScore()
             self.parent.reset()
             self.close()
             return
-
-        if not proceed:
-            return
-
-        self.parent.state.store_purchases += 1
-        self.parent.state.money -= item.price
-        self.parent.infoBar.update()
 
         item.after_use()
         self.update()

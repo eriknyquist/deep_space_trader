@@ -81,6 +81,11 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
 
         self.selectButton.setText(text)
 
+        if cost > self.parent.state.money:
+            self.selectButton.setEnabled(False)
+        else:
+            self.selectButton.setEnabled(True)
+
     def onDoubleClick(self):
         self.selectButtonClicked()
 
@@ -181,10 +186,9 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             infoDialog(self.parent, "Defeat!",
                        message="You have been defeated in battle by %s."
                                "<br><br><br>You are dead :(" % resisting_planet.full_name)
-            planets_to_destroy = None
             self.died = True
             self.close()
-            return [], None
+            return planets_to_destroy, resisting_planet
 
         return planets_to_destroy, resisting_planet
 
@@ -202,7 +206,9 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         planets_to_destroy = [p for p in self.state.planets if id(p) != id(self.state.current_planet)]
 
         planets_to_destroy, resisting_planet = self.handlePlanetResistance(planets_to_destroy)
-        if not planets_to_destroy:
+        self.final_price = const.PLANET_DESTRUCTION_COST * len(planets_to_destroy)
+
+        if self.died:
             return
 
         for planet in planets_to_destroy:
@@ -213,8 +219,6 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             self.parent.state.planets.append(resisting_planet)
 
         self.parent.locationBrowser.update()
-
-        self.final_price = self.all_planets_cost
 
         self.close()
 
@@ -256,8 +260,12 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         if not proceed:
             return
 
+        self.accepted = True
+
         planets_to_destroy, resisting_planet = self.handlePlanetResistance(planets)
-        if not planets_to_destroy:
+        self.final_price = const.PLANET_DESTRUCTION_COST * len(planets_to_destroy)
+
+        if self.died:
             return
 
         for planet in planets_to_destroy:
@@ -265,8 +273,6 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             index = self.parent.state.planets.index(planet)
             self.parent.state.planets.remove(planet)
             self.parent.locationBrowser.table.removeRow(index)
-
-        self.accepted = True
 
         if len(planets_to_destroy) == 1:
             destroyed_desc = planets_to_destroy[0].full_name
