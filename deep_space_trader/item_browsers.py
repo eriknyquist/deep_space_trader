@@ -111,7 +111,9 @@ class ItemBrowser(QtWidgets.QWidget):
         header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
 
     def update(self):
+        self.table.setSortingEnabled(False)
         self.populateTable()
+        self.table.setSortingEnabled(True)
         super(ItemBrowser, self).update()
 
     def add_button(self, text, on_click, tooltip):
@@ -411,7 +413,9 @@ class TradingConsolePlanetDisplay(QtWidgets.QWidget):
         planet_item_browser_setup_header(self)
 
     def update(self):
+        self.table.setSortingEnabled(False)
         self.populateTable()
+        self.table.setSortingEnabled(True)
         super(TradingConsolePlanetDisplay, self).update()
 
     def addRow(self, itemname):
