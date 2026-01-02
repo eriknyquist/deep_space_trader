@@ -1,6 +1,6 @@
 .. sectnum::
 
-Deep Space Trader 1.3.1
+Deep Space Trader 1.4.0
 -----------------------
 
 .. image:: images/readme_image.png
@@ -27,6 +27,12 @@ Install as a python package:
 ::
 
     pip install deep_space_trader
+
+And run like so:
+
+::
+
+    python -m deep_space_trader
 
 Introduction
 ============
@@ -62,7 +68,7 @@ allow the player to:
 * Upgrade the player's inventory capacity, which increases the number of items that can
   be bought or sold at once.
 
-* Increment the number of warehouse trips allowed per day
+* Increase the number of warehouse trips allowed per day
 
 Complete Game Reference
 =======================
@@ -88,13 +94,13 @@ The "Information" section stretches across the entire top of the main game windo
 shows useful information about the current state of the game.
 
 * **"Current Planet"**: Shows the name of, and an image of, the current planet the player is on.
-* **"Current Day"**: Shows the current day number, against the total number of days before the game ends.
+* **"Daily cost"**: Current daily cost of living that gets subtracted from your money on each new day.
 * **"Money"**: Shows the amount of money currently held by the player.
 * **"Purchases"**: Shows the number of store purchases made by the player so far on the current day, against
   the total number of store purchases allowed on the current day (see `"Store" window`_ for more information).
-* **"Planets discovered"**: Shows the total number of planets that have been discovered by the player.
-  This number includes planets that have not been visited by the player, and planets that have been
-  destroyed by the player.
+* **"Warehouse trips"**: Shows the number of trips to the warehouse made by the player so far on the current day,
+  against the total number of warehouse trips allowed on the current day (see `"Store" window`_ for
+  more information).
 * **"Scout fleet level"**: Shows the current upgrade level of the players scout fleet, against the
   maximum possible upgrade level for the players scout fleet. (see `"Store" window`_ for more information
   about upgrading the scout fleet).
@@ -102,6 +108,11 @@ shows useful information about the current state of the game.
   maximum possible upgrade level for the players battle fleet. Also shows the chance (percentage) of
   the player winning a battle, based on current battle fleet upgrade level. (see `"Store" window`_ for more
   information about upgrading the battle fleet).
+* **"Planets discovered"**: Shows the total number of planets that have been discovered by the player.
+  This number includes planets that have not been visited by the player, and planets that have been
+  destroyed by the player.
+* **"Current Day"**: Shows the current day number, against the total number of days before the game ends.
+* **"Health"**: Shows the players current health level.
 
 **Global buttons section**
 ++++++++++++++++++++++++++
@@ -145,7 +156,7 @@ left area of the main game window.
   directly before the current planet. Travelling to a planet costs 100 of the player's money,
   and advances the current day by 1.
 
-* **"See item prices on planet" button**: Opens the trading console, which allows current item prices
+* **"Trading console" button**: Opens the trading console, which allows current item prices
   on the selected planet to be seen without travelling to the planet. Pressing the Enter key while a
   planet is selected will also open the trading console. The trading console can only be used if the
   "Trading console" item has been purchased from the `"Store" window`_.
@@ -154,7 +165,9 @@ left area of the main game window.
   columns: The rightmost column, labelled "visited?", shows "yes" or "no" indicating whether
   the player has travelled to the planet. The leftmost column, labelled "Planet", shows the
   name of the planet. The player can travel to a planet by double-clicking on the planet name
-  within the planet display table.
+  within the planet display table. The last 3 planets visited will be colored different shades of
+  green- the current planet will be a bright green, the previous planet a darker green, and the
+  planet before that the darkest green.
 
 
 **"Items on current planet" section**
@@ -213,7 +226,7 @@ right area of the main game window.
   the current planet. Only items that the current planet already holds will be sold
   (free samples can only be provided via the "Sell items" button).
 
-* **"Add to warehouse" button**: Allows the player to move 1 or more of the selected item
+* **"To warehouse" button**: Allows the player to move 1 or more of the selected item
   from their ship to the warehouse. Unlike the player's ship, the warehouse has infinite
   capacity, but only one move to/from the warehouse per day is allowed (i.e. one trip
   to the warehouse per day). Additional warehouse trips per day can be purchased from the Store
@@ -221,7 +234,7 @@ right area of the main game window.
   Clicking this button opens a new window that allows the player to select the quantity of
   the item they want to move to the warehouse (see `"Move to warehouse" window`_).
 
-* **"Dump selected" button**: Throws away the selected items to free up capacity on the
+* **"Dump" button**: Throws away the selected items to free up capacity on the
   player's ship. Opens a new window that allows the player to select the quantity they wish to
   dump of the selected item (See `"Dump player items" window`_).
 
@@ -243,7 +256,7 @@ game window. The "Items in warehouse" section is used for browsing / managing it
 reside in the warehouse. The "Items in warehouse" section is displayed in the bottom
 right area of the main game window.
 
-* **"Retrieve items" button**: Allows the player to move 1 or more of the selected items
+* **"Retrieve" button**: Allows the player to move 1 or more of the selected items
   from the warehouse to their ship. Only one move to/from the warehouse per day is allowed
   (i.e. one trip to the warehouse per day). Clicking this button opens a new window that
   allows the player to select the quantity of the item they want to move to their ship (see
@@ -252,7 +265,7 @@ right area of the main game window.
 * **"Retrieve all" button**: Moves all warehouse items (or however many will fit) to the
   player's ship.
 
-* **"Dump selected" button**: Throws away the selected items from the warehouse. Opens a new
+* **"Dump" button**: Throws away the selected items from the warehouse. Opens a new
   window that allows the player to select the quantity they wish to dump of the selected items
   (see `"Dump warehouse items" window`_).
 
@@ -279,7 +292,8 @@ purchases can be made per day, but this number is increased when the player reac
   stored on the players ship. This item can be bought an unlimited number of times.
 
 * **Scout expedition**: Buying this item allows the player to discover between 4-8 new planets,
-  which will become available in the `"Planets" section`_. More planets can be discovered per
+  which will become available in the `"Planets" section`_. This item cannot be purchased unless
+  the player has already purchased a scout fleet. More planets can be discovered per
   scout expedition by purchasing the "Upgrade scout fleet" store item.
 
 * **Planet destruction kit**: Buying this item allows the player to destroy one planet and obtain
@@ -293,9 +307,11 @@ purchases can be made per day, but this number is increased when the player reac
   If the player fights and wins, then planet destruction will continue normally. The chance of
   the player winning this fight depends on the player's battle fleet level.
 
-* **Upgrade scout fleet**: Buying this item increases the number of planets than can be
-  discovered on a single scout expedition. This item can be bought a maximum of 9 times,
-  to upgrade the scout fleet through levels 1 to 10.
+* **Buy/upgrade scout fleet**: Buying this item for the first time gives the player a
+  scout fleet that allows the player to discover new planets to trade with. Subsequent
+  purchases of this item upgrade the player's scout fleet, which increases the number of
+  planets than can be discovered on a single scout expedition. The scout fleet can be upgraded
+  9 times, from level 1 through level 10.
 
   * *Scout fleet level 1*: between 4 and 8 new planets per scout expedition
   * *Scout fleet level 2*: between 4 and 16 new planets per scout expedition
@@ -311,18 +327,20 @@ purchases can be made per day, but this number is increased when the player reac
 * **Buy/upgrade battle fleet**: Buying this item for the first time gives the player a
   battle fleet, which increases the chances of the player winning battles against planets
   that resist destruction, or when being robbed while travelling between planets. Subsequent
-  purchases of this item upgrade the battle fleet through levels 1-10.
+  purchases of this item upgrade the battle fleet, which increases the chances of
+  the player winning battles against pirates or against planets that resist destruction.
+  The battle fleet can be upgraded 9 times, from level 1 to level 10.
 
   * *Battle fleet level 0 (no battle fleet)*: 1% chance of winning battles
   * *Battle fleet level 1*: 10% chance of winning battles
-  * *Battle fleet level 2*: 15% chance of winning battles
-  * *Battle fleet level 3*: 20% chance of winning battles
-  * *Battle fleet level 4*: 25% chance of winning battles
-  * *Battle fleet level 5*: 35% chance of winning battles
-  * *Battle fleet level 6*: 50% chance of winning battles
-  * *Battle fleet level 7*: 65% chance of winning battles
+  * *Battle fleet level 2*: 20% chance of winning battles
+  * *Battle fleet level 3*: 30% chance of winning battles
+  * *Battle fleet level 4*: 40% chance of winning battles
+  * *Battle fleet level 5*: 50% chance of winning battles
+  * *Battle fleet level 6*: 60% chance of winning battles
+  * *Battle fleet level 7*: 70% chance of winning battles
   * *Battle fleet level 8*: 80% chance of winning battles
-  * *Battle fleet level 9*: 95% chance of winning battles
+  * *Battle fleet level 9*: 90% chance of winning battles
   * *Battle fleet level 10*: 99% chance of winning battles
 
 * **Increase warehouse limit**: Buying this item will increase by 1 the number of warehouse trips

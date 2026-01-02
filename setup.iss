@@ -7,15 +7,15 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{8E361029-9398-4236-B388-00D4C4D2F1D1}
 AppName=Deep Space Trader
-AppVersion=1.3.1
-;AppVerName=Deep Space Trader 1.3.1
+AppVersion=1.4.0
+;AppVerName=Deep Space Trader 1.4.0
 AppPublisher=Erik Nyquist
 AppPublisherURL=http://www.ekn.io
 AppSupportURL=http://www.ekn.io
 AppUpdatesURL=http://www.ekn.io
 DefaultDirName={pf}\Deep Space Trader
 DefaultGroupName=Deep Space Trader
-OutputBaseFilename=deep-space-trader-1.3.1
+OutputBaseFilename=deep-space-trader-1.4.0
 SetupIconFile=C:\Users\Gamer\deep_space_trader\deep_space_trader\images\icon.ico
 Compression=lzma
 SolidCompression=yes
