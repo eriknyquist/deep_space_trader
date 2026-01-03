@@ -11,7 +11,7 @@ README = os.path.join(HERE, "README.rst")
 REQFILE = 'requirements.txt'
 
 classifiers = [
-    'License :: OSI Approved :: Apache Software License',
+    'License :: OSI Approved :: MIT License',
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
@@ -31,7 +31,7 @@ setup(
     url='http://github.com/eriknyquist/deep_space_trader',
     author='Erik Nyquist',
     author_email='eknyquist@gmail.com',
-    license='Apache 2.0',
+    license='MIT',
     install_requires=dependencies,
     packages=['deep_space_trader'],
     package_data={'deep_space_trader':['images/*', 'audio/*']},
