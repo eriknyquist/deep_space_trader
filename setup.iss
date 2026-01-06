@@ -29,8 +29,8 @@ Source: "C:\Users\Gamer\deep_space_trader\dist\Deep Space Trader\*"; DestDir: "{
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{group}\Deep Space Trader"; Filename: "{app}\Deep Space Trader.exe"; IconFilename: {app}\images\icon.ico
-Name: "{commondesktop}\Deep Space Trader"; Filename: "{app}\Deep Space Trader.exe"; IconFilename: {app}\images\icon.ico; Tasks: desktopicon
+Name: "{group}\Deep Space Trader"; Filename: "{app}\Deep Space Trader.exe"; IconFilename: {app}\_internal\images\icon.ico
+Name: "{commondesktop}\Deep Space Trader"; Filename: "{app}\Deep Space Trader.exe"; IconFilename: {app}\_internal\images\icon.ico; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\Deep Space Trader.exe"; Description: "{cm:LaunchProgram,Deep Space Trader}"; Flags: nowait postinstall skipifsilent
