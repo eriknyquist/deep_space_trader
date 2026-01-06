@@ -26,7 +26,8 @@ with open(REQFILE, 'r') as fh:
 setup(
     name='deep_space_trader',
     version=version,
-    description=('Dumb space game'),
+    description=('A turn-based strategy game. You are the owner & operator of a '
+                 'deep-space commercial trading vessel willing to do anything to get rich.'),
     long_description=long_description,
     url='http://github.com/eriknyquist/deep_space_trader',
     author='Erik Nyquist',
