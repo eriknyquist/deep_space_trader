@@ -115,6 +115,12 @@ MAX_STORE_PURCHASES_PER_DAY = 4
 # Number of high scores stored
 MAX_HIGH_SCORES = 10
 
+# Language to use instead of the system language, e.g. "pt_BR" for Brazilian
+# Portuguese, or None to use the system language. Also sets how numbers are
+# formatted (e.g. 1.000.000 instead of 1,000,000)
+#FORCE_LANGUAGE = "pt_BR"
+FORCE_LANGUAGE = None
+
 # Text shown in the intro dialog. Marked for translation here, and translated
 # when shown (see utils.gameStoryDialog), since translations aren't loaded yet
 # when this module is imported

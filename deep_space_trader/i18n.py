@@ -3,6 +3,8 @@ import sys
 
 from PyQt5.QtCore import QCoreApplication, QLocale, QTranslator, QLibraryInfo
 
+from deep_space_trader import constants as const
+
 # Found the same way as utils.SOURCE_DIR (utils can't be imported here, since it uses this module)
 if getattr(sys, 'frozen', False):
     _SOURCE_DIR = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
@@ -76,15 +78,19 @@ def _installTranslator(app, filename, directory, locale=None):
 
 def installTranslators(app):
     """
-    Load translations for the system language. Must be called before any
-    translated text is created.
+    Load translations for the system language, or for constants.FORCE_LANGUAGE
+    if it is set. Must be called before any translated text is created.
     """
+    if const.FORCE_LANGUAGE is not None:
+        # Also makes formatNumber() and %Ln use this language's number format
+        QLocale.setDefault(QLocale(const.FORCE_LANGUAGE))
+
     # Qt's own text, e.g. the Yes/No/Cancel buttons in message boxes
     _installTranslator(app, "qtbase", QLibraryInfo.location(QLibraryInfo.TranslationsPath), QLocale())
 
     # English plural forms ("1 planet", "2 planets"); also used for any text
-    # that the translation for the system language doesn't cover
+    # that the translation for the chosen language doesn't cover
     _installTranslator(app, "deep_space_trader_en", TRANSLATIONS_DIR)
 
-    # Translation for the system language. Installed last, so it's used first
+    # Translation for the chosen language. Installed last, so it's used first
     _installTranslator(app, "deep_space_trader", TRANSLATIONS_DIR, QLocale())
