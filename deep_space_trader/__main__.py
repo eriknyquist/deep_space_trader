@@ -9,6 +9,7 @@ from deep_space_trader import constants as const
 from deep_space_trader.main_widget import MainWidget
 from deep_space_trader.sounds import waitForSounds
 from deep_space_trader.utils import gameStoryDialog, showAboutDialog, SOURCE_DIR, IMAGE_DIR, ICON_PATH
+from deep_space_trader.i18n import installTranslators
 
 from PyQt5 import QtWidgets, QtGui, QtCore
 
@@ -31,80 +32,80 @@ class MainWindow(QtWidgets.QMainWindow):
         self.widget = MainWidget(self.primary_screen, self)
         self.setCentralWidget(self.widget)
 
-        self.quitAction = QtWidgets.QAction("Quit game", self)
+        self.quitAction = QtWidgets.QAction(self.tr("Quit game"), self)
         self.quitAction.setShortcut("Ctrl+q")
-        self.quitAction.setStatusTip("Stop playing the game")
+        self.quitAction.setStatusTip(self.tr("Stop playing the game"))
         self.quitAction.triggered.connect(self.widget.quit)
 
-        self.scoresAction = QtWidgets.QAction("Show high scores", self)
+        self.scoresAction = QtWidgets.QAction(self.tr("Show high scores"), self)
         self.scoresAction.setShortcut("Ctrl+e")
-        self.scoresAction.setStatusTip("Show table of high scores")
+        self.scoresAction.setStatusTip(self.tr("Show table of high scores"))
         self.scoresAction.triggered.connect(self.widget.showHighScores)
 
-        self.aboutAction = QtWidgets.QAction("About", self)
+        self.aboutAction = QtWidgets.QAction(self.tr("About"), self)
         self.aboutAction.setShortcut("Ctrl+h")
-        self.aboutAction.setStatusTip("About this game")
+        self.aboutAction.setStatusTip(self.tr("About this game"))
         self.aboutAction.triggered.connect(showAboutDialog)
 
-        self.shareScoresAction = QtWidgets.QAction("High score sharing", self)
+        self.shareScoresAction = QtWidgets.QAction(self.tr("High score sharing"), self)
         self.shareScoresAction.setShortcut("Ctrl+r")
-        self.shareScoresAction.setStatusTip("Share your high scores with others")
+        self.shareScoresAction.setStatusTip(self.tr("Share your high scores with others"))
         self.shareScoresAction.triggered.connect(self.widget.shareHighScores)
 
-        self.pricesAction = QtWidgets.QAction("Material prices", self)
+        self.pricesAction = QtWidgets.QAction(self.tr("Material prices"), self)
         self.pricesAction.setShortcut("Ctrl+a")
-        self.pricesAction.setStatusTip("Show base prices for tradeable items")
+        self.pricesAction.setStatusTip(self.tr("Show base prices for tradeable items"))
         self.pricesAction.triggered.connect(self.widget.showPrices)
 
-        self.travelLogAction = QtWidgets.QAction("Show travel log", self)
+        self.travelLogAction = QtWidgets.QAction(self.tr("Show travel log"), self)
         self.travelLogAction.setShortcut("Ctrl+s")
-        self.travelLogAction.setStatusTip("Show a log of planets travelled to")
+        self.travelLogAction.setStatusTip(self.tr("Show a log of planets travelled to"))
         self.travelLogAction.triggered.connect(self.widget.showTravelLog)
 
-        self.transactionLogAction = QtWidgets.QAction("Show transaction log", self)
+        self.transactionLogAction = QtWidgets.QAction(self.tr("Show transaction log"), self)
         self.transactionLogAction.setShortcut("Ctrl+t")
-        self.transactionLogAction.setStatusTip("Show a log of all materials bought/sold")
+        self.transactionLogAction.setStatusTip(self.tr("Show a log of all materials bought/sold"))
         self.transactionLogAction.triggered.connect(self.widget.showTransactionLog)
 
-        self.darkThemeAction = QtWidgets.QAction("Dark theme", self)
+        self.darkThemeAction = QtWidgets.QAction(self.tr("Dark theme"), self)
         self.darkThemeAction.setShortcut("Ctrl+v")
-        self.darkThemeAction.setStatusTip("Enable/disable dark theme")
+        self.darkThemeAction.setStatusTip(self.tr("Enable/disable dark theme"))
         self.darkThemeAction.triggered.connect(self.toggleDarkTheme)
         self.darkThemeAction.setCheckable(True)
         self.darkThemeAction.setChecked(True)
 
-        self.tooltipsAction = QtWidgets.QAction("Show tooltips", self)
+        self.tooltipsAction = QtWidgets.QAction(self.tr("Show tooltips"), self)
         self.tooltipsAction.setShortcut("Ctrl+p")
-        self.tooltipsAction.setStatusTip("Enable/disable tooltips when hovering over game elements")
+        self.tooltipsAction.setStatusTip(self.tr("Enable/disable tooltips when hovering over game elements"))
         self.tooltipsAction.triggered.connect(self.toggleTooltips)
         self.tooltipsAction.setCheckable(True)
         self.tooltipsAction.setChecked(True)
 
-        self.audioAction = QtWidgets.QAction("Sounds", self)
+        self.audioAction = QtWidgets.QAction(self.tr("Sounds"), self)
         self.audioAction.setShortcut("Ctrl+m")
-        self.audioAction.setStatusTip("Enable/disable game sounds")
+        self.audioAction.setStatusTip(self.tr("Enable/disable game sounds"))
         self.audioAction.triggered.connect(self.toggleSounds)
         self.audioAction.setCheckable(True)
         self.audioAction.setChecked(True)
 
         # Build menu bar
         menu = self.menuBar()
-        fileMenu = menu.addMenu("File")
+        fileMenu = menu.addMenu(self.tr("File"))
         fileMenu.addAction(self.scoresAction)
         fileMenu.addAction(self.shareScoresAction)
         fileMenu.addAction(self.quitAction)
 
-        toolMenu = menu.addMenu("Tools")
+        toolMenu = menu.addMenu(self.tr("Tools"))
         toolMenu.addAction(self.pricesAction)
         toolMenu.addAction(self.travelLogAction)
         toolMenu.addAction(self.transactionLogAction)
 
-        prefMenu = menu.addMenu("Preferences")
+        prefMenu = menu.addMenu(self.tr("Preferences"))
         prefMenu.addAction(self.darkThemeAction)
         prefMenu.addAction(self.tooltipsAction)
         prefMenu.addAction(self.audioAction)
 
-        helpMenu = menu.addMenu("Help")
+        helpMenu = menu.addMenu(self.tr("Help"))
         helpMenu.addAction(self.aboutAction)
 
     def enableDarkTheme(self, enabled):
@@ -135,6 +136,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
 def main(on_widget_created=None):
     app = QtWidgets.QApplication(sys.argv)
+
+    # Must happen before any translated text is created
+    installTranslators(app)
 
     app.setStyle('Fusion')
     font = QtWidgets.qApp.font()

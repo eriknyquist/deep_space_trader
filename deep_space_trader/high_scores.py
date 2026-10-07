@@ -3,6 +3,7 @@ import json
 from deep_space_trader import config
 from deep_space_trader.utils import yesNoDialog, errorDialog, infoDialog
 from deep_space_trader.utils import scores_encode, scores_decode
+from deep_space_trader.i18n import formatNumber
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
@@ -25,7 +26,7 @@ class HighScoreTable(QtWidgets.QDialog):
         self.table.setPalette(palette)
 
         self.table.setColumnCount(2)
-        self.table.setHorizontalHeaderLabels(['Name', 'Score'])
+        self.table.setHorizontalHeaderLabels([self.tr('Name'), self.tr('Score')])
         self.table.verticalHeader().setVisible(False)
         self.table.horizontalHeader().setSectionsClickable(False)
         self.table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
@@ -41,7 +42,7 @@ class HighScoreTable(QtWidgets.QDialog):
 
         self.mainLayout.addWidget(self.table)
         self.setLayout(self.mainLayout)
-        self.setWindowTitle("High scores")
+        self.setWindowTitle(self.tr("High scores"))
         self.update()
         self.adjustSize()
 
@@ -50,15 +51,15 @@ class HighScoreTable(QtWidgets.QDialog):
         self.table.insertRow(nextFreeRow)
 
         if nextFreeRow == 0:
-            name += " <i><b>(1st place)</b></i>"
+            name = self.tr("{0} <i><b>(1st place)</b></i>", "{0} is the player's name").format(name)
         elif nextFreeRow == 1:
-            name += " <i><b>(2nd place)</b></i>"
+            name = self.tr("{0} <i><b>(2nd place)</b></i>", "{0} is the player's name").format(name)
         elif nextFreeRow == 2:
-            name += " <i><b>(3rd place)</b></i>"
+            name = self.tr("{0} <i><b>(3rd place)</b></i>", "{0} is the player's name").format(name)
 
         widgetText = QtWidgets.QLabel(name)
         item1 = QtWidgets.QTableWidgetItem(name)
-        item2 = QtWidgets.QTableWidgetItem('{:,}'.format(score))
+        item2 = QtWidgets.QTableWidgetItem(formatNumber(score))
 
         item2.setTextAlignment(QtCore.Qt.AlignHCenter)
 
@@ -90,8 +91,8 @@ class HighScoreSharing(QtWidgets.QDialog):
         self.displayScores = QtWidgets.QTextEdit()
         self.displayScores.setReadOnly(True)
         displayLayout.addWidget(self.displayScores)
-        displayGroup = QtWidgets.QGroupBox("Copy this string to share your "
-                                           "scores with someone else")
+        displayGroup = QtWidgets.QGroupBox(self.tr("Copy this string to share your "
+                                                   "scores with someone else"))
         displayGroup.setLayout(displayLayout)
         self.mainLayout.addWidget(displayGroup)
 
@@ -99,19 +100,19 @@ class HighScoreSharing(QtWidgets.QDialog):
         self.inputScores = QtWidgets.QTextEdit()
         inputLayout.addWidget(self.inputScores)
 
-        self.inputButton = QtWidgets.QPushButton("Add high scores")
+        self.inputButton = QtWidgets.QPushButton(self.tr("Add high scores"))
         self.inputButton.clicked.connect(self.inputButtonClicked)
         inputLayout.addWidget(self.inputButton)
 
-        inputGroup = QtWidgets.QGroupBox("Paste someone else's string here to "
-                                         "add their scores to your high score "
-                                         "table")
+        inputGroup = QtWidgets.QGroupBox(self.tr("Paste someone else's string here to "
+                                                 "add their scores to your high score "
+                                                 "table"))
 
         inputGroup.setLayout(inputLayout)
         self.mainLayout.addWidget(inputGroup)
 
         self.setLayout(self.mainLayout)
-        self.setWindowTitle("High score sharing")
+        self.setWindowTitle(self.tr("High score sharing"))
 
         self.update()
 
@@ -125,22 +126,23 @@ class HighScoreSharing(QtWidgets.QDialog):
             decoded = scores_decode(b64).decode('utf-8')
             scores = json.loads(decoded)
         except:
-            errorDialog(self, "Error", message="Failed to decode high scores")
+            errorDialog(self, self.tr("Error"), message=self.tr("Failed to decode high scores"))
             return
 
-        scores_msg = "The string you added contains the following scores:<br><br>"
-        scores_msg += "<br>".join(['{0} ({1:,})'.format(x[0], x[1]) for x in scores])
+        scores_msg = self.tr("The string you added contains the following scores:")
         scores_msg += "<br><br>"
-        scores_msg += "Are you sure you want to add them to your high scores?"
+        scores_msg += "<br>".join(['{0} ({1})'.format(x[0], formatNumber(x[1])) for x in scores])
+        scores_msg += "<br><br>"
+        scores_msg += self.tr("Are you sure you want to add them to your high scores?")
 
-        proceed = yesNoDialog(self, "Add scores?", message=scores_msg)
+        proceed = yesNoDialog(self, self.tr("Add scores?"), message=scores_msg)
         if not proceed:
             return
 
         for name, score in scores:
             config.add_highscore(name, score)
 
-        infoDialog(self, "Success", "Scores added successfully")
+        infoDialog(self, self.tr("Success"), self.tr("Scores added successfully"))
         config.config_store()
 
     def update(self):

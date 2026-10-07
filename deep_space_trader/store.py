@@ -3,6 +3,7 @@ import random
 from deep_space_trader.utils import errorDialog, infoDialog, yesNoDialog, ICON_PATH
 from deep_space_trader.location_picker import PlanetDestructionPicker
 from deep_space_trader import constants as const
+from deep_space_trader.i18n import translate, formatNumber
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
@@ -29,8 +30,8 @@ class StoreItem(object):
 class PlanetExploration(StoreItem):
     def __init__(self, parent):
         price = const.PLANET_EXPLORATION_COST
-        name = "Scout expedition"
-        desc = (
+        name = translate("PlanetExploration", "Scout expedition")
+        desc = translate("PlanetExploration",
             "Send your planet scouting fleet on an expedition to discover new "
             "planets that you can trade with."
         )
@@ -39,17 +40,20 @@ class PlanetExploration(StoreItem):
 
     def use(self):
         if self.parent.state.scout_level == 0:
-            errorDialog(self.parent, "Sorry!", "You need to buy a scout fleet for scout "
-                                               "expeditions to be possible")
+            errorDialog(self.parent, translate("PlanetExploration", "Sorry!"),
+                        translate("PlanetExploration", "You need to buy a scout fleet for scout "
+                                                       "expeditions to be possible"))
             return
 
         if len(self.parent.state.planets) == const.MAX_PLANETS_ALLOWED:
-            errorDialog(self.parent, "Sorry!", "Too many planets, you need to destroy "
-                                         "some planets before you can discover more")
+            errorDialog(self.parent, translate("PlanetExploration", "Sorry!"),
+                        translate("PlanetExploration", "Too many planets, you need to destroy "
+                                                       "some planets before you can discover more"))
             return False
 
-        if not yesNoDialog(self.parent, "Are you sure?",
-                           message="Are you sure you want to buy a %s?" % self.name):
+        if not yesNoDialog(self.parent, translate("PlanetExploration", "Are you sure?"),
+                           message=translate("PlanetExploration",
+                                             "Are you sure you want to buy a scout expedition?")):
             return False
 
         num_new = random.randint(*self.parent.state.planet_discovery_range)
@@ -61,8 +65,9 @@ class PlanetExploration(StoreItem):
         self.parent.locationBrowser.update()
 
         self.parent.audio.play(self.parent.audio.PlanetDiscoverySound)
-        infoDialog(self.parent, "%d new planets willing to do business with you have "
-                         "been discovered!" % num_new)
+        infoDialog(self.parent, translate("PlanetExploration",
+                                          "%Ln new planets willing to do business with you have "
+                                          "been discovered!", None, num_new))
 
         return True
 
@@ -70,8 +75,8 @@ class PlanetExploration(StoreItem):
 class PlanetDestruction(StoreItem):
     def __init__(self, parent):
         price = const.PLANET_DESTRUCTION_COST
-        name = "Planet destruction kit"
-        desc = (
+        name = translate("PlanetDestruction", "Planet destruction kit")
+        desc = translate("PlanetDestruction",
             "Destroy planets and transport all of their resources to your warehouse"
         )
 
@@ -97,22 +102,24 @@ class CapacityIncrease(StoreItem):
     def __init__(self, parent):
         self.incr = const.CAPACITY_INCREASE
         price = const.CAPACITY_INCREASE_COST
-        name = "Increase ship capacity"
-        desc = "Double the number of items your ship can hold."
+        name = translate("CapacityIncrease", "Increase ship capacity")
+        desc = translate("CapacityIncrease", "Double the number of items your ship can hold.")
 
         super(CapacityIncrease, self).__init__(parent, name, desc, price)
 
     def use(self):
-        if not yesNoDialog(self.parent, "Are you sure?",
-                           message="Are you sure want to increase your ship's capacity?"):
+        if not yesNoDialog(self.parent, translate("CapacityIncrease", "Are you sure?"),
+                           message=translate("CapacityIncrease",
+                                             "Are you sure you want to increase your ship's capacity?")):
             return False
 
         self.parent.audio.play(self.parent.audio.ShipUpgradeSound)
         self.parent.state.capacity += self.incr
         self.parent.infoBar.update()
         self.parent.updatePlayerItemsLabel()
-        infoDialog(self.parent, "Success", message="Capacity successfully increased. "
-                                      "New capacity is {:,}.".format(self.parent.state.capacity))
+        infoDialog(self.parent, translate("CapacityIncrease", "Success"),
+                   message=translate("CapacityIncrease", "Capacity successfully increased. "
+                                     "New capacity is {0}.").format(formatNumber(self.parent.state.capacity)))
 
         return True
 
@@ -125,42 +132,45 @@ class ScoutFleetUpgrade(StoreItem):
     def __init__(self, parent):
         self.range = const.PLANET_DISCOVERY_RANGE
         price = const.PLANET_EXPLORATION_UPGRADE_COST
-        name = "Buy scout fleet"
-        desc = (
+        name = translate("ScoutFleetUpgrade", "Buy scout fleet")
+        desc = translate("ScoutFleetUpgrade",
             "Buy a planet scouting fleet, allowing you to discover "
-            "new planets to trade with. Increases your daily costs by {:,}.".format(const.DAILY_SCOUT_FLEET_COST_PER_LEVEL)
-        )
+            "new planets to trade with. Increases your daily costs by {0}."
+        ).format(formatNumber(const.DAILY_SCOUT_FLEET_COST_PER_LEVEL))
 
         super(ScoutFleetUpgrade, self).__init__(parent, name, desc, price)
 
     def _update_desc(self):
         if self.parent.state.scout_level >= self. parent.state.max_scout_level:
-            desc = "You cannot buy this item anymore."
+            desc = translate("ScoutFleetUpgrade", "You cannot buy this item anymore.")
             self.price = None
         else:
             max_planets = self.range[1] * 2
-            desc = ("Upgrade your planet scouting fleet, increasing the max. "
-                    "number of planets you can discover in a single scout expedition to {}. "
-                    "Increases your daily costs by {:,}. ".format(max_planets, const.DAILY_SCOUT_FLEET_COST_PER_LEVEL))
+            desc = translate("ScoutFleetUpgrade",
+                "Upgrade your planet scouting fleet, increasing the max. "
+                "number of planets you can discover in a single scout expedition to {0}. "
+                "Increases your daily costs by {1}. "
+            ).format(formatNumber(max_planets), formatNumber(const.DAILY_SCOUT_FLEET_COST_PER_LEVEL))
 
-        self.name = "Upgrade scout fleet"
+        self.name = translate("ScoutFleetUpgrade", "Upgrade scout fleet")
         self.description = desc
 
     def use(self):
         if self.parent.state.scout_level >= self.parent.state.max_scout_level:
-            errorDialog(self.parent, "Sorry!", "You cannot upgrade your scout fleet "
-                                         "any further")
+            errorDialog(self.parent, translate("ScoutFleetUpgrade", "Sorry!"),
+                        translate("ScoutFleetUpgrade", "You cannot upgrade your scout fleet "
+                                                       "any further"))
             return False
 
         if self.parent.state.scout_level == 0:
-            check_desc = "buy a"
-            confirm_desc = "purchased"
+            check_msg = translate("ScoutFleetUpgrade", "Are you sure you want to buy a scout fleet?")
+            confirm_msg = translate("ScoutFleetUpgrade", "Scout fleet successfully purchased.")
         else:
-            check_desc = "upgrade your"
-            confirm_desc = "upgraded"
+            check_msg = translate("ScoutFleetUpgrade", "Are you sure you want to upgrade your scout fleet?")
+            confirm_msg = translate("ScoutFleetUpgrade", "Scout fleet successfully upgraded.")
 
-        if not yesNoDialog(self.parent, "Are you sure?",
-                           message="Are you sure you want to %s scout fleet?" % check_desc):
+        if not yesNoDialog(self.parent, translate("ScoutFleetUpgrade", "Are you sure?"),
+                           message=check_msg):
             return False
 
         if self.parent.state.scout_level > 0:
@@ -170,7 +180,7 @@ class ScoutFleetUpgrade(StoreItem):
         self.parent.state.daily_cost += const.DAILY_SCOUT_FLEET_COST_PER_LEVEL
         self.range = self.parent.state.planet_discovery_range
         self.parent.audio.play(self.parent.audio.ScoutUpgradeSound)
-        infoDialog(self.parent, "Scout fleet successfully %s." % confirm_desc)
+        infoDialog(self.parent, confirm_msg)
         return True
 
     def after_use(self):
@@ -182,31 +192,31 @@ class BattleFleetUpgrade(StoreItem):
     def __init__(self, parent):
         self.used = False
         price = const.BATTLE_UPGRADE_COST
-        name = "Buy battle fleet"
-
-        self.desc_fmt = ("{} battle fleet. Gives you a better chance of defeating "
-                         "pirate fleets, or planets that resist destruction. "
-                         "Increases your daily costs by {:,}.")
-
-        desc = self.desc_fmt.format("Buy a", const.DAILY_BATTLE_FLEET_COST_PER_LEVEL)
+        name = translate("BattleFleetUpgrade", "Buy battle fleet")
+        desc = translate("BattleFleetUpgrade",
+            "Buy a battle fleet. Gives you a better chance of defeating "
+            "pirate fleets, or planets that resist destruction. "
+            "Increases your daily costs by {0}."
+        ).format(formatNumber(const.DAILY_BATTLE_FLEET_COST_PER_LEVEL))
 
         super(BattleFleetUpgrade, self).__init__(parent, name, desc, price)
 
     def use(self):
         if self.used:
-            check_str = "upgrade your"
-            bought_str = "upgraded"
+            check_msg = translate("BattleFleetUpgrade", "Are you sure you want to upgrade your battle fleet?")
+            bought_msg = translate("BattleFleetUpgrade", "Battle fleet successfully upgraded.")
         else:
-            check_str = "buy a"
-            bought_str = "purchased"
+            check_msg = translate("BattleFleetUpgrade", "Are you sure you want to buy a battle fleet?")
+            bought_msg = translate("BattleFleetUpgrade", "Battle fleet successfully purchased.")
 
-        if not yesNoDialog(self.parent, "Are you sure?",
-                           message="Are you sure want to %s battle fleet?" % check_str):
+        if not yesNoDialog(self.parent, translate("BattleFleetUpgrade", "Are you sure?"),
+                           message=check_msg):
             return False
 
         if self.parent.state.battle_level >= self.parent.state.max_battle_level:
-            errorDialog(self.parent, "Sorry!", message="You cannot upgrade your battle "
-                                                 "fleet anymore.")
+            errorDialog(self.parent, translate("BattleFleetUpgrade", "Sorry!"),
+                        message=translate("BattleFleetUpgrade", "You cannot upgrade your battle "
+                                                                "fleet anymore."))
             return False
 
         self.parent.state.battle_level += 1
@@ -214,17 +224,21 @@ class BattleFleetUpgrade(StoreItem):
 
         if not self.used:
             self.used = True
-            self.name = "Upgrade battle fleet"
-            self.description = self.desc_fmt.format("Upgrades your", const.DAILY_BATTLE_FLEET_COST_PER_LEVEL)
+            self.name = translate("BattleFleetUpgrade", "Upgrade battle fleet")
+            self.description = translate("BattleFleetUpgrade",
+                "Upgrades your battle fleet. Gives you a better chance of defeating "
+                "pirate fleets, or planets that resist destruction. "
+                "Increases your daily costs by {0}."
+            ).format(formatNumber(const.DAILY_BATTLE_FLEET_COST_PER_LEVEL))
 
         self.parent.audio.play(self.parent.audio.BattleUpgradeSound)
-        infoDialog(self.parent, "Success", message="Battle fleet successfully %s." % bought_str)
+        infoDialog(self.parent, translate("BattleFleetUpgrade", "Success"), message=bought_msg)
 
         return True
 
     def after_use(self):
         if self.parent.state.battle_level >= self.parent.state.max_battle_level:
-            self.description = "You cannot buy this item anymore."
+            self.description = translate("BattleFleetUpgrade", "You cannot buy this item anymore.")
             self.price = None
         else:
             self.price *= 2
@@ -233,8 +247,8 @@ class BattleFleetUpgrade(StoreItem):
 class WarehouseSpeedIncrease(StoreItem):
     def __init__(self, parent):
         price = const.WAREHOUSE_SPEED_INCREASE_COST
-        name = "Increase max. warehouse trips per day"
-        desc = (
+        name = translate("WarehouseSpeedIncrease", "Increase max. warehouse trips per day")
+        desc = translate("WarehouseSpeedIncrease",
             "Increase your engine power, allowing you to make two more trips to "
             "the warehouse per day."
         )
@@ -242,43 +256,47 @@ class WarehouseSpeedIncrease(StoreItem):
         super(WarehouseSpeedIncrease, self).__init__(parent, name, desc, price)
 
     def use(self):
-        if not yesNoDialog(self.parent, "Are you sure?",
-                           message="Are you sure want to increase max. number of "
-                                   "warehouse trips per day?"):
+        if not yesNoDialog(self.parent, translate("WarehouseSpeedIncrease", "Are you sure?"),
+                           message=translate("WarehouseSpeedIncrease",
+                                             "Are you sure you want to increase max. number of "
+                                             "warehouse trips per day?")):
             return False
 
         self.parent.state.warehouse_trips_per_day += 2
 
         self.parent.audio.play(self.parent.audio.WarehouseTripsUpgradeSound)
-        infoDialog(self.parent, "Success", message="Max. warehouse trips per day successfully increased.")
+        infoDialog(self.parent, translate("WarehouseSpeedIncrease", "Success"),
+                   message=translate("WarehouseSpeedIncrease", "Max. warehouse trips per day successfully increased."))
 
         return True
 
 class TradingConsole(StoreItem):
     def __init__(self, parent):
         price = const.TRADING_CONSOLE_COST
-        name = "Trading console"
-        desc = (
+        name = translate("TradingConsoleItem", "Trading console")
+        desc = translate("TradingConsoleItem",
             "Allows you to view current item prices on any planet without travelling. "
-            "Increases your daily costs by {:,}.".format(const.DAILY_TRADING_CONSOLE_COST)
-        )
+            "Increases your daily costs by {0}."
+        ).format(formatNumber(const.DAILY_TRADING_CONSOLE_COST))
 
         super(TradingConsole, self).__init__(parent, name, desc, price)
 
     def use(self):
-        if not yesNoDialog(self.parent, "Are you sure?",
-                           message="Are you sure want to buy the trading console?"):
+        if not yesNoDialog(self.parent, translate("TradingConsoleItem", "Are you sure?"),
+                           message=translate("TradingConsoleItem",
+                                             "Are you sure you want to buy the trading console?")):
             return False
 
         self.parent.state.enable_trading_console()
         self.parent.state.daily_cost += const.DAILY_TRADING_CONSOLE_COST
         self.parent.audio.play(self.parent.audio.TradingConsoleSound)
-        infoDialog(self.parent, "Success", message="Trading console successfully purchased")
+        infoDialog(self.parent, translate("TradingConsoleItem", "Success"),
+                   message=translate("TradingConsoleItem", "Trading console successfully purchased"))
 
         return True
 
     def after_use(self):
-        self.description = "You have already purchased this item."
+        self.description = translate("TradingConsoleItem", "You have already purchased this item.")
         self.price = None
 
 
@@ -304,7 +322,7 @@ class Store(QtWidgets.QDialog):
 
         buttonLayout = QtWidgets.QHBoxLayout()
 
-        self.buyButton = QtWidgets.QPushButton("Buy item")
+        self.buyButton = QtWidgets.QPushButton(self.tr("Buy item"))
         self.buyButton.clicked.connect(self.buyButtonClicked)
         buttonLayout.addWidget(self.buyButton)
 
@@ -325,7 +343,7 @@ class Store(QtWidgets.QDialog):
         self.table.setPalette(palette)
 
         self.table.setColumnCount(3)
-        self.table.setHorizontalHeaderLabels(['Item', 'description', 'Price'])
+        self.table.setHorizontalHeaderLabels([self.tr('Item'), self.tr('description'), self.tr('Price')])
         self.table.verticalHeader().setVisible(False)
         self.table.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         self.table.horizontalHeader().setSectionsClickable(False)
@@ -345,19 +363,19 @@ class Store(QtWidgets.QDialog):
 
         self.mainLayout.addWidget(self.table)
         self.setLayout(self.mainLayout)
-        self.setWindowTitle("Store")
+        self.setWindowTitle(self.tr("Store"))
         self.setWindowIcon(QtGui.QIcon(ICON_PATH))
 
         self.update()
 
     def updateMoneyLabel(self):
-        self.moneyLabel.setText("Your money: {:,}".format(self.parent.state.money))
+        self.moneyLabel.setText(self.tr("Your money: {0}").format(formatNumber(self.parent.state.money)))
 
     def addRow(self, item):
         nextFreeRow = self.table.rowCount()
         self.table.insertRow(nextFreeRow)
 
-        price = "N/A" if item.price is None else '{:,}'.format(item.price)
+        price = self.tr("N/A") if item.price is None else formatNumber(item.price)
 
         item1 = QtWidgets.QTableWidgetItem(item.name)
         item2 = QtWidgets.QTableWidgetItem(item.description)
@@ -380,16 +398,20 @@ class Store(QtWidgets.QDialog):
 
     def buyItem(self, item):
         if self.parent.state.store_purchases >= self.parent.state.max_store_purchases_per_day:
-            errorDialog(self, "Sorry!", "You can only make %d store purchases per day. "
-                              "Come back tomorrow." % self.parent.state.max_store_purchases_per_day)
+            # (Counts passed to translate() must be plain variables, or pylupdate5 skips the string)
+            max_purchases = self.parent.state.max_store_purchases_per_day
+            errorDialog(self, self.tr("Sorry!"),
+                        translate("Store", "You can only make %Ln store purchases per day. "
+                                           "Come back tomorrow.", None, max_purchases))
             return
 
         if item.price is None:
-            errorDialog(self, "Sorry!", "You cannot buy this item anymore")
+            errorDialog(self, self.tr("Sorry!"), self.tr("You cannot buy this item anymore"))
             return
 
         if self.parent.state.money < item.price:
-            errorDialog(self, "Sorry!", "You don't have enough money to buy '%s'" % item.name)
+            errorDialog(self, self.tr("Sorry!"), self.tr("You don't have enough money to buy '{0}'",
+                                                         "{0} is the name of a store item").format(item.name))
             return
 
         proceed = item.use()
@@ -424,7 +446,7 @@ class Store(QtWidgets.QDialog):
     def buyButtonClicked(self):
         selectedRow = self.table.currentRow()
         if selectedRow < 0:
-            errorDialog(self, "Oops!", "Please select an item first")
+            errorDialog(self, self.tr("Oops!"), self.tr("Please select an item first"))
             return
 
         item = store_items[selectedRow]

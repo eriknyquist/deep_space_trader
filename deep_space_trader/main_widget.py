@@ -19,6 +19,8 @@ from deep_space_trader.item_browsers import PlayerItemBrowser, PlanetItemBrowser
 from deep_space_trader.item_prices import PricesTable
 from deep_space_trader.information_bar import InfoBar
 from deep_space_trader.sounds import AudioPlayer
+from deep_space_trader.items import itemDisplayName
+from deep_space_trader.i18n import translate, formatNumber
 
 
 # Set checkbox state without triggering the stateChanged signal
@@ -40,7 +42,7 @@ class MainWidget(QtWidgets.QDialog):
 
         middleColumnLayout = QtWidgets.QHBoxLayout()
 
-        self.locationBrowserGroup = QtWidgets.QGroupBox("Planets ({:,})".format(len(self.state.planets)))
+        self.locationBrowserGroup = QtWidgets.QGroupBox(self.tr("Planets ({0})").format(formatNumber(len(self.state.planets))))
         self.locationBrowserGroup.setStyleSheet("QGroupBox{ font-weight: bold; }")
         planetsLayout = QtWidgets.QHBoxLayout()
         self.locationBrowser = LocationBrowser(self)
@@ -62,7 +64,7 @@ class MainWidget(QtWidgets.QDialog):
         infoLayout = QtWidgets.QHBoxLayout()
         self.infoBar = InfoBar(self)
         infoLayout.addWidget(self.infoBar)
-        infoGroup = QtWidgets.QGroupBox("Information")
+        infoGroup = QtWidgets.QGroupBox(self.tr("Information"))
         infoGroup.setStyleSheet("QGroupBox{ font-weight: bold; }")
         infoGroup.setAlignment(QtCore.Qt.AlignCenter)
         infoGroup.setLayout(infoLayout)
@@ -80,7 +82,7 @@ class MainWidget(QtWidgets.QDialog):
         planetItemsLayout = QtWidgets.QHBoxLayout()
         self.planetItemBrowser = PlanetItemBrowser(self)
         planetItemsLayout.addWidget(self.planetItemBrowser)
-        planetItemsBrowserGroup = QtWidgets.QGroupBox("Items on current planet")
+        planetItemsBrowserGroup = QtWidgets.QGroupBox(self.tr("Items on current planet"))
         planetItemsBrowserGroup.setStyleSheet("QGroupBox{ font-weight: bold; }")
         planetItemsBrowserGroup.setAlignment(QtCore.Qt.AlignCenter)
         planetItemsBrowserGroup.setLayout(planetItemsLayout)
@@ -89,7 +91,7 @@ class MainWidget(QtWidgets.QDialog):
         warehouseItemsLayout = QtWidgets.QHBoxLayout()
         self.warehouseItemBrowser = WarehouseItemBrowser(self)
         warehouseItemsLayout.addWidget(self.warehouseItemBrowser)
-        warehouseItemsBrowserGroup = QtWidgets.QGroupBox("Items in warehouse")
+        warehouseItemsBrowserGroup = QtWidgets.QGroupBox(self.tr("Items in warehouse"))
         warehouseItemsBrowserGroup.setStyleSheet("QGroupBox{ font-weight: bold; }")
         warehouseItemsBrowserGroup.setAlignment(QtCore.Qt.AlignCenter)
         warehouseItemsBrowserGroup.setLayout(warehouseItemsLayout)
@@ -106,7 +108,7 @@ class MainWidget(QtWidgets.QDialog):
 
     def updatePlanetsGroupBoxTitle(self, count=None):
         num_planets = len(self.state.planets) if count is None else count
-        self.locationBrowserGroup.setTitle("Planets ({:,})".format(num_planets))
+        self.locationBrowserGroup.setTitle(self.tr("Planets ({0})").format(formatNumber(num_planets)))
 
     def enableSounds(self, enabled):
         self.audio.setEnabled(enabled)
@@ -120,17 +122,17 @@ class MainWidget(QtWidgets.QDialog):
         self.warehouseItemBrowser.enableTooltips(enabled)
 
     def updatePlayerItemsLabel(self):
-        self.playerItemBrowserGroup.setTitle("Items on your ship ({0:,}/{1:,})".format(
-                                             self.state.items.count(),
-                                             self.state.capacity))
+        self.playerItemBrowserGroup.setTitle(self.tr("Items on your ship ({0}/{1})").format(
+                                             formatNumber(self.state.items.count()),
+                                             formatNumber(self.state.capacity)))
 
     def showTravelLog(self):
-        dialog = ScrollableTextDisplay("Travel log", self.state.read_travel_log())
+        dialog = ScrollableTextDisplay(self.tr("Travel log"), self.state.read_travel_log())
         dialog.setWindowModality(QtCore.Qt.ApplicationModal)
         dialog.exec_()
 
     def showTransactionLog(self):
-        dialog = ScrollableTextDisplay("Transaction log", self.state.read_transaction_log())
+        dialog = ScrollableTextDisplay(self.tr("Transaction log"), self.state.read_transaction_log())
         dialog.setWindowModality(QtCore.Qt.ApplicationModal)
         dialog.exec_()
 
@@ -150,7 +152,7 @@ class MainWidget(QtWidgets.QDialog):
         dialog.exec_()
 
     def warningBeforeQuit(self):
-        return yesNoDialog(self, "Are you sure?", "Are you sure you want to quit?")
+        return yesNoDialog(self, self.tr("Are you sure?"), self.tr("Are you sure you want to quit?"))
 
     def reset(self):
         load_store_items(self)
@@ -195,15 +197,22 @@ class MainWidget(QtWidgets.QDialog):
                     item.value_history[-1] = item.value
 
                     if planet is self.state.current_planet:
+                        if increase:
+                            msg = self.tr("The rumour you heard about {0} was true!<br><br>{0} prices "
+                                          "are through the roof.", "{0} is an item name, e.g. tin")
+                        else:
+                            msg = self.tr("The rumour you heard about {0} was true!<br><br>{0} prices "
+                                          "are at an all-time low.", "{0} is an item name, e.g. tin")
+
                         self.audio.play(self.audio.RumourTrueSound)
-                        infoDialog(self, "Rumour was true!",
-                                   "The rumour you heard about %s was true!<br><br>%s prices are %s."
-                                   % (itemname, itemname, "through the roof" if increase else "at an all-time low"))
+                        infoDialog(self, self.tr("Rumour was true!"), msg.format(itemDisplayName(itemname)))
             else:
                 if planet is self.state.current_planet:
                     self.audio.play(self.audio.FailureSound)
-                    infoDialog(self, "Rumour was false",
-                                     "The rumour you heard about %s on %s was false!" % (itemname, planet.full_name))
+                    infoDialog(self, self.tr("Rumour was false"),
+                                     self.tr("The rumour you heard about {0} on {1} was false!",
+                                             "{0} is an item name, e.g. tin, and {1} is a planet name").format(
+                                             itemDisplayName(itemname), planet.full_name))
 
             return
 
@@ -228,16 +237,33 @@ class MainWidget(QtWidgets.QDialog):
         # Will the price increase or decrease?
         increase = percentChance(50)
 
-        adj = random.choice(["very", "extremely", "unreasonably", "unusually"])
-        descriptor = "expensive" if increase else "cheap"
+        if increase:
+            msg = random.choice([
+                self.tr("You hear a rumour that {0} will be very expensive on {1} tomorrow!",
+                        "{0} is an item name, e.g. tin, and {1} is a planet name"),
+                self.tr("You hear a rumour that {0} will be extremely expensive on {1} tomorrow!",
+                        "{0} is an item name, e.g. tin, and {1} is a planet name"),
+                self.tr("You hear a rumour that {0} will be unreasonably expensive on {1} tomorrow!",
+                        "{0} is an item name, e.g. tin, and {1} is a planet name"),
+                self.tr("You hear a rumour that {0} will be unusually expensive on {1} tomorrow!",
+                        "{0} is an item name, e.g. tin, and {1} is a planet name"),
+            ])
+        else:
+            msg = random.choice([
+                self.tr("You hear a rumour that {0} will be very cheap on {1} tomorrow!",
+                        "{0} is an item name, e.g. tin, and {1} is a planet name"),
+                self.tr("You hear a rumour that {0} will be extremely cheap on {1} tomorrow!",
+                        "{0} is an item name, e.g. tin, and {1} is a planet name"),
+                self.tr("You hear a rumour that {0} will be unreasonably cheap on {1} tomorrow!",
+                        "{0} is an item name, e.g. tin, and {1} is a planet name"),
+                self.tr("You hear a rumour that {0} will be unusually cheap on {1} tomorrow!",
+                        "{0} is an item name, e.g. tin, and {1} is a planet name"),
+            ])
 
-        msg = (
-            "You hear a rumour that %s will be %s %s on %s tomorrow!"
-            % (itemname, adj, descriptor, planet.full_name)
-        )
+        msg = msg.format(itemDisplayName(itemname), planet.full_name)
 
         self.audio.play(self.audio.RumourSound)
-        infoDialog(self, "Rumour overheard!", msg)
+        infoDialog(self, self.tr("Rumour overheard!"), msg)
         self.pending_price_anomaly = (planet, itemname, increase)
 
     def advanceDay(self):
@@ -245,7 +271,7 @@ class MainWidget(QtWidgets.QDialog):
             # Days remaining, check health
             if self.state.health == 0:
                 self.audio.play(self.audio.DeathSound)
-                infoDialog(self, "Dead!", "You have starved to death.")
+                infoDialog(self, self.tr("Dead!"), self.tr("You have starved to death."))
                 self.checkHighScore()
                 self.reset()
                 return
@@ -256,7 +282,7 @@ class MainWidget(QtWidgets.QDialog):
             self.planetItemBrowser.update()
         else:
             # No days remaining
-            infoDialog(self, "Game complete", message="Time is up!")
+            infoDialog(self, self.tr("Game complete"), message=self.tr("Time is up!"))
             self.checkHighScore()
             self.reset()
 
@@ -271,10 +297,10 @@ class MainWidget(QtWidgets.QDialog):
         if (len(scores) > 0) and (len(scores) == const.MAX_HIGH_SCORES) and (self.state.money <= scores[-1][1]):
             return
 
-        proceed = yesNoDialog(self, "High score!",
-                              message="You have achieved a high score ({:,}) ! "
-                                      "would you like to enter your name? (high "
-                                      "scores are only stored locally)".format(self.state.money),
+        proceed = yesNoDialog(self, self.tr("High score!"),
+                              message=self.tr("You have achieved a high score ({0}) ! "
+                                              "would you like to enter your name? (high "
+                                              "scores are only stored locally)").format(formatNumber(self.state.money)),
                               cancelable=False)
 
         if not proceed:
@@ -284,16 +310,18 @@ class MainWidget(QtWidgets.QDialog):
         name = None
 
         while True:
-            name, accepted = QtWidgets.QInputDialog.getText(self, 'Enter name',
-                                                            "Enter your name for the high score table",
+            name, accepted = QtWidgets.QInputDialog.getText(self, self.tr("Enter name"),
+                                                            self.tr("Enter your name for the high score table"),
                                                             text=initial_text)
 
             if not accepted:
                 return
 
             if len(name) > const.MAX_HIGHSCORE_NAME_LEN:
-                errorDialog(self, "Too long", "Name is too long (max %d characters)"
-                                  % const.MAX_HIGHSCORE_NAME_LEN)
+                # (Counts passed to translate() must be plain variables, or pylupdate5 skips the string)
+                max_len = const.MAX_HIGHSCORE_NAME_LEN
+                errorDialog(self, self.tr("Too long"),
+                            translate("MainWidget", "Name is too long (max %Ln characters)", None, max_len))
             else:
                 break
 

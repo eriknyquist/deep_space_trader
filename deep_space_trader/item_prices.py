@@ -1,6 +1,7 @@
 from deep_space_trader.items import (
-        common_item_types, medium_rare_item_types, rare_item_types
+        common_item_types, medium_rare_item_types, rare_item_types, itemDisplayName
 )
+from deep_space_trader.i18n import formatNumber
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
@@ -34,7 +35,7 @@ class PricesTable(QtWidgets.QDialog):
         self.table.setPalette(palette)
 
         self.table.setColumnCount(2)
-        self.table.setHorizontalHeaderLabels(['Item type', 'Base price'])
+        self.table.setHorizontalHeaderLabels([self.tr('Item type'), self.tr('Base price')])
         self.table.verticalHeader().setVisible(False)
         self.table.horizontalHeader().setSectionsClickable(False)
         self.table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
@@ -50,7 +51,7 @@ class PricesTable(QtWidgets.QDialog):
 
         self.mainLayout.addWidget(self.table)
         self.setLayout(self.mainLayout)
-        self.setWindowTitle("Prices")
+        self.setWindowTitle(self.tr("Prices"))
 
         self.update()
 
@@ -58,8 +59,8 @@ class PricesTable(QtWidgets.QDialog):
         nextFreeRow = self.table.rowCount()
         self.table.insertRow(nextFreeRow)
 
-        item1 = QtWidgets.QTableWidgetItem(name)
-        item2 = QtWidgets.QTableWidgetItem(str(value))
+        item1 = QtWidgets.QTableWidgetItem(itemDisplayName(name))
+        item2 = QtWidgets.QTableWidgetItem(formatNumber(value))
 
         item2.setTextAlignment(QtCore.Qt.AlignHCenter)
 

@@ -3,6 +3,7 @@ import os
 from PyQt5 import QtWidgets, QtCore, QtGui
 
 from deep_space_trader.planet_image import PlanetImage
+from deep_space_trader.i18n import translate, formatNumber, formatPercent
 
 GROUPBOX_STYLE= "QGroupBox{ font-size: 12px; }"
 LABEL_STYLE = "QLabel{ font-size: 14px; }"
@@ -22,7 +23,7 @@ class InfoBar(QtWidgets.QWidget):
         self.planetLabel.setAlignment(QtCore.Qt.AlignCenter)
         planetLayout.addWidget(self.planetLabel)
 
-        self.planetGroup = QtWidgets.QGroupBox("Current planet")
+        self.planetGroup = QtWidgets.QGroupBox(self.tr("Current planet"))
         self.planetGroup.setStyleSheet(GROUPBOX_STYLE)
         self.planetGroup.setAlignment(QtCore.Qt.AlignCenter)
         self.planetGroup.setLayout(planetLayout)
@@ -32,7 +33,7 @@ class InfoBar(QtWidgets.QWidget):
         self.moneyLabel.setStyleSheet(LABEL_STYLE)
         self.moneyLabel.setAlignment(QtCore.Qt.AlignCenter)
         moneyLayout.addWidget(self.moneyLabel)
-        self.moneyGroup = QtWidgets.QGroupBox("Money")
+        self.moneyGroup = QtWidgets.QGroupBox(self.tr("Money"))
         self.moneyGroup.setStyleSheet(GROUPBOX_STYLE)
         self.moneyGroup.setAlignment(QtCore.Qt.AlignCenter)
         self.moneyGroup.setLayout(moneyLayout)
@@ -42,7 +43,7 @@ class InfoBar(QtWidgets.QWidget):
         self.dailyCostLabel.setStyleSheet(LABEL_STYLE)
         self.dailyCostLabel.setAlignment(QtCore.Qt.AlignCenter)
         dailyCostLayout.addWidget(self.dailyCostLabel)
-        self.dailyCostGroup = QtWidgets.QGroupBox("Daily cost")
+        self.dailyCostGroup = QtWidgets.QGroupBox(self.tr("Daily cost"))
         self.dailyCostGroup.setStyleSheet(GROUPBOX_STYLE)
         self.dailyCostGroup.setAlignment(QtCore.Qt.AlignCenter)
         self.dailyCostGroup.setLayout(dailyCostLayout)
@@ -56,7 +57,7 @@ class InfoBar(QtWidgets.QWidget):
         self.purchasesLabel.setStyleSheet(LABEL_STYLE)
         self.purchasesLabel.setAlignment(QtCore.Qt.AlignCenter)
         purchasesLayout.addWidget(self.purchasesLabel)
-        self.purchasesGroup = QtWidgets.QGroupBox("Purchases")
+        self.purchasesGroup = QtWidgets.QGroupBox(self.tr("Purchases"))
         self.purchasesGroup.setStyleSheet(GROUPBOX_STYLE)
         self.purchasesGroup.setAlignment(QtCore.Qt.AlignCenter)
         self.purchasesGroup.setLayout(purchasesLayout)
@@ -66,7 +67,7 @@ class InfoBar(QtWidgets.QWidget):
         self.warehouseTripsLabel.setStyleSheet(LABEL_STYLE)
         self.warehouseTripsLabel.setAlignment(QtCore.Qt.AlignCenter)
         warehouseTripsLayout.addWidget(self.warehouseTripsLabel)
-        self.warehouseTripsGroup = QtWidgets.QGroupBox("Warehouse trips")
+        self.warehouseTripsGroup = QtWidgets.QGroupBox(self.tr("Warehouse trips"))
         self.warehouseTripsGroup.setStyleSheet(GROUPBOX_STYLE)
         self.warehouseTripsGroup.setAlignment(QtCore.Qt.AlignCenter)
         self.warehouseTripsGroup.setLayout(warehouseTripsLayout)
@@ -80,7 +81,7 @@ class InfoBar(QtWidgets.QWidget):
         self.planetCountLabel.setStyleSheet(LABEL_STYLE)
         self.planetCountLabel.setAlignment(QtCore.Qt.AlignCenter)
         planetCountLayout.addWidget(self.planetCountLabel)
-        self.planetCountGroup = QtWidgets.QGroupBox("Planets discovered")
+        self.planetCountGroup = QtWidgets.QGroupBox(self.tr("Planets discovered"))
         self.planetCountGroup.setStyleSheet(GROUPBOX_STYLE)
         self.planetCountGroup.setAlignment(QtCore.Qt.AlignCenter)
         self.planetCountGroup.setLayout(planetCountLayout)
@@ -90,7 +91,7 @@ class InfoBar(QtWidgets.QWidget):
         self.dayLabel.setStyleSheet(LABEL_STYLE)
         self.dayLabel.setAlignment(QtCore.Qt.AlignCenter)
         dayLayout.addWidget(self.dayLabel)
-        self.dayGroup = QtWidgets.QGroupBox("Current day")
+        self.dayGroup = QtWidgets.QGroupBox(self.tr("Current day"))
         self.dayGroup.setStyleSheet(GROUPBOX_STYLE)
         self.dayGroup.setAlignment(QtCore.Qt.AlignCenter)
         self.dayGroup.setLayout(dayLayout)
@@ -104,7 +105,7 @@ class InfoBar(QtWidgets.QWidget):
         self.scoutFleetLabel.setStyleSheet(LABEL_STYLE)
         self.scoutFleetLabel.setAlignment(QtCore.Qt.AlignCenter)
         scoutFleetLayout.addWidget(self.scoutFleetLabel)
-        self.scoutFleetGroup = QtWidgets.QGroupBox("Scout fleet level")
+        self.scoutFleetGroup = QtWidgets.QGroupBox(self.tr("Scout fleet level"))
         self.scoutFleetGroup.setStyleSheet(GROUPBOX_STYLE)
         self.scoutFleetGroup.setAlignment(QtCore.Qt.AlignCenter)
         self.scoutFleetGroup.setLayout(scoutFleetLayout)
@@ -114,7 +115,7 @@ class InfoBar(QtWidgets.QWidget):
         self.battleFleetLabel.setStyleSheet(LABEL_STYLE)
         self.battleFleetLabel.setAlignment(QtCore.Qt.AlignCenter)
         battleFleetLayout.addWidget(self.battleFleetLabel)
-        self.battleFleetGroup = QtWidgets.QGroupBox("Battle fleet level")
+        self.battleFleetGroup = QtWidgets.QGroupBox(self.tr("Battle fleet level"))
         self.battleFleetGroup.setStyleSheet(GROUPBOX_STYLE)
         self.battleFleetGroup.setAlignment(QtCore.Qt.AlignCenter)
         self.battleFleetGroup.setLayout(battleFleetLayout)
@@ -132,7 +133,7 @@ class InfoBar(QtWidgets.QWidget):
         self.healthBar.setStyleSheet("QProgressBar::chunk { background-color: #00FF00; }")
         self.healthBar.setFormat(None)
         healthLayout.addWidget(self.healthBar)
-        self.healthGroup = QtWidgets.QGroupBox("Health")
+        self.healthGroup = QtWidgets.QGroupBox(self.tr("Health"))
         self.healthGroup.setStyleSheet(GROUPBOX_STYLE)
         self.healthGroup.setAlignment(QtCore.Qt.AlignCenter)
         self.healthGroup.setLayout(healthLayout)
@@ -183,25 +184,31 @@ class InfoBar(QtWidgets.QWidget):
 
     def setTooltips(self):
         if self.tooltipsEnabled:
-            self.planetGroup.setToolTip("the planet you are currently on")
-            self.moneyGroup.setToolTip("how much money you currently have")
-            self.planetCountGroup.setToolTip("how many planets you have discovered since day 1")
-            self.dayGroup.setToolTip('%d days remaining' % (self.parent.state.max_days - self.parent.state.day))
-            self.purchasesGroup.setToolTip('%d store purchases remaining today' %
-                                           (self.parent.state.max_store_purchases_per_day - self.parent.state.store_purchases))
-            self.warehouseTripsGroup.setToolTip('%d warehouse trips remaining today' %
-                                                (self.parent.state.warehouse_trips_per_day - self.parent.state.warehouse_trips))
+            self.planetGroup.setToolTip(self.tr("the planet you are currently on"))
+            self.moneyGroup.setToolTip(self.tr("how much money you currently have"))
+            self.planetCountGroup.setToolTip(self.tr("how many planets you have discovered since day 1"))
+            # (Counts passed to translate() must be plain variables, or pylupdate5 skips the string)
+            days = self.parent.state.max_days - self.parent.state.day
+            purchases = self.parent.state.max_store_purchases_per_day - self.parent.state.store_purchases
+            trips = self.parent.state.warehouse_trips_per_day - self.parent.state.warehouse_trips
+            self.dayGroup.setToolTip(translate("InfoBar", "%Ln days remaining", None, days))
+            self.purchasesGroup.setToolTip(translate("InfoBar", "%Ln store purchases remaining today", None, purchases))
+            self.warehouseTripsGroup.setToolTip(translate("InfoBar", "%Ln warehouse trips remaining today", None, trips))
 
             if self.parent.state.scout_level > 0:
-                upper, lower = self.parent.state.planet_discovery_range
-                self.scoutFleetGroup.setToolTip("{0:,} - {1:,} new planets per scout expedition".format(upper, lower))
+                lower, upper = self.parent.state.planet_discovery_range
+                self.scoutFleetGroup.setToolTip(translate("InfoBar", "{0} - %Ln new planets per scout expedition",
+                                                          "{0} is the smallest number of planets", upper).format(
+                                                          formatNumber(lower)))
             else:
-                self.scoutFleetGroup.setToolTip("Scout expeditions are not possible")
+                self.scoutFleetGroup.setToolTip(self.tr("Scout expeditions are not possible"))
 
-            self.battleFleetGroup.setToolTip('%d%% chance of winning battles' % int(self.parent.state.battle_victory_chance_percentage()))
-            self.healthGroup.setToolTip("%d%%" % self.parent.state.health)
-            self.dailyCostGroup.setToolTip("{:,} per day is required to feed yourself and "
-                                           "maintain all purchased services".format(self.parent.state.daily_cost))
+            self.battleFleetGroup.setToolTip(self.tr("{0} chance of winning battles", "{0} is a percentage").format(
+                                             formatPercent(int(self.parent.state.battle_victory_chance_percentage()))))
+            self.healthGroup.setToolTip(formatPercent(self.parent.state.health))
+            self.dailyCostGroup.setToolTip(self.tr("{0} per day is required to feed yourself and "
+                                                   "maintain all purchased services").format(
+                                                   formatNumber(self.parent.state.daily_cost)))
         else:
             self.planetGroup.setToolTip(None)
             self.moneyGroup.setToolTip(None)
@@ -217,27 +224,31 @@ class InfoBar(QtWidgets.QWidget):
     def update(self):
         self.planetLabel.setText(self.parent.state.current_planet.full_name)
         self.planetImage.update()
-        self.dayLabel.setText('%d/%d' % (self.parent.state.day, self.parent.state.max_days))
-        self.moneyLabel.setText('{:,}'.format(self.parent.state.money))
-        self.planetCountLabel.setText('{:,}'.format(self.parent.state.planets_discovered))
-        self.purchasesLabel.setText('%s/%s' % (self.parent.state.store_purchases, self.parent.state.max_store_purchases_per_day))
-        self.warehouseTripsLabel.setText('%s/%s' % (self.parent.state.warehouse_trips, self.parent.state.warehouse_trips_per_day))
+        self.dayLabel.setText('%s/%s' % (formatNumber(self.parent.state.day), formatNumber(self.parent.state.max_days)))
+        self.moneyLabel.setText(formatNumber(self.parent.state.money))
+        self.planetCountLabel.setText(formatNumber(self.parent.state.planets_discovered))
+        self.purchasesLabel.setText('%s/%s' % (formatNumber(self.parent.state.store_purchases),
+                                               formatNumber(self.parent.state.max_store_purchases_per_day)))
+        self.warehouseTripsLabel.setText('%s/%s' % (formatNumber(self.parent.state.warehouse_trips),
+                                                    formatNumber(self.parent.state.warehouse_trips_per_day)))
 
         if self.parent.state.battle_level == 0:
-            battle_label_txt = "No battle fleet"
+            battle_label_txt = self.tr("No battle fleet")
         else:
-            battle_label_txt = '%d/%d' % (self.parent.state.battle_level, self.parent.state.max_battle_level)
+            battle_label_txt = '%s/%s' % (formatNumber(self.parent.state.battle_level),
+                                          formatNumber(self.parent.state.max_battle_level))
 
         self.battleFleetLabel.setText(battle_label_txt)
 
         if self.parent.state.scout_level == 0:
-            scout_label_txt = "No scout fleet"
+            scout_label_txt = self.tr("No scout fleet")
         else:
-            scout_label_txt = '%d/%d' % (self.parent.state.scout_level, self.parent.state.max_scout_level)
+            scout_label_txt = '%s/%s' % (formatNumber(self.parent.state.scout_level),
+                                         formatNumber(self.parent.state.max_scout_level))
 
         self.scoutFleetLabel.setText(scout_label_txt)
 
-        self.dailyCostLabel.setText("{:,}".format(self.parent.state.daily_cost))
+        self.dailyCostLabel.setText(formatNumber(self.parent.state.daily_cost))
 
         self.healthBar.setValue(self.parent.state.health)
         self.setHealthBarColor()

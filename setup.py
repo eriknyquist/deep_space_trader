@@ -35,7 +35,7 @@ setup(
     license='MIT',
     install_requires=dependencies,
     packages=['deep_space_trader'],
-    package_data={'deep_space_trader':['images/*', 'audio/*']},
+    package_data={'deep_space_trader':['images/*', 'audio/*', 'translations/*.qm']},
     include_package_data=True,
     zip_safe=False
 )

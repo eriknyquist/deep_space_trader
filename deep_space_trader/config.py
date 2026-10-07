@@ -3,6 +3,7 @@ import json
 
 from deep_space_trader.utils import errorDialog, scores_encode, scores_decode
 from deep_space_trader.constants import MAX_HIGH_SCORES
+from deep_space_trader.i18n import translate
 
 
 FILENAME = os.path.join(os.path.expanduser('~'), '.deep_space_trader_config.json')
@@ -18,7 +19,8 @@ config = {
 
 
 def _malformed_config():
-    errorDialog(None, "Error", message="Malformed config file: %s" % FILENAME)
+    errorDialog(None, translate("Config", "Error"),
+                message=translate("Config", "Malformed config file: {0}").format(FILENAME))
 
 
 def config_load():
@@ -64,7 +66,8 @@ def config_store():
         with open(FILENAME, 'w') as fh:
             json.dump(cfg, fh)
     except:
-        errorDialog(None, "Error", message="Unable to write file %s" % FILENAME)
+        errorDialog(None, translate("Config", "Error"),
+                    message=translate("Config", "Unable to write file {0}").format(FILENAME))
 
 def set_show_intro(value):
     config[SHOWINTRO_KEY] = value

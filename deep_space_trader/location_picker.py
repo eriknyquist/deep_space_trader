@@ -1,7 +1,8 @@
 import random
 from deep_space_trader import constants as const
 from deep_space_trader.utils import errorDialog, yesNoDialog, infoDialog
-from deep_space_trader.item_browsers import TableWidgetStringIntCommas
+from deep_space_trader.item_browsers import TableWidgetNumber
+from deep_space_trader.i18n import translate, formatNumber, joinList
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
@@ -18,24 +19,24 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         self.mainLayout = QtWidgets.QVBoxLayout(self)
         self.buttonLayout = QtWidgets.QHBoxLayout()
 
-        self.selectButton = QtWidgets.QPushButton("Destroy selected")
+        self.selectButton = QtWidgets.QPushButton(self.tr("Destroy selected"))
         self.selectButton.clicked.connect(self.selectButtonClicked)
         self.buttonLayout.addWidget(self.selectButton)
-        self.selectButton.setToolTip("destroy the selected planets")
+        self.selectButton.setToolTip(self.tr("destroy the selected planets"))
 
         self.all_planets_cost = const.PLANET_DESTRUCTION_COST * (len(self.state.planets) - 1)
         self.allButton = QtWidgets.QPushButton()
 
-        text = "Destroy all"
         if self.all_planets_cost > 0:
-            text += " (cost {:,})".format(self.all_planets_cost)
+            text = self.tr("Destroy all (cost {0})").format(formatNumber(self.all_planets_cost))
         else:
+            text = self.tr("Destroy all")
             self.allButton.setEnabled(False)
 
         self.allButton.setText(text)
         self.allButton.clicked.connect(self.allButtonClicked)
         self.buttonLayout.addWidget(self.allButton)
-        self.allButton.setToolTip("destroy all planets except the one you are currently on")
+        self.allButton.setToolTip(self.tr("destroy all planets except the one you are currently on"))
 
         if self.state.money < self.all_planets_cost:
             self.allButton.setEnabled(False)
@@ -51,7 +52,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         self.table.setPalette(palette)
 
         self.table.setColumnCount(3)
-        self.table.setHorizontalHeaderLabels(['Planet name', 'Visited?', 'Planet value'])
+        self.table.setHorizontalHeaderLabels([self.tr('Planet name'), self.tr('Visited?'), self.tr('Planet value')])
         self.table.verticalHeader().setVisible(False)
         self.table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
         self.table.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
@@ -66,7 +67,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         self.mainLayout.addLayout(self.buttonLayout)
         self.mainLayout.addWidget(self.table)
 
-        self.setWindowTitle("Select a planet to destroy")
+        self.setWindowTitle(self.tr("Select a planet to destroy"))
         self.setLayout(self.mainLayout)
         self.table.resizeColumnsToContents()
         self.update()
@@ -76,10 +77,10 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         for index in self.table.selectionModel().selectedRows():
             cost += const.PLANET_DESTRUCTION_COST
 
-        text = "Destroy selected"
-
         if cost > 0:
-            text += " (cost {:,})".format(cost)
+            text = self.tr("Destroy selected (cost {0})").format(formatNumber(cost))
+        else:
+            text = self.tr("Destroy selected")
 
         self.selectButton.setText(text)
 
@@ -106,13 +107,13 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             # Keep a reference to the planet on the row, since the player can
             # sort the table, and then row numbers no longer match state.planets
             item1.setData(QtCore.Qt.UserRole, planet)
-            item2 = QtWidgets.QTableWidgetItem("yes" if planet.visited else "no")
+            item2 = QtWidgets.QTableWidgetItem(self.tr("yes") if planet.visited else self.tr("no"))
             item2.setTextAlignment(QtCore.Qt.AlignHCenter)
             self.table.setItem(row, 0, item1)
             self.table.setItem(row, 1, item2)
 
             # Total value of the planet's items, which go to the warehouse if it's destroyed
-            item3 = TableWidgetStringIntCommas("{:,}".format(int(planet.items.total_value)))
+            item3 = TableWidgetNumber(int(planet.items.total_value))
             item3.setTextAlignment(QtCore.Qt.AlignHCenter)
             self.table.setItem(row, 2, item3)
 
@@ -155,28 +156,29 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
 
         resisting_planet.resists_destruction = True
 
-        msg = (
-            "Planet {0} is resisting destruction! A battle fleet from {0} has been " +
-            "dispatched, and is prepared to defend the planet if you try to destroy it. " +
-            "You must defeat them if you want to continue with the destruction of {0}." +
-            "<br><br>If you fight and lose, you will die and the game will be over." +
-            "<br><br>If you fight and win, you will destroy this planet and gain its materials, " +
+        msg = self.tr(
+            "Planet {0} is resisting destruction! A battle fleet from {0} has been "
+            "dispatched, and is prepared to defend the planet if you try to destroy it. "
+            "You must defeat them if you want to continue with the destruction of {0}."
+            "<br><br>If you fight and lose, you will die and the game will be over."
+            "<br><br>If you fight and win, you will destroy this planet and gain its materials, "
             "but you will lose some health."
-            "<br><br>If you choose not to fight, you will not be able to destroy this planet, " +
-            "but will continue unscathed."
+            "<br><br>If you choose not to fight, you will not be able to destroy this planet, "
+            "but will continue unscathed.", "{0} is a planet name"
         ).format(resisting_planet.full_name)
 
         if self.state.battle_level == 0:
-            msg += "<br><br>Since you have no battle fleet, your chances of victory are slim. "
+            msg += "<br><br>" + self.tr("Since you have no battle fleet, your chances of victory are slim.")
 
-        msg += "<br><br>Do you want to fight?"
+        msg += "<br><br>" + self.tr("Do you want to fight?")
 
         self.parent.audio.play(self.parent.audio.BattleSound)
-        proceed = yesNoDialog(self, "Planet is resisting!", msg)
+        proceed = yesNoDialog(self, self.tr("Planet is resisting!"), msg)
         if not proceed:
             self.parent.audio.play(self.parent.audio.FailureSound)
-            infoDialog(self.parent, "Chickened out!",
-                       message="You have declined to fight %s. They win, this time." % resisting_planet.full_name)
+            infoDialog(self.parent, self.tr("Chickened out!"),
+                       message=self.tr("You have declined to fight {0}. They win, this time.",
+                                       "{0} is a planet name").format(resisting_planet.full_name))
 
             # Remove resisting planet from list of planets to destroy
             return [p for p in planets_to_destroy if id(p) != id(resisting_planet)], resisting_planet
@@ -186,16 +188,18 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             self.parent.audio.play(self.parent.audio.VictorySound)
             self.parent.state.lost_health_from_battle()
             if self.parent.state.health > 0:
-                infoDialog(self.parent, "Victory!",
-                           message="You have defeated %s!" % resisting_planet.full_name)
+                infoDialog(self.parent, self.tr("Victory!"),
+                           message=self.tr("You have defeated {0}!", "{0} is a planet name").format(
+                                           resisting_planet.full_name))
 
                 resisting_planet = None
 
         if (not battle_won) or (self.parent.state.health == 0):
             self.parent.audio.play(self.parent.audio.DeathSound)
-            infoDialog(self.parent, "Defeat!",
-                       message="You have been defeated in battle by %s."
-                               "<br><br><br>You are dead :(" % resisting_planet.full_name)
+            infoDialog(self.parent, self.tr("Defeat!"),
+                       message=self.tr("You have been defeated in battle by {0}."
+                                       "<br><br><br>You are dead :(", "{0} is a planet name").format(
+                                       resisting_planet.full_name))
             self.died = True
             self.close()
             return planets_to_destroy, resisting_planet
@@ -203,12 +207,12 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         return planets_to_destroy, resisting_planet
 
     def allButtonClicked(self):
-        proceed = yesNoDialog(self, "Are you sure?",
-                              message="Are you sure you want to destroy all planets for {0:,}? "
-                                      "All planets except for the one you are currently "
-                                      "on will cease to exist, and all tradeable items "
-                                      "that currrently exist on those planets will be "
-                                      "shipped to your warehouse.".format(self.all_planets_cost))
+        proceed = yesNoDialog(self, self.tr("Are you sure?"),
+                              message=self.tr("Are you sure you want to destroy all planets for {0}? "
+                                              "All planets except for the one you are currently "
+                                              "on will cease to exist, and all tradeable items "
+                                              "that currently exist on those planets will be "
+                                              "shipped to your warehouse.").format(formatNumber(self.all_planets_cost)))
         if not proceed:
             return
 
@@ -233,40 +237,41 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         self.close()
 
         self.parent.audio.play(self.parent.audio.PlanetDestructionSound)
-        infoDialog(self.parent, "Success",
-                   message="Destruction of all planets is complete.")
+        infoDialog(self.parent, self.tr("Success"),
+                   message=self.tr("Destruction of all planets is complete."))
 
     def selectButtonClicked(self):
         selectedRows = [index.row() for index in self.table.selectionModel().selectedRows()]
         if len(selectedRows) < 1:
-            errorDialog(self, message="Please select planets to destroy first!")
+            errorDialog(self, message=self.tr("Please select planets to destroy first!"))
             return
 
         planets = [self.table.item(row, 0).data(QtCore.Qt.UserRole) for row in selectedRows]
-        destroyed_desc = ""
 
         if len(planets) == 1:
-            msg = ("Are you sure you want to destroy the planet {0}? {0} will cease to exist, and "
-                   "all tradeable items that currrently exist on {0} will be shipped to your "
-                   "warehouse.".format(planets[0].full_name))
+            msg = self.tr("Are you sure you want to destroy the planet {0}? {0} will cease to exist, and "
+                          "all tradeable items that currently exist on {0} will be shipped to your "
+                          "warehouse.", "{0} is a planet name").format(planets[0].full_name)
         elif len(planets) < 6:
-            planets_desc = ", ".join(p.full_name for p in planets[:-1]) + " and " + planets[-1].full_name
-            msg = ("Are you sure you want to destroy {0}? These planets will cease to exist, and "
-                   "all tradeable items that currrently exist on these planets will be shipped to your "
-                   "warehouse.".format(planets_desc))
+            msg = self.tr("Are you sure you want to destroy {0}? These planets will cease to exist, and "
+                          "all tradeable items that currently exist on these planets will be shipped to your "
+                          "warehouse.", "{0} is a list of 2 to 5 planet names, e.g. \"A, B and C\"").format(
+                          joinList([p.full_name for p in planets]))
         else:
-            msg = ("Are you sure you want to destroy {:,} planets? These planets will cease to exist, and "
-                   "all tradeable items that currrently exist on these planets will be shipped to your "
-                   "warehouse.".format(len(planets)))
+            msg = translate("PlanetDestructionPicker",
+                            "Are you sure you want to destroy %Ln planets? These planets will cease to exist, and "
+                            "all tradeable items that currently exist on these planets will be shipped to your "
+                            "warehouse.", None, len(planets))
 
 
         on_planet = any(planet is self.parent.state.current_planet for planet in planets)
 
         if on_planet:
-            msg += ("<br><br>Oh, and you are currently on {0}, so you will "
-                   "also die.".format(self.parent.state.current_planet.full_name))
+            msg += "<br><br>" + self.tr("Oh, and you are currently on {0}, so you will "
+                                        "also die.", "{0} is a planet name").format(
+                                        self.parent.state.current_planet.full_name)
 
-        proceed = yesNoDialog(self, "Are you sure?", message=msg)
+        proceed = yesNoDialog(self, self.tr("Are you sure?"), message=msg)
         if not proceed:
             return
 
@@ -291,23 +296,25 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             self.parent.locationBrowser.table.removeRow(index)
 
         if len(planets_to_destroy) == 1:
-            destroyed_desc = planets_to_destroy[0].full_name
+            destroyed_msg = self.tr("Destruction of {0} is complete.", "{0} is a planet name").format(
+                                    planets_to_destroy[0].full_name)
         elif len(planets_to_destroy) < 6:
-            destroyed_desc = (", ".join(p.full_name for p in planets_to_destroy[:-1]) + " and "
-                                        + planets_to_destroy[-1].full_name)
+            destroyed_msg = self.tr("Destruction of {0} is complete.",
+                                    "{0} is a list of 2 to 5 planet names, e.g. \"A, B and C\"").format(
+                                    joinList([p.full_name for p in planets_to_destroy]))
         else:
-            destroyed_desc = "{:,} planets".format(len(planets_to_destroy))
+            destroyed_msg = translate("PlanetDestructionPicker", "Destruction of %Ln planets is complete.",
+                                      None, len(planets_to_destroy))
 
 
         self.parent.audio.play(self.parent.audio.PlanetDestructionSound)
-        infoDialog(self.parent, "Success", message="Destruction of %s is complete."
-                                                   % destroyed_desc)
+        infoDialog(self.parent, self.tr("Success"), message=destroyed_msg)
 
         if on_planet:
             self.parent.audio.play(self.parent.audio.DeathSound)
-            infoDialog(self.parent, "Dead!", message="You destroyed the planet "
-                                                     "you were on, and killed yourself.<br><br>"
-                                                     "You are dead.")
+            infoDialog(self.parent, self.tr("Dead!"), message=self.tr("You destroyed the planet "
+                                                                      "you were on, and killed yourself.<br><br>"
+                                                                      "You are dead."))
             self.died = True
 
         self.close()

@@ -5,6 +5,8 @@ from deep_space_trader.planet import Planet
 from deep_space_trader.items import ItemCollection
 from deep_space_trader import constants as const
 from deep_space_trader.utils import percentChance
+from deep_space_trader.items import itemDisplayName
+from deep_space_trader.i18n import translate, formatNumber
 
 # Ranges of possible health loss during battle, by battle level number
 health_loss_ranges_by_battle_level = [
@@ -132,21 +134,29 @@ class State(object):
         self.current_planet.clear_samples_today()
 
     def record_sale(self, item_name, quantity, price):
-        self.transaction_log.append(("sold", self.day, self.current_planet.full_name, item_name, quantity, price))
+        self.transaction_log.append((False, self.day, self.current_planet.full_name, item_name, quantity, price))
 
     def record_purchase(self, item_name, quantity, price):
-        self.transaction_log.append(("bought", self.day, self.current_planet.full_name, item_name, quantity, price))
+        self.transaction_log.append((True, self.day, self.current_planet.full_name, item_name, quantity, price))
 
     def read_transaction_log(self):
         lines = []
 
-        for desc, daynum, planetname, itemname, quantity, price in self.transaction_log:
-            lines.append("Day %s: %s, %s %s %s for %s each" % (daynum, planetname, desc, quantity, itemname, price))
+        for bought, daynum, planetname, itemname, quantity, price in self.transaction_log:
+            if bought:
+                line = translate("State", "Day {0}: {1}, bought %Ln {2} for {3} each",
+                                 "{1} is a planet name, and {2} is an item name, e.g. tin", quantity)
+            else:
+                line = translate("State", "Day {0}: {1}, sold %Ln {2} for {3} each",
+                                 "{1} is a planet name, and {2} is an item name, e.g. tin", quantity)
+
+            lines.append(line.format(formatNumber(daynum), planetname, itemDisplayName(itemname), formatNumber(price)))
 
         return '\n'.join(lines)
 
     def read_travel_log(self):
-        return '\n'.join("Day %s: %s" % (daynum, name) for name, daynum in self.travel_log)
+        return '\n'.join(translate("State", "Day {0}: {1}", "{1} is a planet name").format(formatNumber(daynum), name)
+                         for name, daynum in self.travel_log)
 
     def next_day(self):
         if self.day == self.max_days:

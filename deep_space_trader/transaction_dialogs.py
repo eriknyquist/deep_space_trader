@@ -1,9 +1,13 @@
 from deep_space_trader.utils import errorDialog, yesNoDialog, infoDialog, checkForMoneyBonus, ICON_PATH
+from deep_space_trader.items import itemDisplayName
+from deep_space_trader.i18n import translate, formatNumber
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
 
 class TransactionDialog(QtWidgets.QDialog):
+    # Text in this base class uses translate("TransactionDialog", ...) rather than
+    # self.tr(), since self.tr() would look it up under the subclass name
     def __init__(self, parent, itemname, include_money=True):
         super(TransactionDialog, self).__init__(parent=parent)
 
@@ -14,7 +18,8 @@ class TransactionDialog(QtWidgets.QDialog):
         buttonLayout = QtWidgets.QHBoxLayout()
 
         self.description = QtWidgets.QLabel()
-        moneyCount = QtWidgets.QLabel("(your money: {:,})".format(parent.state.money))
+        moneyCount = QtWidgets.QLabel(translate("TransactionDialog", "(your money: {0})").format(
+                                      formatNumber(parent.state.money)))
 
         self.spinboxLabel = QtWidgets.QLabel("")
 
@@ -25,7 +30,7 @@ class TransactionDialog(QtWidgets.QDialog):
         self.spinbox.valueChanged.connect(self.valueChanged)
         self.spinbox.setMaximum(self.maximumQuantity())
 
-        maxButton = QtWidgets.QPushButton("Max")
+        maxButton = QtWidgets.QPushButton(translate("TransactionDialog", "Max"))
         maxButton.clicked.connect(self.maxButtonClicked)
 
         spinboxLayout.addWidget(self.spinboxLabel)
@@ -36,7 +41,7 @@ class TransactionDialog(QtWidgets.QDialog):
         self.acceptButton.clicked.connect(self.acceptButtonClicked)
         buttonLayout.addWidget(self.acceptButton)
 
-        cancelButton = QtWidgets.QPushButton("Cancel")
+        cancelButton = QtWidgets.QPushButton(translate("TransactionDialog", "Cancel"))
         cancelButton.clicked.connect(self.cancelButtonClicked)
         buttonLayout.addWidget(cancelButton)
 
@@ -89,9 +94,10 @@ class Buy(TransactionDialog):
 
         super(Buy, self).__init__(parent, itemname, include_money=True)
 
-        self.description.setText("How much %s do you want to buy?" % self.itemName)
-        self.acceptButton.setText("Buy")
-        self.setWindowTitle("Buy items")
+        self.description.setText(self.tr("How much {0} do you want to buy?",
+                                         "{0} is an item name, e.g. tin").format(itemDisplayName(self.itemName)))
+        self.acceptButton.setText(self.tr("Buy"))
+        self.setWindowTitle(self.tr("Buy items"))
 
     def acceptTransaction(self, quantity):
         self.parent.state.items.add_items(self.itemName,
@@ -103,7 +109,8 @@ class Buy(TransactionDialog):
         self.parent.state.record_purchase(self.itemName, quantity, self.value)
 
     def valueChanged(self):
-        self.spinboxLabel.setText("Buy quantity (cost: {:,})".format(int(self.spinbox.value()) * self.value))
+        self.spinboxLabel.setText(self.tr("Buy quantity (cost: {0})").format(
+                                  formatNumber(int(self.spinbox.value()) * self.value)))
 
     def maximumQuantity(self):
         capacity = self.parent.state.capacity - self.parent.state.items.count()
@@ -120,9 +127,10 @@ class Sell(TransactionDialog):
         self.quantity = parent.state.items.items[itemname].quantity
 
         super(Sell, self).__init__(parent, itemname, include_money=False)
-        self.description.setText("How much %s do you want to sell?" % self.itemName)
-        self.acceptButton.setText("Sell")
-        self.setWindowTitle("Sell items")
+        self.description.setText(self.tr("How much {0} do you want to sell?",
+                                         "{0} is an item name, e.g. tin").format(itemDisplayName(self.itemName)))
+        self.acceptButton.setText(self.tr("Sell"))
+        self.setWindowTitle(self.tr("Sell items"))
 
     def acceptTransaction(self, quantity):
         self.parent.state.current_planet.items.add_items(self.itemName,
@@ -135,7 +143,8 @@ class Sell(TransactionDialog):
         checkForMoneyBonus(self.parent)
 
     def valueChanged(self):
-        self.spinboxLabel.setText("Sell quantity (gain: {:,})".format(int(self.spinbox.value()) * self.value))
+        self.spinboxLabel.setText(self.tr("Sell quantity (gain: {0})").format(
+                                  formatNumber(int(self.spinbox.value()) * self.value)))
 
     def maximumQuantity(self):
         return self.quantity
@@ -146,11 +155,11 @@ class PlayerToWarehouse(TransactionDialog):
         self.quantity = parent.state.items.items[itemname].quantity
 
         super(PlayerToWarehouse, self).__init__(parent, itemname, include_money=False)
-        self.description.setText("How much %s do you want to move to the warehouse?"
-                                 % self.itemName)
+        self.description.setText(self.tr("How much {0} do you want to move to the warehouse?",
+                                         "{0} is an item name, e.g. tin").format(itemDisplayName(self.itemName)))
 
-        self.acceptButton.setText("Move")
-        self.setWindowTitle("Move to warehouse")
+        self.acceptButton.setText(self.tr("Move"))
+        self.setWindowTitle(self.tr("Move to warehouse"))
 
     def acceptTransaction(self, quantity):
         self.parent.audio.play(self.parent.audio.WhooshPopSound)
@@ -160,7 +169,7 @@ class PlayerToWarehouse(TransactionDialog):
                                               quantity)
 
     def valueChanged(self):
-        self.spinboxLabel.setText("Move quantity")
+        self.spinboxLabel.setText(self.tr("Move quantity"))
 
     def maximumQuantity(self):
         return self.quantity
@@ -171,11 +180,11 @@ class WarehouseToPlayer(TransactionDialog):
         self.quantity = parent.state.warehouse.items[itemname].quantity
 
         super(WarehouseToPlayer, self).__init__(parent, itemname, include_money=False)
-        self.description.setText("How much %s do you want to retrieve?"
-                                 % self.itemName)
+        self.description.setText(self.tr("How much {0} do you want to retrieve?",
+                                         "{0} is an item name, e.g. tin").format(itemDisplayName(self.itemName)))
 
-        self.acceptButton.setText("Move")
-        self.setWindowTitle("Retrieve from warehouse")
+        self.acceptButton.setText(self.tr("Move"))
+        self.setWindowTitle(self.tr("Retrieve from warehouse"))
 
     def acceptTransaction(self, quantity):
         self.parent.audio.play(self.parent.audio.WhooshPopSound)
@@ -185,7 +194,7 @@ class WarehouseToPlayer(TransactionDialog):
                                           quantity)
 
     def valueChanged(self):
-        self.spinboxLabel.setText("Move quantity")
+        self.spinboxLabel.setText(self.tr("Move quantity"))
 
     def maximumQuantity(self):
         return min(self.quantity, self.parent.state.capacity - self.parent.state.items.count())
@@ -196,15 +205,19 @@ class DumpWarehouseItem(TransactionDialog):
         self.quantity = parent.state.warehouse.items[itemname].quantity
 
         super(DumpWarehouseItem, self).__init__(parent, itemname, include_money=False)
-        self.description.setText("How much %s do you want to dump?" % self.itemName)
-        self.acceptButton.setText("Dump")
-        self.setWindowTitle("Dump warehouse items")
+        self.description.setText(self.tr("How much {0} do you want to dump?",
+                                         "{0} is an item name, e.g. tin").format(itemDisplayName(self.itemName)))
+        self.acceptButton.setText(self.tr("Dump"))
+        self.setWindowTitle(self.tr("Dump warehouse items"))
 
     def acceptTransaction(self, quantity):
-        proceed = yesNoDialog(self, "Dump items?",
-                              message="Are you sure you want to dump {0:,} {1}? "
-                              "You will lose these items from your warehouse, and you will "
-                              "not be able to get them back.".format(quantity, self.itemName))
+        proceed = yesNoDialog(self, self.tr("Dump items?"),
+                              message=translate("DumpWarehouseItem",
+                                                "Are you sure you want to dump %Ln {0}? "
+                                                "You will lose these items from your warehouse, and you will "
+                                                "not be able to get them back.",
+                                                "{0} is an item name, e.g. tin",
+                                                quantity).format(itemDisplayName(self.itemName)))
         if not proceed:
             return
 
@@ -212,7 +225,7 @@ class DumpWarehouseItem(TransactionDialog):
         self.parent.state.warehouse.remove_items(self.itemName, quantity)
 
     def valueChanged(self):
-        self.spinboxLabel.setText("Dump quantity")
+        self.spinboxLabel.setText(self.tr("Dump quantity"))
 
     def maximumQuantity(self):
         return self.quantity
@@ -223,15 +236,19 @@ class DumpPlayerItem(TransactionDialog):
         self.quantity = parent.state.items.items[itemname].quantity
 
         super(DumpPlayerItem, self).__init__(parent, itemname, include_money=False)
-        self.description.setText("How much %s do you want to dump?" % self.itemName)
-        self.acceptButton.setText("Dump")
-        self.setWindowTitle("Dump player items")
+        self.description.setText(self.tr("How much {0} do you want to dump?",
+                                         "{0} is an item name, e.g. tin").format(itemDisplayName(self.itemName)))
+        self.acceptButton.setText(self.tr("Dump"))
+        self.setWindowTitle(self.tr("Dump player items"))
 
     def acceptTransaction(self, quantity):
-        proceed = yesNoDialog(self, "Dump items?",
-                              message="Are you sure you want to dump {0:,} {1}? "
-                              "these items will be removed from your ship, and you will "
-                              "not be able to get them back.".format(quantity, self.itemName))
+        proceed = yesNoDialog(self, self.tr("Dump items?"),
+                              message=translate("DumpPlayerItem",
+                                                "Are you sure you want to dump %Ln {0}? "
+                                                "These items will be removed from your ship, and you will "
+                                                "not be able to get them back.",
+                                                "{0} is an item name, e.g. tin",
+                                                quantity).format(itemDisplayName(self.itemName)))
         if not proceed:
             return
 
@@ -239,7 +256,7 @@ class DumpPlayerItem(TransactionDialog):
         self.parent.state.items.remove_items(self.itemName, quantity)
 
     def valueChanged(self):
-        self.spinboxLabel.setText("Dump quantity")
+        self.spinboxLabel.setText(self.tr("Dump quantity"))
 
     def maximumQuantity(self):
         return self.quantity

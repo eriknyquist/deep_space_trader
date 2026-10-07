@@ -2,6 +2,17 @@ import copy
 import random
 
 from deep_space_trader import constants as const
+from deep_space_trader.i18n import translate
+
+from PyQt5.QtCore import QT_TRANSLATE_NOOP
+
+
+def itemDisplayName(name):
+    """
+    Translated name of an item type, for showing to the player. Item type names
+    themselves stay in English, since they are used as keys everywhere
+    """
+    return translate("Items", name)
 
 
 class ItemType(object):
@@ -9,27 +20,31 @@ class ItemType(object):
         self.name = name
         self.base_value = base_value
 
+    @property
+    def display_name(self):
+        return itemDisplayName(self.name)
+
 
 common_item_types = [
-    ItemType("tin", const.PRICE_TIN),
-    ItemType("steel", const.PRICE_STEEL),
-    ItemType("copper", const.PRICE_COPPER),
-    ItemType("silver", const.PRICE_SILVER),
+    ItemType(QT_TRANSLATE_NOOP("Items", "tin"), const.PRICE_TIN),
+    ItemType(QT_TRANSLATE_NOOP("Items", "steel"), const.PRICE_STEEL),
+    ItemType(QT_TRANSLATE_NOOP("Items", "copper"), const.PRICE_COPPER),
+    ItemType(QT_TRANSLATE_NOOP("Items", "silver"), const.PRICE_SILVER),
 ]
 
 medium_rare_item_types = [
-    ItemType("gold", const.PRICE_GOLD),
-    ItemType("silicon", const.PRICE_SILICON),
-    ItemType("uranium", const.PRICE_URANIUM),
-    ItemType("diamond", const.PRICE_DIAMOND),
-    ItemType("tritium", const.PRICE_TRITIUM),
-    ItemType("platinum", const.PRICE_PLATINUM),
-    ItemType("plutonium", const.PRICE_PLUTONIUM)
+    ItemType(QT_TRANSLATE_NOOP("Items", "gold"), const.PRICE_GOLD),
+    ItemType(QT_TRANSLATE_NOOP("Items", "silicon"), const.PRICE_SILICON),
+    ItemType(QT_TRANSLATE_NOOP("Items", "uranium"), const.PRICE_URANIUM),
+    ItemType(QT_TRANSLATE_NOOP("Items", "diamond"), const.PRICE_DIAMOND),
+    ItemType(QT_TRANSLATE_NOOP("Items", "tritium"), const.PRICE_TRITIUM),
+    ItemType(QT_TRANSLATE_NOOP("Items", "platinum"), const.PRICE_PLATINUM),
+    ItemType(QT_TRANSLATE_NOOP("Items", "plutonium"), const.PRICE_PLUTONIUM)
 ]
 
 rare_item_types = [
-    ItemType("jade stone", const.PRICE_JADESTONE),
-    ItemType("antimatter", const.PRICE_ANTIMATTER)
+    ItemType(QT_TRANSLATE_NOOP("Items", "jade stone"), const.PRICE_JADESTONE),
+    ItemType(QT_TRANSLATE_NOOP("Items", "antimatter"), const.PRICE_ANTIMATTER)
 ]
 
 

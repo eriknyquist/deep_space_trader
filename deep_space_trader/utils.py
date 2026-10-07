@@ -7,6 +7,10 @@ import sys
 from PyQt5 import QtWidgets, QtCore, QtGui
 
 from deep_space_trader import constants as const
+from deep_space_trader.i18n import translate, formatNumber
+from deep_space_trader import __maintainer__ as package_author
+from deep_space_trader import __email__ as author_email
+from deep_space_trader import __version__ as package_version
 
 DATA_ITER = 99
 PWD_ITER = 72
@@ -55,7 +59,7 @@ class InfoDialog(QtWidgets.QDialog):
         mainLayout.addWidget(textGroup)
 
         if cancelable:
-            checkboxLabel = QtWidgets.QLabel("Don't show this message again")
+            checkboxLabel = QtWidgets.QLabel(self.tr("Don't show this message again"))
             self.checkbox = QtWidgets.QCheckBox()
             self.checkbox.setStyleSheet("QCheckBox::indicator::unchecked { border: 2px solid black }")
             self.checkbox.stateChanged.connect(self.checkboxClicked)
@@ -72,17 +76,25 @@ class InfoDialog(QtWidgets.QDialog):
         self.dont_show_again = self.checkbox.isChecked()
 
 def showAboutDialog():
-    dialog = InfoDialog("Deep Space Trader", const.GAME_ABOUT_TEXT, cancelable=False)
+    text = ("Deep Space Trader %s<br><br>" % package_version +
+            translate("About", const.GAME_INTRO_TEXT) +
+            translate("About", const.GAME_ABOUT_STRATEGY_TEXT) + "<br><br>" +
+            translate("About", "Created by {0} ({1})").format(package_author, author_email))
+
+    dialog = InfoDialog("Deep Space Trader", text, cancelable=False)
     dialog.setWindowModality(QtCore.Qt.ApplicationModal)
     dialog.exec_()
 
 def gameStoryDialog():
-    dialog = InfoDialog("Deep Space Trader", const.GAME_INTRO_TEXT)
+    dialog = InfoDialog("Deep Space Trader", translate("About", const.GAME_INTRO_TEXT))
     dialog.setWindowModality(QtCore.Qt.ApplicationModal)
     dialog.exec_()
     return dialog.dont_show_again
 
-def yesNoDialog(parent, header="", message="Are you sure?", cancelable=True):
+def yesNoDialog(parent, header="", message=None, cancelable=True):
+    if message is None:
+        message = translate("Dialogs", "Are you sure?")
+
     if cancelable:
         buttons = (QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Cancel)
         default_button = QtWidgets.QMessageBox.Cancel
@@ -96,7 +108,13 @@ def yesNoDialog(parent, header="", message="Are you sure?", cancelable=True):
 
     return reply == QtWidgets.QMessageBox.Yes
 
-def errorDialog(parent, heading="Error", message="Unrecoverable error occurred"):
+def errorDialog(parent, heading=None, message=None):
+    if heading is None:
+        heading = translate("Dialogs", "Error")
+
+    if message is None:
+        message = translate("Dialogs", "Unrecoverable error occurred")
+
     msg = QtWidgets.QMessageBox(parent)
 
     # Set icon pixmap directly-- if we use the "setIcon" method on the message
@@ -107,7 +125,7 @@ def errorDialog(parent, heading="Error", message="Unrecoverable error occurred")
     msg.setIconPixmap(icon.pixmap(iconSize, iconSize))
 
     msg.setText(heading + "<br><br>" + message)
-    msg.setWindowTitle("Error")
+    msg.setWindowTitle(translate("Dialogs", "Error"))
     msg.setWindowIcon(QtGui.QIcon(ICON_PATH))
     msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
     msg.exec_()
@@ -123,29 +141,43 @@ def infoDialog(parent, heading="", message=""):
     msg.setIconPixmap(icon.pixmap(iconSize, iconSize))
 
     msg.setText(heading + "<br><br>" + message)
-    msg.setWindowTitle("Information")
+    msg.setWindowTitle(translate("Dialogs", "Information"))
     msg.setWindowIcon(QtGui.QIcon(ICON_PATH))
     msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
     msg.exec_()
 
 
-def selectedRowName(table):
+def rowKey(table, row):
+    """
+    Identify a table row by the object stored with Qt.UserRole in its first
+    cell (e.g. the Planet, or the item type name), or by the text shown in the
+    first cell if nothing is stored. Shown text is translated, so it can't be
+    used to look things up.
+    """
+    item = table.item(row, 0)
+    if item is None:
+        return None
+
+    key = item.data(QtCore.Qt.UserRole)
+    return item.text() if key is None else key
+
+
+def selectedRowKey(table):
     row = table.currentRow()
     if row < 0:
         return None
 
-    return table.item(row, 0).text()
+    return rowKey(table, row)
 
 
-def selectRowByName(table, name):
+def selectRowByKey(table, key):
     # Re-select a row after the table has been re-populated, so that the current
     # row isn't lost (Qt would otherwise default to the first row on focus-in)
-    if name is None:
+    if key is None:
         return
 
     for row in range(table.rowCount()):
-        item = table.item(row, 0)
-        if (item is not None) and (item.text() == name):
+        if rowKey(table, row) == key:
             table.setCurrentCell(row, 0)
             return
 
@@ -176,10 +208,11 @@ def checkForMoneyBonus(parent):
         new_store_purchases += 1
 
     if new_days is not None:
-        infoDialog(parent, "Congratulations!",
-                   "Congratulations, industrious trader! you have accrued {0:,}. Your total "
-                   "days have been increased to {1}, and you can now make {2} store "
-                   "purchases per day.".format(parent.state.money, new_days, new_store_purchases))
+        infoDialog(parent, translate("MoneyBonus", "Congratulations!"),
+                   translate("MoneyBonus", "Congratulations, industrious trader! You have accrued {0}. "
+                             "Your total days have been increased to {1}, and you can now make "
+                             "%Ln store purchases per day.", None,
+                             new_store_purchases).format(formatNumber(parent.state.money), formatNumber(new_days)))
 
         parent.state.max_days = new_days
         parent.state.max_store_purchases_per_day = new_store_purchases

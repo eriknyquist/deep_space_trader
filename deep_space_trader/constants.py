@@ -3,6 +3,8 @@ from deep_space_trader import __email__ as author_email
 from deep_space_trader import __name__ as package_name
 from deep_space_trader import __version__ as package_version
 
+from PyQt5.QtCore import QT_TRANSLATE_NOOP
+
 
 # ------ Initial values for player data on day 1 ------
 
@@ -113,8 +115,10 @@ MAX_STORE_PURCHASES_PER_DAY = 4
 # Number of high scores stored
 MAX_HIGH_SCORES = 10
 
-# Text shown in the intro dialog
-GAME_INTRO_TEXT = (
+# Text shown in the intro dialog. Marked for translation here, and translated
+# when shown (see utils.gameStoryDialog), since translations aren't loaded yet
+# when this module is imported
+GAME_INTRO_TEXT = QT_TRANSLATE_NOOP("About",
     "The year is 5208, and humanity has solved the problem of bridging the vast "
     "distances between stars by bending the fabric of spacetime. Commerce between "
     "thousands of newly colonized planets is now possible.<br><br>"
@@ -134,20 +138,18 @@ GAME_COMPLETE_TEXT = (
     ""
 )
 
-# Text shown in the Help->About dialog
-GAME_ABOUT_TEXT = (
-    ("Deep Space Trader %s<br><br>" % (package_version)) +
-    GAME_INTRO_TEXT +
-    ("<ul>Recommended strategy: <br>" +
-     "<li>Buy the 'Increase ship capacity' upgrade from the store as early and as " +
-     " frequently as possible</li><br>" +
-     "<li>Destroy as many planets as you can, by buying the 'Planet destruction " +
-     "kit' from the store</li><br>" +
-     "<li>Discover new planets by buying 'Scout expedition' from " +
-     "the store, and sell them the resources you obtained from destroying " +
-     " other planets. Rinse and repeat.</li><br>" +
-     "<li>Watch out for pirates and planets that resist destruction; buy the " +
-     "Battle Fleet from the store and upgrade it as often as you can to increase " +
-     "your chances of winning battles against pirate fleets and planet defense fleets.</li></ul><br><br>" +
-    ("Created by %s (%s)" % (package_author, author_email)))
+# Strategy tips shown in the Help->About dialog, after the intro text (see
+# utils.showAboutDialog). Translated when shown, like GAME_INTRO_TEXT
+GAME_ABOUT_STRATEGY_TEXT = QT_TRANSLATE_NOOP("About",
+    "<ul>Recommended strategy: <br>"
+    "<li>Buy the 'Increase ship capacity' upgrade from the store as early and as "
+    "frequently as possible</li><br>"
+    "<li>Destroy as many planets as you can, by buying the 'Planet destruction "
+    "kit' from the store</li><br>"
+    "<li>Discover new planets by buying 'Scout expedition' from "
+    "the store, and sell them the resources you obtained from destroying "
+    "other planets. Rinse and repeat.</li><br>"
+    "<li>Watch out for pirates and planets that resist destruction; buy the "
+    "Battle Fleet from the store and upgrade it as often as you can to increase "
+    "your chances of winning battles against pirate fleets and planet defense fleets.</li></ul>"
 )

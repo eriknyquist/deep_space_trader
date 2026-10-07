@@ -1,9 +1,10 @@
 import os
 import random
 from PyQt5.QtMultimedia import QAudioDeviceInfo, QSoundEffect
-from PyQt5.QtCore import QUrl, QObject, QThread, QTimer, Qt, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QUrl, QObject, QThread, QTimer, Qt, pyqtSignal, pyqtSlot, QT_TRANSLATE_NOOP
 from PyQt5.QtWidgets import QApplication, QDialog, QProgressDialog
 from deep_space_trader.utils import AUDIO_DIR
+from deep_space_trader.i18n import translate
 
 # AudioPlayer attribute name -> sound file
 SOUND_FILES = {
@@ -129,15 +130,16 @@ class SoundLoadingDialog(QProgressDialog):
 
     # Label text cycles through these, moving to the next one after a randomly
     # chosen number of progress updates (see LABEL_UPDATE_COUNTS), and wrapping
-    # around to the start after the last one
+    # around to the start after the last one. Each string must be wrapped in
+    # QT_TRANSLATE_NOOP("SoundLoadingDialog", ...) so it can be translated
     LABEL_STRINGS = [
-        "reserializing quantum encoders",
-        "backtracing core entanglements",
-        "reverse-engineering universe",
-        "rotating atomic stack carriers",
-        "initializing reality",
-        "deriving orbital constants",
-        "rate-matching baffle alignments"]
+        QT_TRANSLATE_NOOP("SoundLoadingDialog", "reserializing quantum encoders..."),
+        QT_TRANSLATE_NOOP("SoundLoadingDialog", "backtracing core entanglements..."),
+        QT_TRANSLATE_NOOP("SoundLoadingDialog", "reverse-engineering universe..."),
+        QT_TRANSLATE_NOOP("SoundLoadingDialog", "rotating atomic stack carriers..."),
+        QT_TRANSLATE_NOOP("SoundLoadingDialog", "initializing reality..."),
+        QT_TRANSLATE_NOOP("SoundLoadingDialog", "deriving orbital constants..."),
+        QT_TRANSLATE_NOOP("SoundLoadingDialog", "rate-matching baffle alignments...")]
 
     # Number of progress updates to wait before changing the label is picked
     # at random from this list each time, so the changes look less mechanical
@@ -150,8 +152,8 @@ class SoundLoadingDialog(QProgressDialog):
         self.loadingDone = False
         self.updatesUntilNextLabel = random.choice(self.LABEL_UPDATE_COUNTS)
 
-        self.setWindowTitle("Please wait")
-        self.setLabelText(random.choice(self.LABEL_STRINGS))
+        self.setWindowTitle(self.tr("Please wait"))
+        self.setLabelText(self.randomLabel())
         self.setCancelButton(None)
         self.setRange(0, audio.totalCount)
         self.setMinimumDuration(0)
@@ -167,12 +169,15 @@ class SoundLoadingDialog(QProgressDialog):
     def onLoadProgress(self, count, total):
         self.updatesUntilNextLabel -= 1
         if self.updatesUntilNextLabel <= 0:
-            self.setLabelText(random.choice(self.LABEL_STRINGS) + "...")
+            self.setLabelText(self.randomLabel())
             self.updatesUntilNextLabel = random.choice(self.LABEL_UPDATE_COUNTS)
 
         self.setValue(count)
         if count >= total:
             self.finish()
+
+    def randomLabel(self):
+        return translate("SoundLoadingDialog", random.choice(self.LABEL_STRINGS))
 
     def finish(self):
         if not self.loadingDone:

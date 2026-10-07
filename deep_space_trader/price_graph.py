@@ -1,6 +1,8 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 import pyqtgraph
 
+from deep_space_trader.i18n import formatNumber
+
 
 class PriceHistoryGraph(QtWidgets.QDialog):
     def __init__(self, parent, item):
@@ -18,13 +20,14 @@ class PriceHistoryGraph(QtWidgets.QDialog):
         self.graph = pyqtgraph.PlotWidget()
         self.graph.plotItem.vb.setMouseEnabled(x=False, y=False)
 
-        self.graph.setLabel('left', "<span style=\"font-size:30px\">Price</span>")
-        self.graph.setLabel('bottom', "<span style=\"font-size:30px\">Day</span>")
+        self.graph.setLabel('left', '<span style="font-size:30px">{0}</span>'.format(self.tr("Price")))
+        self.graph.setLabel('bottom', '<span style="font-size:30px">{0}</span>'.format(self.tr("Day")))
 
         self.mainLayout.addWidget(self.graph)
 
-        self.setWindowTitle("Price history for %s on %s" %
-                            (item.type.name, parent.state.current_planet.full_name))
+        self.setWindowTitle(self.tr("Price history for {0} on {1}",
+                                    "{0} is an item name, e.g. tin, and {1} is a planet name").format(
+                                    item.type.display_name, parent.state.current_planet.full_name))
 
         planet = parent.state.current_planet
         range_end = self.parent.state.day + 1
@@ -42,5 +45,5 @@ class PriceHistoryGraph(QtWidgets.QDialog):
         self.graph.setBackground('#101010')
 
         # Ensure no fraction values (days) are shown on the X-axis
-        dx = [(value, str(value)) for value in list((range(int(min(x_axis)), int(max(x_axis)+1))))]
+        dx = [(value, formatNumber(value)) for value in list((range(int(min(x_axis)), int(max(x_axis)+1))))]
         ax.setTicks([dx, []])

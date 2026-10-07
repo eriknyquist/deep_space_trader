@@ -1,15 +1,19 @@
 import random
 
 from deep_space_trader.utils import (
-    errorDialog, yesNoDialog, infoDialog, selectedRowName, selectRowByName, percentChance
+    errorDialog, yesNoDialog, infoDialog, selectedRowKey, selectRowByKey, percentChance
 )
 from deep_space_trader.item_browsers import TradingConsolePlanetDisplay
+from deep_space_trader.i18n import translate, formatNumber
 
 from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5.QtCore import QT_TRANSLATE_NOOP
 
-TRADING_CONSOLE_MESSAGE = ("You must buy the trading console from the store if "
-                           "you want to be able to see planet item prices without "
-                           "travelling to the planet")
+# Translated when used, since translations aren't loaded yet when this module is imported
+TRADING_CONSOLE_MESSAGE = QT_TRANSLATE_NOOP("LocationBrowser",
+                                            "You must buy the trading console from the store if "
+                                            "you want to be able to see planet item prices without "
+                                            "travelling to the planet")
 
 
 class TradingConsole(QtWidgets.QDialog):
@@ -22,7 +26,7 @@ class TradingConsole(QtWidgets.QDialog):
         self.setLayout(self.mainLayout)
         self.update()
         self.adjustSize()
-        self.setWindowTitle("Item prices on " + planet.full_name)
+        self.setWindowTitle(self.tr("Item prices on {0}", "{0} is a planet name").format(planet.full_name))
 
     def sizeHint(self):
         return QtCore.QSize(600, 400)
@@ -38,19 +42,19 @@ class LocationBrowser(QtWidgets.QWidget):
         self.buttonLayout = QtWidgets.QHBoxLayout()
 
         self.planetSearchText = QtWidgets.QLineEdit()
-        self.planetSearchText.setPlaceholderText("Search for planets by name...")
+        self.planetSearchText.setPlaceholderText(self.tr("Search for planets by name..."))
         self.planetSearchText.textChanged.connect(self.planetSearchTextChanged)
         self.planetSearchLayout.addWidget(self.planetSearchText)
 
-        self.travelButton = QtWidgets.QPushButton("Travel...")
+        self.travelButton = QtWidgets.QPushButton(self.tr("Travel..."))
         self.travelButton.clicked.connect(self.travelButtonClicked)
         self.buttonLayout.addWidget(self.travelButton)
 
-        self.previousButton = QtWidgets.QPushButton("Travel to previous")
+        self.previousButton = QtWidgets.QPushButton(self.tr("Travel to previous"))
         self.previousButton.clicked.connect(self.previousButtonClicked)
         self.buttonLayout.addWidget(self.previousButton)
 
-        self.pricesButton = QtWidgets.QPushButton("Trading console")
+        self.pricesButton = QtWidgets.QPushButton(self.tr("Trading console"))
         self.pricesButton.clicked.connect(self.pricesButtonClicked)
         self.buttonLayout.addWidget(self.pricesButton)
         self.pricesButton.setEnabled(self.parent.state.have_trading_console)
@@ -66,7 +70,7 @@ class LocationBrowser(QtWidgets.QWidget):
         self.table.setPalette(palette)
 
         self.table.setColumnCount(2)
-        self.table.setHorizontalHeaderLabels(['Planet', 'visited?'])
+        self.table.setHorizontalHeaderLabels([self.tr('Planet'), self.tr('visited?')])
         self.table.verticalHeader().setVisible(False)
         self.table.horizontalHeader().setSectionsClickable(False)
         self.table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
@@ -82,7 +86,7 @@ class LocationBrowser(QtWidgets.QWidget):
         self.mainLayout.addLayout(self.buttonLayout)
         self.mainLayout.addWidget(self.table)
 
-        self.tradingConsoleTooltip = TRADING_CONSOLE_MESSAGE
+        self.tradingConsoleTooltip = translate("LocationBrowser", TRADING_CONSOLE_MESSAGE)
         self.tooltipsEnabled = True
         self.setTooltips()
         self.table.resizeColumnsToContents()
@@ -94,8 +98,8 @@ class LocationBrowser(QtWidgets.QWidget):
 
     def setTooltips(self):
         if self.tooltipsEnabled:
-            self.travelButton.setToolTip("travel to the selected planet")
-            self.previousButton.setToolTip("travel back to the planet you were on before the current planet")
+            self.travelButton.setToolTip(self.tr("travel to the selected planet"))
+            self.previousButton.setToolTip(self.tr("travel back to the planet you were on before the current planet"))
             self.pricesButton.setToolTip(self.tradingConsoleTooltip)
         else:
             self.travelButton.setToolTip(None)
@@ -104,8 +108,8 @@ class LocationBrowser(QtWidgets.QWidget):
 
     def enableTradingConsole(self):
         self.pricesButton.setEnabled(True)
-        self.tradingConsoleTooltip = ("opens the trading console for the selected planet, "
-                                      "allowing you to see item prices without travelling there")
+        self.tradingConsoleTooltip = self.tr("opens the trading console for the selected planet, "
+                                             "allowing you to see item prices without travelling there")
         self.pricesButton.setToolTip(self.tradingConsoleTooltip)
 
     def keyPressEvent(self, event: QtGui.QKeyEvent):
@@ -117,7 +121,7 @@ class LocationBrowser(QtWidgets.QWidget):
 
                 self.openTradingConsole(planet)
             else:
-                errorDialog(self, message=TRADING_CONSOLE_MESSAGE)
+                errorDialog(self, message=translate("LocationBrowser", TRADING_CONSOLE_MESSAGE))
 
     def planetSearchTextChanged(self, newText):
         if not newText.strip():
@@ -168,7 +172,7 @@ class LocationBrowser(QtWidgets.QWidget):
         # Set current planet "visited=yes"
         index = self.parent.state.planets.index(self.parent.state.current_planet)
 
-        item2 = QtWidgets.QTableWidgetItem("yes")
+        item2 = QtWidgets.QTableWidgetItem(self.tr("yes"))
         item2.setTextAlignment(QtCore.Qt.AlignHCenter)
         self.table.setItem(index, 1, item2)
 
@@ -182,13 +186,13 @@ class LocationBrowser(QtWidgets.QWidget):
         # Keep a reference to the planet on the row, so the planet can be found
         # without looking it up by name or by row number
         item1.setData(QtCore.Qt.UserRole, planet)
-        item2 = QtWidgets.QTableWidgetItem("yes" if planet.visited else "no")
+        item2 = QtWidgets.QTableWidgetItem(self.tr("yes") if planet.visited else self.tr("no"))
         item2.setTextAlignment(QtCore.Qt.AlignHCenter)
         self.table.setItem(row, 0, item1)
         self.table.setItem(row, 1, item2)
 
     def populateTable(self, planets):
-        selectedName = selectedRowName(self.table)
+        selectedKey = selectedRowKey(self.table)
         self.table.setUpdatesEnabled(False)
         self.table.blockSignals(True)
         self.table.setSortingEnabled(False)
@@ -201,7 +205,7 @@ class LocationBrowser(QtWidgets.QWidget):
             self.addRow(planets[row], row)
 
         self.table.setSortingEnabled(True)
-        selectRowByName(self.table, selectedName)
+        selectRowByKey(self.table, selectedKey)
         self.table.blockSignals(False)
         self.table.setUpdatesEnabled(True)
 
@@ -222,17 +226,19 @@ class LocationBrowser(QtWidgets.QWidget):
     def travelToPlanet(self, planet):
         planetname = planet.full_name
         if planet is self.parent.state.current_planet:
-            errorDialog(self, message="You are already on %s!" % planetname)
+            errorDialog(self, message=self.tr("You are already on {0}!", "{0} is a planet name").format(planetname))
             return
 
         if self.parent.state.money < self.parent.state.travel_cost:
-            errorDialog(self, message="You don't have enough money! (%d required)"
-                                      % self.parent.state.travel_cost)
+            errorDialog(self, message=self.tr("You don't have enough money! ({0} required)").format(
+                                      formatNumber(self.parent.state.travel_cost)))
             return
 
-        accepted = yesNoDialog(self, "Travel",
-                               "Travel to {0}?<br><br>(cost is {1:,}, you have {2:,})".format(
-                               planetname, self.parent.state.travel_cost, self.parent.state.money))
+        accepted = yesNoDialog(self, self.tr("Travel"),
+                               self.tr("Travel to {0}?<br><br>(cost is {1}, you have {2})",
+                                       "{0} is a planet name").format(
+                               planetname, formatNumber(self.parent.state.travel_cost),
+                               formatNumber(self.parent.state.money)))
         if not accepted:
             return
 
@@ -240,17 +246,17 @@ class LocationBrowser(QtWidgets.QWidget):
 
         if percentChance(self.parent.state.chance_of_being_robbed_in_transit()):
             self.parent.audio.play(self.parent.audio.BattleSound)
-            accepted = yesNoDialog(self, "Attacked by pirates!",
-                                   "You have encountered a pirate fleet while travelling "
-                                   "between planets!<br><br>Your battle fleet must defeat them if "
-                                   "you want to continue.<br><br>"
-                                   "If you fight and lose, you will die.<br><br>"
-                                   "If you fight and win, you you will lose some health, but you will "
-                                   "be able to continue your travels and will not lose any money"
-                                   "or resources.<br><br>"
-                                   "If you do not fight, then the only other "
-                                   "option is surrender; you will not die or lose any health, but you "
-                                   "may lose some of your money and resources.<br><br>Do you want to fight?",
+            accepted = yesNoDialog(self, self.tr("Attacked by pirates!"),
+                                   self.tr("You have encountered a pirate fleet while travelling "
+                                           "between planets!<br><br>Your battle fleet must defeat them if "
+                                           "you want to continue.<br><br>"
+                                           "If you fight and lose, you will die.<br><br>"
+                                           "If you fight and win, you will lose some health, but you will "
+                                           "be able to continue your travels and will not lose any money "
+                                           "or resources.<br><br>"
+                                           "If you do not fight, then the only other "
+                                           "option is surrender; you will not die or lose any health, but you "
+                                           "may lose some of your money and resources.<br><br>Do you want to fight?"),
                                    cancelable=False)
             if accepted:
                 battle_won = self.parent.state.battle_won()
@@ -259,13 +265,13 @@ class LocationBrowser(QtWidgets.QWidget):
                     self.parent.state.disable_health_recovery_today()
                     if self.parent.state.health > 0:
                         self.parent.audio.play(self.parent.audio.VictorySound)
-                        infoDialog(self, "Battle won!", "You have defeated the pirate fleet, " +
-                                   "and can continue with your travels.")
+                        infoDialog(self, self.tr("Battle won!"), self.tr("You have defeated the pirate fleet, "
+                                                                         "and can continue with your travels."))
 
                 if (not battle_won) or (self.parent.state.health == 0):
                     self.parent.audio.play(self.parent.audio.DeathSound)
-                    infoDialog(self, "Battle lost!", "You have been defeated by the pirate fleet." +
-                               "<br><br>You are dead.")
+                    infoDialog(self, self.tr("Battle lost!"), self.tr("You have been defeated by the pirate fleet."
+                                                                      "<br><br>You are dead."))
                     self.parent.checkHighScore()
                     self.parent.reset()
                     return
@@ -282,8 +288,9 @@ class LocationBrowser(QtWidgets.QWidget):
                 self.parent.infoBar.update()
 
                 self.parent.audio.play(self.parent.audio.FailureSound)
-                infoDialog(self, "Surrender", "You decide not to fight the pirate fleet. " +
-                           "<br><br>The pirates spare your life, but they rob you of everything you've got!")
+                infoDialog(self, self.tr("Surrender"), self.tr("You decide not to fight the pirate fleet. "
+                                                               "<br><br>The pirates spare your life, but they "
+                                                               "rob you of everything you've got!"))
 
         self.parent.audio.play(self.parent.audio.TravelSound)
         self.parent.state.change_current_planet(planet)
@@ -297,7 +304,7 @@ class LocationBrowser(QtWidgets.QWidget):
     def pricesButtonClicked(self):
         planet = self.selectedPlanet()
         if planet is None:
-            errorDialog(self, message="Please select a planet first!")
+            errorDialog(self, message=self.tr("Please select a planet first!"))
             return
 
         self.openTradingConsole(planet)
@@ -305,7 +312,7 @@ class LocationBrowser(QtWidgets.QWidget):
     def travelButtonClicked(self):
         planet = self.selectedPlanet()
         if planet is None:
-            errorDialog(self, message="Please select a planet to travel to first!")
+            errorDialog(self, message=self.tr("Please select a planet to travel to first!"))
             return
 
         self.travelToPlanet(planet)
@@ -317,12 +324,12 @@ class LocationBrowser(QtWidgets.QWidget):
 
     def previousButtonClicked(self):
         if self.parent.state.previous_planet is None:
-            errorDialog(self, message="No previous planet to travel to!")
+            errorDialog(self, message=self.tr("No previous planet to travel to!"))
             return
 
         if self.parent.state.previous_planet not in self.parent.state.planets:
-            errorDialog(self, message="%s no longer exists!"
-                                      % self.parent.state.previous_planet.full_name)
+            errorDialog(self, message=self.tr("{0} no longer exists!", "{0} is a planet name").format(
+                                      self.parent.state.previous_planet.full_name))
             return
 
         self.travelToPlanet(self.parent.state.previous_planet)
