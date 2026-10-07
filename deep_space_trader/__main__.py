@@ -87,7 +87,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tooltipsAction.setChecked(True)
 
         self.audioAction = QtWidgets.QAction("Sounds", self)
-        self.audioAction.setShortcut("Ctrl+h")
+        self.audioAction.setShortcut("Ctrl+m")
         self.audioAction.setStatusTip("Enable/disable game sounds")
         self.audioAction.triggered.connect(self.toggleSounds)
         self.audioAction.setCheckable(True)
