@@ -551,6 +551,13 @@ class WarehouseItemBrowser(ItemBrowser):
         capacity = self.parent.state.capacity - self.parent.state.items.count()
         itemcount = min(capacity, totalitemcount)
 
+        if itemcount <= 0:
+            errorDialog(self, "Maximum capacity",
+                        message="You have no more room on your ship. You need to increase your ship "
+                                "capacity, or sell some items, or dump some items before you can "
+                                "retrieve items from the warehouse.")
+            return
+
         if itemcount < totalitemcount:
             msg = (
                 "You do not have room for all items, the maximum number of items "
