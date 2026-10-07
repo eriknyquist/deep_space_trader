@@ -159,19 +159,21 @@ def percentChance(percent):
 
 def checkForMoneyBonus(parent):
     new_days = None
-    new_store_purchases = None
+
+    # Each bonus adds one store purchase, so a player who earns both at once gets both
+    new_store_purchases = parent.state.max_store_purchases_per_day
 
     if ((parent.state.money >= const.BONUS_1_MONEY) and
         (parent.state.max_days < const.BONUS_1_MAX_DAYS)):
         # Player gets bonus #1
         new_days = const.BONUS_1_MAX_DAYS
-        new_store_purchases = parent.state.max_store_purchases_per_day + 1
+        new_store_purchases += 1
 
     if ((parent.state.money >= const.BONUS_2_MONEY) and
         (parent.state.max_days < const.BONUS_2_MAX_DAYS)):
         # Player gets bonus #2
         new_days = const.BONUS_2_MAX_DAYS
-        new_store_purchases = parent.state.max_store_purchases_per_day + 1
+        new_store_purchases += 1
 
     if new_days is not None:
         infoDialog(parent, "Congratulations!",
