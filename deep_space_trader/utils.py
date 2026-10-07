@@ -128,6 +128,27 @@ def infoDialog(parent, heading="", message=""):
     msg.exec_()
 
 
+def selectedRowName(table):
+    row = table.currentRow()
+    if row < 0:
+        return None
+
+    return table.item(row, 0).text()
+
+
+def selectRowByName(table, name):
+    # Re-select a row after the table has been re-populated, so that the current
+    # row isn't lost (Qt would otherwise default to the first row on focus-in)
+    if name is None:
+        return
+
+    for row in range(table.rowCount()):
+        item = table.item(row, 0)
+        if (item is not None) and (item.text() == name):
+            table.setCurrentCell(row, 0)
+            return
+
+
 def checkForMoneyBonus(parent):
     new_days = None
     new_store_purchases = None

@@ -1,6 +1,8 @@
 import random
 
-from deep_space_trader.utils import errorDialog, yesNoDialog, infoDialog
+from deep_space_trader.utils import (
+    errorDialog, yesNoDialog, infoDialog, selectedRowName, selectRowByName
+)
 from deep_space_trader.item_browsers import TradingConsolePlanetDisplay
 
 from PyQt5 import QtWidgets, QtCore, QtGui
@@ -107,9 +109,13 @@ class LocationBrowser(QtWidgets.QWidget):
         self.pricesButton.setToolTip(self.tradingConsoleTooltip)
 
     def keyPressEvent(self, event: QtGui.QKeyEvent):
-        if event.key() == QtCore.Qt.Key_Return:
+        if event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter):
             if self.parent.state.have_trading_console:
-                planetname = self.table.item(self.table.currentRow(), 0).text()
+                selectedRow = self.table.currentRow()
+                if selectedRow < 0:
+                    return
+
+                planetname = self.table.item(selectedRow, 0).text()
                 self.openTradingConsole(planetname)
             else:
                 errorDialog(self, message=TRADING_CONSOLE_MESSAGE)
@@ -120,7 +126,6 @@ class LocationBrowser(QtWidgets.QWidget):
             return
 
         text = newText.strip().lower()
-        self.table.setRowCount(0)
 
         planets = []
         for planet in self.parent.state.planets:
@@ -181,6 +186,7 @@ class LocationBrowser(QtWidgets.QWidget):
         self.table.setItem(row, 1, item2)
 
     def populateTable(self, planets):
+        selectedName = selectedRowName(self.table)
         self.table.setUpdatesEnabled(False)
         self.table.blockSignals(True)
         self.table.setSortingEnabled(False)
@@ -193,6 +199,7 @@ class LocationBrowser(QtWidgets.QWidget):
             self.addRow(planets[row], row)
 
         self.table.setSortingEnabled(True)
+        selectRowByName(self.table, selectedName)
         self.table.blockSignals(False)
         self.table.setUpdatesEnabled(True)
 

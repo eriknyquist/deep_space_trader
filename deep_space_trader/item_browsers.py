@@ -7,7 +7,9 @@ from deep_space_trader.transaction_dialogs import (
 
 from deep_space_trader.price_graph import PriceHistoryGraph
 from deep_space_trader import constants as const
-from deep_space_trader.utils import errorDialog, yesNoDialog, infoDialog, checkForMoneyBonus
+from deep_space_trader.utils import (
+    errorDialog, yesNoDialog, infoDialog, checkForMoneyBonus, selectedRowName, selectRowByName
+)
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
@@ -111,9 +113,11 @@ class ItemBrowser(QtWidgets.QWidget):
         header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
 
     def update(self):
+        selectedName = selectedRowName(self.table)
         self.table.setSortingEnabled(False)
         self.populateTable()
         self.table.setSortingEnabled(True)
+        selectRowByName(self.table, selectedName)
         super(ItemBrowser, self).update()
 
     def add_button(self, text, on_click, tooltip):
@@ -437,8 +441,12 @@ class PlanetItemBrowser(ItemBrowser):
         self.table.doubleClicked.connect(self.onDoubleClick)
 
     def keyPressEvent(self, event: QtGui.QKeyEvent):
-        if event.key() == QtCore.Qt.Key_Return:
-            itemname = self.table.item(self.table.currentRow(), 0).text()
+        if event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter):
+            selectedRow = self.table.currentRow()
+            if selectedRow < 0:
+                return
+
+            itemname = self.table.item(selectedRow, 0).text()
             item = self.parent.state.current_planet.items.items[itemname]
 
             dialog = PriceHistoryGraph(self.parent, item)
