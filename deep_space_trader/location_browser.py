@@ -306,4 +306,9 @@ class LocationBrowser(QtWidgets.QWidget):
             errorDialog(self, message="No previous planet to travel to!")
             return
 
+        if self.parent.state.previous_planet not in self.parent.state.planets:
+            errorDialog(self, message="%s no longer exists!"
+                                      % self.parent.state.previous_planet.full_name)
+            return
+
         self.travelToPlanet(self.parent.state.previous_planet.full_name)
