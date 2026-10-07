@@ -253,7 +253,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
                    "warehouse.".format(len(planets)))
 
 
-        on_planet = any(self.parent.state.current_planet.full_name == planet.full_name for planet in planets)
+        on_planet = any(planet is self.parent.state.current_planet for planet in planets)
 
         if on_planet:
             msg += ("<br><br>Oh, and you are currently on {0}, so you will "

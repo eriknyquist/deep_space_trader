@@ -111,12 +111,11 @@ class LocationBrowser(QtWidgets.QWidget):
     def keyPressEvent(self, event: QtGui.QKeyEvent):
         if event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter):
             if self.parent.state.have_trading_console:
-                selectedRow = self.table.currentRow()
-                if selectedRow < 0:
+                planet = self.selectedPlanet()
+                if planet is None:
                     return
 
-                planetname = self.table.item(selectedRow, 0).text()
-                self.openTradingConsole(planetname)
+                self.openTradingConsole(planet)
             else:
                 errorDialog(self, message=TRADING_CONSOLE_MESSAGE)
 
@@ -180,6 +179,9 @@ class LocationBrowser(QtWidgets.QWidget):
 
     def addRow(self, planet, row):
         item1 = QtWidgets.QTableWidgetItem(planet.full_name)
+        # Keep a reference to the planet on the row, so the planet can be found
+        # without looking it up by name or by row number
+        item1.setData(QtCore.Qt.UserRole, planet)
         item2 = QtWidgets.QTableWidgetItem("yes" if planet.visited else "no")
         item2.setTextAlignment(QtCore.Qt.AlignHCenter)
         self.table.setItem(row, 0, item1)
@@ -210,8 +212,16 @@ class LocationBrowser(QtWidgets.QWidget):
         self.colorPreviousPlanets()
         super(LocationBrowser, self).update()
 
-    def travelToPlanet(self, planetname):
-        if self.parent.state.current_planet.full_name == planetname:
+    def selectedPlanet(self):
+        selectedRow = self.table.currentRow()
+        if selectedRow < 0:
+            return None
+
+        return self.table.item(selectedRow, 0).data(QtCore.Qt.UserRole)
+
+    def travelToPlanet(self, planet):
+        planetname = planet.full_name
+        if planet is self.parent.state.current_planet:
             errorDialog(self, message="You are already on %s!" % planetname)
             return
 
@@ -275,38 +285,34 @@ class LocationBrowser(QtWidgets.QWidget):
                            "<br><br>The pirates spare your life, but they rob you of everything you've got!")
 
         self.parent.audio.play(self.parent.audio.TravelSound)
-        self.parent.state.change_current_planet(planetname)
+        self.parent.state.change_current_planet(planet)
         self.parent.advanceDay()
         self.colorPreviousPlanets()
 
-    def openTradingConsole(self, planetname):
-        planet = self.parent.state.get_planet_by_name(planetname)
+    def openTradingConsole(self, planet):
         trading_console = TradingConsole(self.parent, planet)
         trading_console.exec_()
 
     def pricesButtonClicked(self):
-        selectedRow = self.table.currentRow()
-        if selectedRow < 0:
+        planet = self.selectedPlanet()
+        if planet is None:
             errorDialog(self, message="Please select a planet first!")
             return
 
-        planetname = self.table.item(selectedRow, 0).text()
-        self.openTradingConsole(planetname)
+        self.openTradingConsole(planet)
 
     def travelButtonClicked(self):
-        selectedRow = self.table.currentRow()
-        if selectedRow < 0:
+        planet = self.selectedPlanet()
+        if planet is None:
             errorDialog(self, message="Please select a planet to travel to first!")
             return
 
-        planetname = self.table.item(selectedRow, 0).text()
-
-        self.travelToPlanet(planetname)
+        self.travelToPlanet(planet)
 
     def onDoubleClick(self, signal):
-        selectedRow = self.table.currentRow()
-        planetname = self.table.item(selectedRow, 0).text()
-        self.travelToPlanet(planetname)
+        planet = self.selectedPlanet()
+        if planet is not None:
+            self.travelToPlanet(planet)
 
     def previousButtonClicked(self):
         if self.parent.state.previous_planet is None:
@@ -318,4 +324,4 @@ class LocationBrowser(QtWidgets.QWidget):
                                       % self.parent.state.previous_planet.full_name)
             return
 
-        self.travelToPlanet(self.parent.state.previous_planet.full_name)
+        self.travelToPlanet(self.parent.state.previous_planet)

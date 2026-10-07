@@ -50,6 +50,10 @@ class State(object):
         self.daily_cost = const.DAILY_LIVING_COST
         self.previous_planets = deque(maxlen=2)
 
+        # Full names of every planet generated this game, including destroyed
+        # ones, so that no two planets ever share a name
+        self.used_planet_names = set()
+
         self.warehouse_trips = 0
         self.expand_planets(const.INITIAL_PLANET_COUNT)
         self.current_planet = self.planets[0]
@@ -115,20 +119,12 @@ class State(object):
         win_chance_percent = self.battle_victory_chance_percentage()
         return percentChance(win_chance_percent)
 
-    def get_planet_by_name(self, planetname):
-        for p in self.planets:
-            if p.full_name == planetname:
-                return p
-
-        return None
-
-    def change_current_planet(self, planetname):
-        self.travel_log.append((planetname, self.day))
+    def change_current_planet(self, new_planet):
+        self.travel_log.append((new_planet.full_name, self.day))
 
         if len(self.previous_planets) == self.previous_planets.maxlen:
             self.previous_planets_tail = self.previous_planets[-1]
 
-        new_planet = self.get_planet_by_name(planetname)
         self.previous_planets.appendleft(self.current_planet)
         self.previous_planet = self.current_planet
         self.current_planet = new_planet
@@ -185,7 +181,7 @@ class State(object):
         if num_new is None:
             num_new = random.randrange(1, 10)
 
-        new_planets = Planet.random(num=num_new)
+        new_planets = Planet.random(num=num_new, used_names=self.used_planet_names)
         for new in new_planets:
             new.discovery_day = self.day
             new.items = ItemCollection.random(value_multiplier=self.level,

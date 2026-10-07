@@ -117,7 +117,15 @@ class Planet(object):
         return Planet(name, number, letter)
 
     @classmethod
-    def random(cls, num=1):
+    def random(cls, num=1, used_names=None):
+        """
+        Generate 'num' new planets, with full names that are unique among each
+        other and not in the set 'used_names'. The new names are added to
+        'used_names'.
+        """
+        if used_names is None:
+            used_names = set()
+
         max_group_size = 4
         last_planet_with_letter = None
         group_size = None
@@ -127,15 +135,22 @@ class Planet(object):
             if last_planet_with_letter is not None:
                 if group_size < max_group_size:
                     new = last_planet_with_letter.neighbour()
-                    ret.append(new)
-                    last_planet_with_letter = new
-                    group_size += 1
-                    continue
-                else:
-                    last_planet_with_letter = None
-                    group_size = None
+                    if new.full_name not in used_names:
+                        used_names.add(new.full_name)
+                        ret.append(new)
+                        last_planet_with_letter = new
+                        group_size += 1
+                        continue
+
+                # Group is full, or the next name in the group is already taken
+                last_planet_with_letter = None
+                group_size = None
 
             new = cls._random_planet()
+            while new.full_name in used_names:
+                new = cls._random_planet()
+
+            used_names.add(new.full_name)
             if new.letter is not None:
                 last_planet_with_letter = new
                 group_size = 1
