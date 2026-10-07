@@ -1,7 +1,7 @@
 import random
 
 from deep_space_trader.utils import (
-    errorDialog, yesNoDialog, infoDialog, selectedRowName, selectRowByName
+    errorDialog, yesNoDialog, infoDialog, selectedRowName, selectRowByName, percentChance
 )
 from deep_space_trader.item_browsers import TradingConsolePlanetDisplay
 
@@ -228,7 +228,7 @@ class LocationBrowser(QtWidgets.QWidget):
 
         self.parent.state.money -= self.parent.state.travel_cost
 
-        if random.randint(0, 100) <= self.parent.state.chance_of_being_robbed_in_transit():
+        if percentChance(self.parent.state.chance_of_being_robbed_in_transit()):
             self.parent.audio.play(self.parent.audio.BattleSound)
             accepted = yesNoDialog(self, "Attacked by pirates!",
                                    "You have encountered a pirate fleet while travelling "
@@ -260,7 +260,7 @@ class LocationBrowser(QtWidgets.QWidget):
                     self.parent.reset()
                     return
             else:
-                if (self.parent.state.items.count() == 0) or (random.randint(0, 100) >= 80):
+                if (self.parent.state.items.count() == 0) or percentChance(20):
                     # take 95-99% percent of players money
                     percent_to_take = random.randint(95, 99)
                     money_to_take = (float(self.parent.state.money) / 100.0) * percent_to_take

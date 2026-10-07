@@ -1,6 +1,7 @@
 import hashlib
 import base64
 import os
+import random
 import sys
 
 from PyQt5 import QtWidgets, QtCore, QtGui
@@ -147,6 +148,13 @@ def selectRowByName(table, name):
         if (item is not None) and (item.text() == name):
             table.setCurrentCell(row, 0)
             return
+
+
+def percentChance(percent):
+    """
+    Return True with the given probability, in percent (0 never, 100 always)
+    """
+    return (random.random() * 100.0) < percent
 
 
 def checkForMoneyBonus(parent):

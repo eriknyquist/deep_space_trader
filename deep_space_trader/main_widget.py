@@ -7,7 +7,7 @@ import traceback
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
-from deep_space_trader.utils import yesNoDialog, errorDialog, infoDialog, ScrollableTextDisplay
+from deep_space_trader.utils import yesNoDialog, errorDialog, infoDialog, ScrollableTextDisplay, percentChance
 from deep_space_trader.game_state import State
 from deep_space_trader.store import load_store_items
 from deep_space_trader import constants as const
@@ -176,7 +176,7 @@ class MainWidget(QtWidgets.QDialog):
             planet, itemname, increase = self.pending_price_anomaly
             self.pending_price_anomaly = None
 
-            if random.randint(0, 100) <= const.TRADING_TIP_ACCURACY_PERCENTAGE:
+            if percentChance(const.TRADING_TIP_ACCURACY_PERCENTAGE):
                 if itemname in planet.items.items:
                     planet.update_prices(self.state.day)
                     item = planet.items.items[itemname]
@@ -214,7 +214,7 @@ class MainWidget(QtWidgets.QDialog):
             if itemname in planet.items.items:
                 planet.items.items[itemname].value = old_value
 
-        if random.randint(0, 100) > const.CHANCE_TRADING_TIP_PERCENTAGE:
+        if not percentChance(const.CHANCE_TRADING_TIP_PERCENTAGE):
             # Nothing to do this time
             return
 
@@ -226,7 +226,7 @@ class MainWidget(QtWidgets.QDialog):
         item = planet.items.items[itemname]
 
         # Will the price increase or decrease?
-        increase = random.randint(0, 100) >= 50
+        increase = percentChance(50)
 
         adj = random.choice(["very", "extremely", "unreasonably", "unusually"])
         descriptor = "expensive" if increase else "cheap"

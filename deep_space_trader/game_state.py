@@ -4,6 +4,7 @@ from collections import deque
 from deep_space_trader.planet import Planet
 from deep_space_trader.items import ItemCollection
 from deep_space_trader import constants as const
+from deep_space_trader.utils import percentChance
 
 # Ranges of possible health loss during battle, by battle level number
 health_loss_ranges_by_battle_level = [
@@ -112,7 +113,7 @@ class State(object):
 
     def battle_won(self):
         win_chance_percent = self.battle_victory_chance_percentage()
-        return random.randint(0, 100) <= win_chance_percent
+        return percentChance(win_chance_percent)
 
     def get_planet_by_name(self, planetname):
         for p in self.planets:
