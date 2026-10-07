@@ -1,6 +1,6 @@
 import os
 import random
-from PyQt5.QtMultimedia import QSoundEffect
+from PyQt5.QtMultimedia import QAudioDeviceInfo, QSoundEffect
 from PyQt5.QtCore import QUrl, QObject, QThread, QTimer, Qt, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QApplication, QDialog, QProgressDialog
 from deep_space_trader.utils import AUDIO_DIR
@@ -29,10 +29,12 @@ SOUND_FILES = {
 
 class _SoundEffects(QObject):
     """
-    Owns the QSoundEffect objects, and lives in the audio thread. On Windows,
-    each QSoundEffect takes ~0.5s of work in its owning thread once its sample
-    has loaded, so creating them in the GUI thread kept the main window blank
-    for several seconds at startup.
+    Owns the QSoundEffect objects, and lives in the audio thread.
+
+    On Windows, looking up the default audio output device takes ~0.5s. A
+    QSoundEffect created without a device repeats that lookup when its sample
+    has loaded, so the device is looked up once here and passed to every
+    effect, which brings each one down to a few milliseconds.
     """
     # Number of sounds that have finished loading (successfully or not)
     loadProgress = pyqtSignal(int)
@@ -44,8 +46,10 @@ class _SoundEffects(QObject):
 
     @pyqtSlot()
     def load(self):
+        device = QAudioDeviceInfo.defaultOutputDevice()
+
         for name, filename in SOUND_FILES.items():
-            effect = QSoundEffect(self)
+            effect = QSoundEffect(device, self)
             self.effects[name] = effect
             effect.statusChanged.connect(lambda name=name: self.checkStatus(name))
             effect.setSource(QUrl.fromLocalFile(os.path.join(AUDIO_DIR, filename)))
