@@ -39,8 +39,8 @@ class Planet(object):
             'zor', 'for', 'wor', 'gor', 'noth', 'roth', 'moth', 'zoth',
             'loth', 'nith', 'lith', 'sith', 'dith', 'ith', 'oth', 'orb', 'urb',
             'er', 'zer', 'ze', 'zera', 'ter', 'nor', 'za', 'zi', 'di', 'mi',
-            'per', 'pir', 'pera', 'par', 'sta', 'mor', 'kur', 'ker', 'ni'
-            'ler', 'der', 'ber', 'shar', 'sher', 'mer', 'wer', 'fer', 'fra'
+            'per', 'pir', 'pera', 'par', 'sta', 'mor', 'kur', 'ker', 'ni',
+            'ler', 'der', 'ber', 'shar', 'sher', 'mer', 'wer', 'fer', 'fra',
             'gra', 'bra', 'zir', 'dir', 'tir', 'sir', 'mir', 'nir', 'por',
             'lir', 'bir', 'dra', 'tha', 'the', 'tho', 'kan', 'lan', 'narn',
             'karn', 'barn', 'darn', 'gern', 'yurn', 'zorn', 'forn', 'worn',
