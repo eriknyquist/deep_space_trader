@@ -7,6 +7,7 @@ import qdarktheme
 from deep_space_trader import config
 from deep_space_trader import constants as const
 from deep_space_trader.main_widget import MainWidget
+from deep_space_trader.sounds import waitForSounds
 from deep_space_trader.utils import gameStoryDialog, showAboutDialog, SOURCE_DIR, IMAGE_DIR, ICON_PATH
 
 from PyQt5 import QtWidgets, QtGui, QtCore
@@ -156,6 +157,9 @@ def main(on_widget_created=None):
     win.setWindowTitle("Deep Space Trader %s" % package_version)
     win.enableDarkTheme(True)
     win.show()
+
+    # Block gameplay until all sounds have loaded in the audio thread
+    waitForSounds(win, win.widget.audio)
 
     if config.get_show_intro():
         dont_show_again = gameStoryDialog()
