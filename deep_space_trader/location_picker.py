@@ -268,6 +268,12 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         if self.died:
             return
 
+        if not planets_to_destroy:
+            # Player declined to fight the only selected planet, nothing to destroy
+            self.accepted = False
+            self.close()
+            return
+
         for planet in planets_to_destroy:
             self.parent.state.warehouse.add_all_items(planet.items)
             index = self.parent.state.planets.index(planet)
