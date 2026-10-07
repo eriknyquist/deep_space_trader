@@ -180,8 +180,8 @@ class ItemCollection(object):
         for item in items:
             if item.type.name not in self.items:
                 self.items[item.type.name] = item
-
-            self.items[item.type.name].quantity += item.quantity
+            else:
+                self.items[item.type.name].quantity += item.quantity
 
     @property
     def total_value(self):
