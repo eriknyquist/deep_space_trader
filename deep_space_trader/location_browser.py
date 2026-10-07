@@ -278,6 +278,7 @@ class LocationBrowser(QtWidgets.QWidget):
 
                 self.parent.state.items.remove_all_items()
                 self.parent.playerItemBrowser.update()
+                self.parent.updatePlayerItemsLabel()
                 self.parent.infoBar.update()
 
                 self.parent.audio.play(self.parent.audio.FailureSound)
