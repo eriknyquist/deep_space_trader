@@ -63,8 +63,3 @@ class ButtonBar(QtWidgets.QWidget):
 
     def dayButtonClicked(self):
         self.parent.advanceDay()
-
-    def useButtonClicked(self):
-        dialog = StoreItemSelector(self.parent)
-        dialog.setWindowModality(QtCore.Qt.ApplicationModal)
-        dialog.exec_()

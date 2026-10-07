@@ -14,13 +14,6 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 
 from deep_space_trader import __version__ as package_version
 
-def textDisplayWindow(title, message):
-    msg = QtWidgets.QMessageBox()
-    msg.setInformativeText(message)
-    msg.setWindowTitle(title)
-    self.setWindowIcon(QtGui.QIcon(ICON_PATH))
-    msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
-    msg.exec_()
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, primary_screen):

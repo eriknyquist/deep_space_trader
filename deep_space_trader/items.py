@@ -89,7 +89,7 @@ class Items(object):
         self._daily_variance = random.uniform(0.0, 1.5)
 
         if value is None:
-            self_value = float(itemtype.base_value)
+            self._value = float(itemtype.base_value)
         else:
             self._value = float(value)
 
