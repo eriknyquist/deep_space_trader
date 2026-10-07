@@ -1,6 +1,7 @@
 import random
 from deep_space_trader import constants as const
 from deep_space_trader.utils import errorDialog, yesNoDialog, infoDialog
+from deep_space_trader.item_browsers import TableWidgetStringIntCommas
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
@@ -49,8 +50,8 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         palette.setColor(QtGui.QPalette.Highlight, default_highlight)
         self.table.setPalette(palette)
 
-        self.table.setColumnCount(2)
-        self.table.setHorizontalHeaderLabels(['Planet name', 'Planet value'])
+        self.table.setColumnCount(3)
+        self.table.setHorizontalHeaderLabels(['Planet name', 'Visited?', 'Planet value'])
         self.table.verticalHeader().setVisible(False)
         self.table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
         self.table.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
@@ -60,6 +61,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         header = self.table.horizontalHeader()
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
 
         self.mainLayout.addLayout(self.buttonLayout)
         self.mainLayout.addWidget(self.table)
@@ -108,6 +110,11 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             item2.setTextAlignment(QtCore.Qt.AlignHCenter)
             self.table.setItem(row, 0, item1)
             self.table.setItem(row, 1, item2)
+
+            # Total value of the planet's items, which go to the warehouse if it's destroyed
+            item3 = TableWidgetStringIntCommas("{:,}".format(int(planet.items.total_value)))
+            item3.setTextAlignment(QtCore.Qt.AlignHCenter)
+            self.table.setItem(row, 2, item3)
 
         self.table.setSortingEnabled(True)
         self.table.blockSignals(False)
