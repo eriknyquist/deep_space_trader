@@ -139,7 +139,7 @@ GAME_ABOUT_TEXT = (
     ("Deep Space Trader %s<br><br>" % (package_version)) +
     GAME_INTRO_TEXT +
     ("<ul>Recommended strategy: <br>" +
-     "<li>Buy the 'Increase item capacity' upgrade from the store as early and as " +
+     "<li>Buy the 'Increase ship capacity' upgrade from the store as early and as " +
      " frequently as possible</li><br>" +
      "<li>Destroy as many planets as you can, by buying the 'Planet destruction " +
      "kit' from the store</li><br>" +

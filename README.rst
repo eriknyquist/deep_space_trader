@@ -104,10 +104,10 @@ shows useful information about the current state of the game.
 * **"Scout fleet level"**: Shows the current upgrade level of the players scout fleet, against the
   maximum possible upgrade level for the players scout fleet. (see `"Store" window`_ for more information
   about upgrading the scout fleet).
-* **"Battle fleet"**: Shows the current upgrade level of the players battle fleet, against the
-  maximum possible upgrade level for the players battle fleet. Also shows the chance (percentage) of
-  the player winning a battle, based on current battle fleet upgrade level. (see `"Store" window`_ for more
-  information about upgrading the battle fleet).
+* **"Battle fleet level"**: Shows the current upgrade level of the players battle fleet, against the
+  maximum possible upgrade level for the players battle fleet. When tooltips are enabled, hovering over
+  this section shows the chance (percentage) of the player winning a battle, based on current battle fleet
+  upgrade level. (see `"Store" window`_ for more information about upgrading the battle fleet).
 * **"Planets discovered"**: Shows the total number of planets that have been discovered by the player.
   This number includes planets that have not been visited by the player, and planets that have been
   destroyed by the player.
@@ -146,11 +146,15 @@ left area of the main game window.
   to a planet costs 100 of the player's money, and advances the current day by 1. Travelling always
   incurs a risk of encountering a pirate fleet. When encountered, the player will be given the choice
   to fight or not. If the player chooses to fight, and wins, then the player can continue their journey
-  unscathed. If the player chooses to fight, and loses, then the player will die, and the game will end.
-  The chance of the player winning a fight against pirates is directly correlated to the upgrade level
-  of the players battle fleet (See `"Store" window`_). If the player chooses not to fight, then they
-  will not die, but the pirates will steal (almost) all of the players money, and all of the items
-  stored on the players ship. Items stored in the warehouse cannot be touched by pirates.
+  without losing any money or items, but will lose some health (and will not recover health on the next
+  day). If winning the fight brings the player's health down to 0, then the player will die. If the player
+  chooses to fight, and loses, then the player will die.
+  The chance of the player winning a fight against pirates, and the amount of health lost when winning,
+  depend on the upgrade level of the players battle fleet (See `"Store" window`_). If the player chooses
+  not to fight, then they will not die, but the pirates will steal all of the items stored on the players
+  ship. If the players ship had no items on it, the pirates will also steal (almost) all of the players
+  money; otherwise, there is a 20% chance that they will also steal (almost) all of the players money.
+  Items stored in the warehouse cannot be touched by pirates.
 
 * **"Travel to previous" button**: Causes the player to travel to the planet that they were on
   directly before the current planet. Travelling to a planet costs 100 of the player's money,
@@ -182,7 +186,7 @@ in the bottom left area of the main game window.
 
 * **"Buy item" button**: Allows the player to purchase 1 or more of the selected items in the
   item display table. When clicked, this button will open a new window that allows the player to
-  select the quantity they wish to purchase of the selected item (See `"Buy item" window`_ reference
+  select the quantity they wish to purchase of the selected item (See `"Buy items" window`_ reference
   section in this document for more details about this window).
 
 * **Item display table**: Displays all items available for purchase on the current planet.
@@ -228,7 +232,7 @@ right area of the main game window.
 
 * **"To warehouse" button**: Allows the player to move 1 or more of the selected item
   from their ship to the warehouse. Unlike the player's ship, the warehouse has infinite
-  capacity, but only one move to/from the warehouse per day is allowed (i.e. one trip
+  capacity, but only two moves to/from the warehouse per day are allowed (i.e. two trips
   to the warehouse per day). Additional warehouse trips per day can be purchased from the Store
   (See `"Store" window`_ for more details about the store window).
   Clicking this button opens a new window that allows the player to select the quantity of
@@ -257,8 +261,8 @@ reside in the warehouse. The "Items in warehouse" section is displayed in the bo
 right area of the main game window.
 
 * **"Retrieve" button**: Allows the player to move 1 or more of the selected items
-  from the warehouse to their ship. Only one move to/from the warehouse per day is allowed
-  (i.e. one trip to the warehouse per day). Clicking this button opens a new window that
+  from the warehouse to their ship. Only two moves to/from the warehouse per day are allowed
+  (i.e. two trips to the warehouse per day), unless more have been purchased from the Store. Clicking this button opens a new window that
   allows the player to select the quantity of the item they want to move to their ship (see
   `"Retrieve from warehouse" window`_).
 
@@ -288,19 +292,19 @@ store window allows the player to exchange money for various upgrades and servic
 purchases can be made per day, but this number is increased when the player reaches certain scores
 (see `Score bonuses`_ for more information).
 
-* **Increase item capacity**: Buying this item doubles the number of items that can be
+* **Increase ship capacity**: Buying this item doubles the number of items that can be
   stored on the players ship. This item can be bought an unlimited number of times.
 
-* **Scout expedition**: Buying this item allows the player to discover between 4-8 new planets,
-  which will become available in the `"Planets" section`_. This item cannot be purchased unless
+* **Scout expedition**: Buying this item allows the player to discover new planets (between 4-8
+  new planets with a level 1 scout fleet), which will become available in the `"Planets" section`_. This item cannot be purchased unless
   the player has already purchased a scout fleet. More planets can be discovered per
   scout expedition by purchasing the "Upgrade scout fleet" store item.
 
-* **Planet destruction kit**: Buying this item allows the player to destroy one planet and obtain
-  all of its materials. The planet will disappear from the `"Planets" section`_ and all materials
-  held by the planet will be transferred to the player's warehouse. Opens a new window that allows
-  the player to pick which planet they want to destroy, or optionally destroy all planets at once
-  (except for the current planet) for a higher price. There is a small chance that a single planet may
+* **Planet destruction kit**: Buying this item allows the player to destroy one or more planets and
+  obtain all of their materials. Destroyed planets will disappear from the `"Planets" section`_ and all
+  materials held by them will be transferred to the player's warehouse. Opens a new window that allows
+  the player to pick which planets they want to destroy (each planet destroyed adds to the price), or
+  optionally destroy all planets at once (except for the current planet). There is a small chance that a single planet may
   resist destruction and attempt to fight back. The higher number of planets being destroyed, the
   higher the chance of one planet resisting will be. The player must decide whether to fight, or leave
   the planet alone. If the player fights and loses, the player will die and the game will be over.
@@ -314,15 +318,15 @@ purchases can be made per day, but this number is increased when the player reac
   9 times, from level 1 through level 10.
 
   * *Scout fleet level 1*: between 4 and 8 new planets per scout expedition
-  * *Scout fleet level 2*: between 4 and 16 new planets per scout expedition
-  * *Scout fleet level 3*: between 4 and 32 new planets per scout expedition
-  * *Scout fleet level 4*: between 4 and 64 new planets per scout expedition
-  * *Scout fleet level 5*: between 4 and 128 new planets per scout expedition
-  * *Scout fleet level 6*: between 4 and 256 new planets per scout expedition
-  * *Scout fleet level 7*: between 4 and 512 new planets per scout expedition
-  * *Scout fleet level 8*: between 4 and 1024 new planets per scout expedition
-  * *Scout fleet level 9*: between 4 and 2048 new planets per scout expedition
-  * *Scout fleet level 10*: between 4 and 4096 new planets per scout expedition
+  * *Scout fleet level 2*: between 8 and 16 new planets per scout expedition
+  * *Scout fleet level 3*: between 16 and 32 new planets per scout expedition
+  * *Scout fleet level 4*: between 32 and 64 new planets per scout expedition
+  * *Scout fleet level 5*: between 64 and 128 new planets per scout expedition
+  * *Scout fleet level 6*: between 128 and 256 new planets per scout expedition
+  * *Scout fleet level 7*: between 256 and 512 new planets per scout expedition
+  * *Scout fleet level 8*: between 512 and 1024 new planets per scout expedition
+  * *Scout fleet level 9*: between 1024 and 2048 new planets per scout expedition
+  * *Scout fleet level 10*: between 2048 and 4096 new planets per scout expedition
 
 * **Buy/upgrade battle fleet**: Buying this item for the first time gives the player a
   battle fleet, which increases the chances of the player winning battles against planets
@@ -343,15 +347,15 @@ purchases can be made per day, but this number is increased when the player reac
   * *Battle fleet level 9*: 90% chance of winning battles
   * *Battle fleet level 10*: 99% chance of winning battles
 
-* **Increase warehouse limit**: Buying this item will increase by 1 the number of warehouse trips
-  that the player can make in a single day.
+* **Increase max. warehouse trips per day**: Buying this item will increase by 2 the number of
+  warehouse trips that the player can make in a single day.
 
-* **Trading console**: Buying this item will enable the "See item prices on planet" button
+* **Trading console**: Buying this item will enable the "Trading console" button
   in the `"Planets" section`_, allowing you to see current item prices on any planet without
   travelling.
 
-**"Buy item" window**
-#####################
+**"Buy items" window**
+######################
 
 .. image:: images/buy_window.png
 
@@ -388,7 +392,7 @@ when the player clicks the "Sell items" button in the `"Items on your ship" sect
 .. image:: images/dump_ship_window.png
 
 This section describes the functionality of the "Dump player items" window. The "Dump player items"
-window is displayed when the player clicks the "Dump selected" button in the `"Items on your ship" section`_.
+window is displayed when the player clicks the "Dump" button in the `"Items on your ship" section`_.
 
 * **"Dump" button**: Dumps the selected quantity of the item. This button will do nothing
   when the selected quantity is 0.
@@ -404,7 +408,7 @@ window is displayed when the player clicks the "Dump selected" button in the `"I
 .. image:: images/to_warehouse_window.png
 
 This section describes the functionality of the "Move to warehouse" window. The "Move to warehouse"
-window is displayed when the player clicks the "Add to warehouse" button in the `"Items on your ship" section`_.
+window is displayed when the player clicks the "To warehouse" button in the `"Items on your ship" section`_.
 
 * **"Move" button**: Moves the selected quantity of the item to the warehouse. This button will do nothing
   when the selected quantity is 0.
@@ -420,7 +424,7 @@ window is displayed when the player clicks the "Add to warehouse" button in the 
 .. image:: images/dump_warehouse_window.png
 
 This section describes the functionality of the "Dump warehouse items" window. The "Dump warehouse items"
-window is displayed when the player clicks the "Dump selected" button in the `"Items in warehouse" section`_.
+window is displayed when the player clicks the "Dump" button in the `"Items in warehouse" section`_.
 
 * **"Dump" button**: Dumps the selected quantity of the item. This button will do nothing
   when the selected quantity is 0.
@@ -436,7 +440,7 @@ window is displayed when the player clicks the "Dump selected" button in the `"I
 .. image:: images/from_warehouse_window.png
 
 This section describes the functionality of the "Retrieve from warehouse" window. The "Retrieve from warehouse"
-window is displayed when the player clicks the "Retrieve items" button in the `"Items in warehouse" section`_.
+window is displayed when the player clicks the "Retrieve" button in the `"Items in warehouse" section`_.
 
 * **"Move" button**: Moves the selected quantity of the item to the player's ship. This button will do nothing
   when the selected quantity is 0.
@@ -484,7 +488,7 @@ own high scores.
 
 The section describes the functionality of the "Prices" window. The "Prices" window is displayed
 when the "Material prices" option is selected from the "Tools" menu in the main game window
-(e.g. **Tools->Material Prices**). The "Prices" window can also be opened via the keyboard shortcut Ctrl-A.
+(e.g. **Tools->Material prices**). The "Prices" window can also be opened via the keyboard shortcut Ctrl-A.
 
 The "Prices" window shows the usual price for all materials, and can be used as a trading reference.
 The "Prices" window does *not* show the exact item prices for any particular planet. Planets will set their
