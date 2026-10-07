@@ -52,7 +52,7 @@ class PlanetExploration(StoreItem):
                            message="Are you sure you want to buy a %s?" % self.name):
             return False
 
-        num_new = random.randrange(*self.parent.state.planet_discovery_range)
+        num_new = random.randint(*self.parent.state.planet_discovery_range)
         if (num_new + len(self.parent.state.planets)) > const.MAX_PLANETS_ALLOWED:
             num_new = const.MAX_PLANETS_ALLOWED - len(self.parent.state.planets)
 
