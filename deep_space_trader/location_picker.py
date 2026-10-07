@@ -101,6 +101,9 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         for row in range(len(self.state.planets)):
             planet = self.state.planets[row]
             item1 = QtWidgets.QTableWidgetItem(planet.full_name)
+            # Keep a reference to the planet on the row, since the player can
+            # sort the table, and then row numbers no longer match state.planets
+            item1.setData(QtCore.Qt.UserRole, planet)
             item2 = QtWidgets.QTableWidgetItem("yes" if planet.visited else "no")
             item2.setTextAlignment(QtCore.Qt.AlignHCenter)
             self.table.setItem(row, 0, item1)
@@ -232,7 +235,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             errorDialog(self, message="Please select planets to destroy first!")
             return
 
-        planets = [self.parent.state.planets[row] for row in selectedRows]
+        planets = [self.table.item(row, 0).data(QtCore.Qt.UserRole) for row in selectedRows]
         destroyed_desc = ""
 
         if len(planets) == 1:
