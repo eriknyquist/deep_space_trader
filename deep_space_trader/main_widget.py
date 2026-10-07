@@ -184,11 +184,11 @@ class MainWidget(QtWidgets.QDialog):
                     self.temporary_price_change = (planet, itemname, item.value)
                     old_value = item.value
                     if increase:
-                        # Increase price by 100-500%
+                        # Increase price by 200-500%
                         change_percentage = random.randint(200, 500)
                         item.value += int((float(item.value) / 100.0) * float(change_percentage))
                     else:
-                        # Decrease price by 70-90%
+                        # Decrease price by 80-95%
                         change_percentage = random.randint(80, 95)
                         item.value -= int((float(item.value) / 100.0) * float(change_percentage))
 

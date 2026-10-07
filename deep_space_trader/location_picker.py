@@ -133,7 +133,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
                 return p
 
         # Otherwise, just calculate a numerical percentage representing the chance
-        # That one of the planets in the list would resist. There is a 0.005% chance
+        # That one of the planets in the list would resist. There is a 5% chance
         # that any single planet will be able to resist us and possibly stop us from destroying it.
         percentage_chance_per_planet = 5.0
 
