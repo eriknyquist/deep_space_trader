@@ -124,18 +124,17 @@ class LocationBrowser(QtWidgets.QWidget):
                 errorDialog(self, message=translate("LocationBrowser", TRADING_CONSOLE_MESSAGE))
 
     def planetSearchTextChanged(self, newText):
-        if not newText.strip():
-            self.update()
-            return
+        self.update()
 
-        text = newText.strip().lower()
+    def filteredPlanets(self):
+        """
+        Planets matching the text in the search box, or all planets if it's empty
+        """
+        text = self.planetSearchText.text().strip().lower()
+        if not text:
+            return self.parent.state.planets
 
-        planets = []
-        for planet in self.parent.state.planets:
-            if text in planet.full_name.lower():
-                planets.append(planet)
-
-        self.populateTable(planets)
+        return [planet for planet in self.parent.state.planets if text in planet.full_name.lower()]
 
     def colorPreviousPlanets(self):
         colors = [
@@ -145,41 +144,43 @@ class LocationBrowser(QtWidgets.QWidget):
 
         columns = self.table.columnCount()
 
-        if self.parent.state.previous_planets_tail is not None:
-            try:
-                index = self.parent.state.planets.index(self.parent.state.previous_planets_tail)
-            except ValueError:
-                pass
-            else:
-                for col in range(columns):
-                    item = self.table.item(index, col)
-                    item.setBackground(QtGui.QBrush())
+        # Find rows by the Planet stored in each row, since the search box may be
+        # filtering the table, so row numbers don't match state.planets. Planets
+        # hidden by the filter have no row, and are skipped
+        rows = {self.table.item(row, 0).data(QtCore.Qt.UserRole): row
+                for row in range(self.table.rowCount())}
+
+        tail_row = rows.get(self.parent.state.previous_planets_tail)
+        if tail_row is not None:
+            for col in range(columns):
+                self.table.item(tail_row, col).setBackground(QtGui.QBrush())
 
         self.table.setAlternatingRowColors(False)
         self.table.setAlternatingRowColors(True)
 
         for planet in self.parent.state.previous_planets:
-            try:
-                index = self.parent.state.planets.index(planet)
-            except ValueError:
+            if planet not in self.parent.state.planets:
+                # Destroyed
                 continue
-            else:
-                color = colors.pop()
+
+            color = colors.pop()
+            row = rows.get(planet)
+            if row is not None:
                 for col in range(columns):
-                    item = self.table.item(index, col)
-                    item.setBackground(color)
+                    self.table.item(row, col).setBackground(color)
+
+        row = rows.get(self.parent.state.current_planet)
+        if row is None:
+            return
 
         # Set current planet "visited=yes"
-        index = self.parent.state.planets.index(self.parent.state.current_planet)
-
         item2 = QtWidgets.QTableWidgetItem(self.tr("yes"))
         item2.setTextAlignment(QtCore.Qt.AlignHCenter)
-        self.table.setItem(index, 1, item2)
+        self.table.setItem(row, 1, item2)
 
         # Set current planet row color
         for col in range(columns):
-            item = self.table.item(index, col)
-            item.setBackground(QtGui.QColor(0, 0xAA, 0))
+            self.table.item(row, col).setBackground(QtGui.QColor(0, 0xAA, 0))
 
     def addRow(self, planet, row):
         item1 = QtWidgets.QTableWidgetItem(planet.full_name)
@@ -212,7 +213,8 @@ class LocationBrowser(QtWidgets.QWidget):
         self.parent.updatePlanetsGroupBoxTitle(len(planets))
 
     def update(self):
-        self.populateTable(self.parent.state.planets)
+        # Keep the search filter, so the table always matches the search box
+        self.populateTable(self.filteredPlanets())
         self.colorPreviousPlanets()
         super(LocationBrowser, self).update()
 

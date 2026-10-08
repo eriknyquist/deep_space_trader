@@ -291,9 +291,9 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
 
         for planet in planets_to_destroy:
             self.parent.state.warehouse.add_all_items(planet.items)
-            index = self.parent.state.planets.index(planet)
             self.parent.state.planets.remove(planet)
-            self.parent.locationBrowser.table.removeRow(index)
+
+        self.parent.locationBrowser.update()
 
         if len(planets_to_destroy) == 1:
             destroyed_msg = self.tr("Destruction of {0} is complete.", "{0} is a planet name").format(
