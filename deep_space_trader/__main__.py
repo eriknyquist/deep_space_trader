@@ -1,5 +1,4 @@
 import sys
-import os
 import random
 import time
 import qdarktheme
@@ -8,10 +7,10 @@ from deep_space_trader import config
 from deep_space_trader import constants as const
 from deep_space_trader.main_widget import MainWidget
 from deep_space_trader.sounds import waitForSounds
-from deep_space_trader.utils import gameStoryDialog, showAboutDialog, SOURCE_DIR, IMAGE_DIR, ICON_PATH
+from deep_space_trader.utils import gameStoryDialog, showAboutDialog, ICON_PATH
 from deep_space_trader.i18n import installTranslators
 
-from PyQt5 import QtWidgets, QtGui, QtCore
+from PyQt5 import QtWidgets, QtGui
 
 from deep_space_trader import __version__ as package_version
 

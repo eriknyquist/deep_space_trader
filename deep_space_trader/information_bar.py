@@ -1,6 +1,4 @@
-import os
-
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5 import QtWidgets, QtCore
 
 from deep_space_trader.planet_image import PlanetImage
 from deep_space_trader.i18n import translate, formatNumber, formatPercent

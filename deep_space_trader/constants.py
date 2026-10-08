@@ -1,8 +1,3 @@
-from deep_space_trader import __maintainer__ as package_author
-from deep_space_trader import __email__ as author_email
-from deep_space_trader import __name__ as package_name
-from deep_space_trader import __version__ as package_version
-
 from PyQt5.QtCore import QT_TRANSLATE_NOOP
 
 

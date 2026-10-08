@@ -89,9 +89,6 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         else:
             self.selectButton.setEnabled(True)
 
-    def onDoubleClick(self):
-        self.selectButtonClicked()
-
     def populateTable(self):
         self.table.setUpdatesEnabled(False)
         self.table.blockSignals(True)
@@ -149,7 +146,6 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         return None
 
     def handlePlanetResistance(self, planets_to_destroy):
-        successful = True
         resisting_planet = self.checkForResistingPlanet(planets_to_destroy)
         if resisting_planet is None:
             return planets_to_destroy, None
@@ -225,6 +221,12 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         if self.died:
             return
 
+        if not planets_to_destroy:
+            # Player declined to fight the only other planet, nothing to destroy
+            self.accepted = False
+            self.close()
+            return
+
         for planet in planets_to_destroy:
             self.state.warehouse.add_all_items(planet.items)
 
@@ -288,6 +290,10 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             self.accepted = False
             self.close()
             return
+
+        # The current planet may have resisted and been left alone, so check
+        # what is actually being destroyed, not what was selected
+        on_planet = any(planet is self.parent.state.current_planet for planet in planets_to_destroy)
 
         for planet in planets_to_destroy:
             self.parent.state.warehouse.add_all_items(planet.items)

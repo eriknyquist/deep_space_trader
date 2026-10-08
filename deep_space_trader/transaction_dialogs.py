@@ -1,8 +1,8 @@
-from deep_space_trader.utils import errorDialog, yesNoDialog, infoDialog, checkForMoneyBonus, ICON_PATH
+from deep_space_trader.utils import yesNoDialog, checkForMoneyBonus, ICON_PATH
 from deep_space_trader.items import itemDisplayName
 from deep_space_trader.i18n import translate, formatNumber
 
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5 import QtWidgets, QtGui
 
 
 class TransactionDialog(QtWidgets.QDialog):
@@ -66,7 +66,10 @@ class TransactionDialog(QtWidgets.QDialog):
         if value == 0:
             return
 
-        self.acceptTransaction(value)
+        if self.acceptTransaction(value) is False:
+            # Player changed their mind; leave the dialog open
+            return
+
         self.parent.playerItemBrowser.update()
         self.parent.planetItemBrowser.update()
         self.parent.warehouseItemBrowser.update()
@@ -78,6 +81,9 @@ class TransactionDialog(QtWidgets.QDialog):
         self.reject()
 
     def acceptTransaction(self, quantity):
+        """
+        Carry out the transaction. Return False to cancel it and keep the dialog open
+        """
         raise NotImplementedError()
 
     def valueChanged(self):
@@ -219,7 +225,7 @@ class DumpWarehouseItem(TransactionDialog):
                                                 "{0} is an item name, e.g. tin",
                                                 quantity).format(itemDisplayName(self.itemName)))
         if not proceed:
-            return
+            return False
 
         self.parent.audio.play(self.parent.audio.DumpSound)
         self.parent.state.warehouse.remove_items(self.itemName, quantity)
@@ -250,7 +256,7 @@ class DumpPlayerItem(TransactionDialog):
                                                 "{0} is an item name, e.g. tin",
                                                 quantity).format(itemDisplayName(self.itemName)))
         if not proceed:
-            return
+            return False
 
         self.parent.audio.play(self.parent.audio.DumpSound)
         self.parent.state.items.remove_items(self.itemName, quantity)

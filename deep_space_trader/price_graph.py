@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5 import QtWidgets, QtGui
 import pyqtgraph
 
 from deep_space_trader.i18n import formatNumber
@@ -29,7 +29,6 @@ class PriceHistoryGraph(QtWidgets.QDialog):
                                     "{0} is an item name, e.g. tin, and {1} is a planet name").format(
                                     item.type.display_name, parent.state.current_planet.full_name))
 
-        planet = parent.state.current_planet
         range_end = self.parent.state.day + 1
         range_start = (self.parent.state.day - len(self.item.value_history)) + 1
 

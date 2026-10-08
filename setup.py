@@ -1,8 +1,5 @@
-import unittest
 import os
-import sys
-from setuptools import setup, find_packages
-from distutils.core import Command
+from setuptools import setup
 
 from deep_space_trader import __version__ as version
 

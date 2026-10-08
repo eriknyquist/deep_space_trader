@@ -1,11 +1,6 @@
-import os
-import json
-import zlib
-import copy
 import random
-import traceback
 
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5 import QtWidgets, QtCore
 
 from deep_space_trader.utils import yesNoDialog, errorDialog, infoDialog, ScrollableTextDisplay, percentChance
 from deep_space_trader.game_state import State

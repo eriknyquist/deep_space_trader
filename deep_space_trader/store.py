@@ -1,4 +1,3 @@
-import copy
 import random
 from deep_space_trader.utils import errorDialog, infoDialog, yesNoDialog, ICON_PATH
 from deep_space_trader.location_picker import PlanetDestructionPicker

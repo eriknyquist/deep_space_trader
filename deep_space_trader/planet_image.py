@@ -62,7 +62,6 @@ class PlanetImage(QtWidgets.QWidget):
 
         self.pixmap = QtGui.QPixmap(WIDTH, HEIGHT)
 
-        self.painter = QtGui.QPainter(self.pixmap)
         self.bg_image = QtGui.QPixmap(planet_background).scaled(WIDTH, HEIGHT)
         self.fill_image = QtGui.QPixmap(planet_fill).scaled(WIDTH, HEIGHT)
         self.outline_image = QtGui.QPixmap(planet_outline).scaled(WIDTH, HEIGHT)
@@ -106,12 +105,17 @@ class PlanetImage(QtWidgets.QWidget):
                         ring_color=None):
         planet = self.parent.state.current_planet
         shine_image = self.shine_images[shineImageIndex(planet.full_name)]
-        self.painter.drawImage(0, 0, self.changeColor(self.bg_image, bg_color, alpha_white=True))
-        self.painter.drawImage(0, 0, self.changeColor(self.outline_image, outline_color))
-        self.painter.drawImage(0, 0, self.changeColor(self.fill_image, fill_color))
-        self.painter.drawImage(0, 0, self.changeColor(shine_image, shine_color))
+
+        # Only paint while drawing: a QPainter left active on the pixmap can crash
+        # when Python frees the two in the wrong order
+        painter = QtGui.QPainter(self.pixmap)
+        painter.drawImage(0, 0, self.changeColor(self.bg_image, bg_color, alpha_white=True))
+        painter.drawImage(0, 0, self.changeColor(self.outline_image, outline_color))
+        painter.drawImage(0, 0, self.changeColor(self.fill_image, fill_color))
+        painter.drawImage(0, 0, self.changeColor(shine_image, shine_color))
 
         if ring_color is not None:
-            self.painter.drawImage(0, 0, self.changeColor(self.ring_image, ring_color))
+            painter.drawImage(0, 0, self.changeColor(self.ring_image, ring_color))
 
+        painter.end()
         self.planetLabel.setPixmap(self.pixmap)

@@ -1,5 +1,3 @@
-import copy
-import time
 import random
 
 from deep_space_trader.items import ItemCollection

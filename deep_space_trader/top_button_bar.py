@@ -1,10 +1,8 @@
 from deep_space_trader.store import Store
-from deep_space_trader import constants as const
-from deep_space_trader import config
-from deep_space_trader.utils import errorDialog, yesNoDialog, infoDialog
+from deep_space_trader.utils import errorDialog, yesNoDialog
 from deep_space_trader.i18n import translate
 
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5 import QtWidgets, QtCore
 
 
 class ButtonBar(QtWidgets.QWidget):

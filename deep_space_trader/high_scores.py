@@ -1,11 +1,35 @@
 import json
+import html
 
 from deep_space_trader import config
+from deep_space_trader import constants as const
 from deep_space_trader.utils import yesNoDialog, errorDialog, infoDialog
 from deep_space_trader.utils import scores_encode, scores_decode
 from deep_space_trader.i18n import formatNumber
 
 from PyQt5 import QtWidgets, QtCore, QtGui
+
+
+def validScores(scores):
+    """
+    True if 'scores' looks like a high score list stored by config.add_highscore:
+    a list of [name, score] pairs, with names no longer than the game allows
+    """
+    if not isinstance(scores, list):
+        return False
+
+    for entry in scores:
+        if not (isinstance(entry, list) and (len(entry) == 2)):
+            return False
+
+        name, score = entry
+        if (not isinstance(name, str)) or (len(name) > const.MAX_HIGHSCORE_NAME_LEN):
+            return False
+
+        if isinstance(score, bool) or (not isinstance(score, int)) or (score < 0):
+            return False
+
+    return True
 
 
 class HighScoreTable(QtWidgets.QDialog):
@@ -50,6 +74,9 @@ class HighScoreTable(QtWidgets.QDialog):
         nextFreeRow = self.table.rowCount()
         self.table.insertRow(nextFreeRow)
 
+        # Names are shown as rich text (for the place markers), so escape them
+        name = html.escape(name)
+
         if nextFreeRow == 0:
             name = self.tr("{0} <i><b>(1st place)</b></i>", "{0} is the player's name").format(name)
         elif nextFreeRow == 1:
@@ -58,12 +85,11 @@ class HighScoreTable(QtWidgets.QDialog):
             name = self.tr("{0} <i><b>(3rd place)</b></i>", "{0} is the player's name").format(name)
 
         widgetText = QtWidgets.QLabel(name)
-        item1 = QtWidgets.QTableWidgetItem(name)
+        widgetText.setTextFormat(QtCore.Qt.RichText)
         item2 = QtWidgets.QTableWidgetItem(formatNumber(score))
 
         item2.setTextAlignment(QtCore.Qt.AlignHCenter)
 
-        #self.table.setItem(nextFreeRow, 0, item1)
         self.table.setCellWidget(nextFreeRow, 0, widgetText)
         self.table.setItem(nextFreeRow, 1, item2)
 
@@ -126,12 +152,15 @@ class HighScoreSharing(QtWidgets.QDialog):
             decoded = scores_decode(b64).decode('utf-8')
             scores = json.loads(decoded)
         except:
+            scores = None
+
+        if not validScores(scores):
             errorDialog(self, self.tr("Error"), message=self.tr("Failed to decode high scores"))
             return
 
         scores_msg = self.tr("The string you added contains the following scores:")
         scores_msg += "<br><br>"
-        scores_msg += "<br>".join(['{0} ({1})'.format(x[0], formatNumber(x[1])) for x in scores])
+        scores_msg += "<br>".join(['{0} ({1})'.format(html.escape(x[0]), formatNumber(x[1])) for x in scores])
         scores_msg += "<br><br>"
         scores_msg += self.tr("Are you sure you want to add them to your high scores?")
 
