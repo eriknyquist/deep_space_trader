@@ -33,6 +33,7 @@ setup(
     author='Erik Nyquist',
     author_email='eknyquist@gmail.com',
     license='MIT',
+    classifiers=classifiers,
     install_requires=dependencies,
     packages=['deep_space_trader'],
     package_data={'deep_space_trader':['images/*', 'audio/*', 'translations/*.qm']},
