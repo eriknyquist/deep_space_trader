@@ -19,7 +19,7 @@ def shop(game):
 def test_store_lists_every_item(shop):
     names = [shop.table.item(row, 0).text() for row in range(shop.table.rowCount())]
     assert names == ["Increase ship capacity", "Scout expedition", "Planet destruction kit",
-                     "Buy scout fleet", "Buy battle fleet", "Increase max. warehouse trips per day",
+                     "Buy scout fleet", "Buy battle fleet", "Increase engine power",
                      "Trading console"]
 
 
@@ -179,9 +179,53 @@ def test_battle_fleet_purchase_and_upgrades(game, shop, dialogs):
     assert item.price is None
 
 
-def test_warehouse_trips_increase(game, shop):
-    shop.buyItem(store_item(store.WarehouseSpeedIncrease))
-    assert game.state.warehouse_trips_per_day == const.WAREHOUSE_TRIPS_PER_DAY + 2
+def test_engine_upgrade(game, shop, dialogs):
+    # More engine power gives more warehouse trips, and makes travel cheaper
+    state = game.state
+    item = store_item(store.EngineUpgrade)
+    target = state.planets[1]
+    target.x, target.y = 100.0, 0.0
+    cost = state.travel_cost_to(target)
+    assert item.description.endswith("making travel 25% cheaper per light-year.")
+
+    shop.buyItem(item)
+    assert state.warehouse_trips_per_day == const.WAREHOUSE_TRIPS_PER_DAY + 2
+    assert state.engine_level == 1
+    assert state.travel_cost_to(target) == round(cost * const.ENGINE_TRAVEL_COST_FACTOR)
+    assert dialogs.messages("info") == ["Engine power successfully increased."]
+
+    bar = game.infoBar.engineBar
+    assert (bar.minimum(), bar.value(), bar.maximum()) == (0, 1, const.MAX_ENGINE_LEVEL)
+    assert game.infoBar.engineGroup.toolTip() == "Engine power 1/%d. Travel costs %.2f per light-year." % (
+        const.MAX_ENGINE_LEVEL, const.TRAVEL_COST_PER_LY * const.ENGINE_TRAVEL_COST_FACTOR)
+    assert game.infoBar.warehouseTripsLabel.text() == "0/%d" % state.warehouse_trips_per_day
+
+
+def test_engine_power_maximum(game, shop, dialogs):
+    item = store_item(store.EngineUpgrade)
+    for _ in range(const.MAX_ENGINE_LEVEL):
+        shop.buyItem(item)
+
+    state = game.state
+    assert state.engine_level == const.MAX_ENGINE_LEVEL
+    assert state.warehouse_trips_per_day == const.WAREHOUSE_TRIPS_PER_DAY + 2 * const.MAX_ENGINE_LEVEL
+    assert game.infoBar.engineBar.value() == game.infoBar.engineBar.maximum()
+    assert item.price is None
+    assert item.description == "You cannot buy this item anymore."
+
+    purchases = state.store_purchases
+    shop.buyItem(item)
+    assert state.engine_level == const.MAX_ENGINE_LEVEL
+    assert state.store_purchases == purchases
+    assert dialogs.messages("error")[-1] == "You cannot buy this item anymore"
+
+
+def test_engine_power_bar_is_next_to_health(game):
+    layout = game.infoBar.mainLayout
+    widgets = [layout.itemAt(i).widget() for i in range(layout.count())]
+    assert widgets[-2:] == [game.infoBar.engineGroup, game.infoBar.healthGroup]
+    assert game.infoBar.engineGroup.title() == "Engine power"
+    assert game.infoBar.engineBar.value() == 0
 
 
 def test_trading_console(game, shop):

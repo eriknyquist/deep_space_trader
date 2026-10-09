@@ -3,3 +3,4 @@ venv/*
 dist/*
 *.pyc
 .pytest_cache/
+.claude-tmp/*

@@ -1,3 +1,4 @@
+import math
 import random
 
 from deep_space_trader.items import ItemCollection
@@ -168,6 +169,16 @@ class Planet(object):
         self._items = ItemCollection()
         self._samples_today = []
         self._last_prices_update_day = None
+
+        # Position in the galaxy, in light-years (see State.expand_planets)
+        self.x = 0.0
+        self.y = 0.0
+
+    def distance_to(self, other):
+        """
+        Distance from this planet to another planet, in light-years
+        """
+        return math.hypot(self.x - other.x, self.y - other.y)
 
     def update_prices(self, current_day):
         if self._last_prices_update_day == None:

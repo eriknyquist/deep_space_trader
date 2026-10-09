@@ -172,3 +172,118 @@ def test_destroyed_planet_names_are_not_reused(state):
     random.seed(11)
     state.expand_planets(3000)
     assert destroyed.full_name not in {p.full_name for p in state.planets}
+
+
+# ----- Distances and travel -----
+
+def test_home_planet_is_at_the_centre(state):
+    assert state.home_planet is state.planets[0]
+    assert state.current_planet is state.home_planet
+    assert (state.home_planet.x, state.home_planet.y) == (0.0, 0.0)
+
+
+def test_starting_planets_are_near_home(state):
+    for planet in state.planets:
+        assert planet.distance_to(state.home_planet) <= const.INITIAL_GALAXY_RADIUS
+
+
+def test_distance_between_planets(state):
+    a, b = state.planets[1:3]
+    a.x, a.y = 3.0, 0.0
+    b.x, b.y = 0.0, 4.0
+    assert a.distance_to(b) == b.distance_to(a) == 5.0
+
+
+@pytest.mark.parametrize("level", [1, 2, const.MAX_SCOUT_LEVEL])
+def test_scouts_find_planets_further_away(state, level):
+    state.scout_level = level
+    assert state.discovery_distances() == (const.INITIAL_GALAXY_RADIUS, const.INITIAL_GALAXY_RADIUS * (level + 1))
+
+    random.seed(level)
+    start = len(state.planets)
+    state.expand_planets(400)
+    distances = [p.distance_to(state.home_planet) for p in state.planets[start:]]
+    low, high = state.discovery_distances()
+    assert all(low <= d <= high for d in distances)
+    # Spread over the whole range, not bunched at one end
+    assert min(distances) < low + (high - low) * 0.2
+    assert max(distances) > high - (high - low) * 0.2
+
+
+def test_travel_cost_grows_with_distance(state):
+    target = state.planets[1]
+    target.x, target.y = 20.0, 0.0
+    assert state.travel_cost_to(target) == round(20 * const.TRAVEL_COST_PER_LY)
+
+    target.x = 200.0
+    assert state.travel_cost_to(target) == round(200 * const.TRAVEL_COST_PER_LY)
+
+
+def test_travel_cost_has_a_minimum(state):
+    target = state.planets[1]
+    target.x, target.y = 0.1, 0.0
+    assert state.travel_cost_to(target) == const.MIN_TRAVEL_COST
+
+
+def test_engine_upgrades_make_travel_cheaper(state):
+    target = state.planets[1]
+    target.x, target.y = 100.0, 0.0
+    state.engine_level = 2
+    expected = round(100 * const.TRAVEL_COST_PER_LY * const.ENGINE_TRAVEL_COST_FACTOR ** 2)
+    assert state.travel_cost_to(target) == expected
+    assert state.travel_cost_per_ly() == const.TRAVEL_COST_PER_LY * const.ENGINE_TRAVEL_COST_FACTOR ** 2
+
+
+@pytest.mark.parametrize("distance, factor", [
+    (const.PIRATE_REFERENCE_DISTANCE, 1.0),
+    (const.PIRATE_REFERENCE_DISTANCE * 2, 2.0),
+    (1.0, const.PIRATE_DISTANCE_FACTOR_RANGE[0]),
+    (const.PIRATE_REFERENCE_DISTANCE * 100, const.PIRATE_DISTANCE_FACTOR_RANGE[1]),
+])
+def test_pirate_chance_grows_with_distance(state, monkeypatch, distance, factor):
+    monkeypatch.setattr(state, "chance_of_being_robbed_in_transit", lambda: 10.0)
+    target = state.planets[1]
+    target.x, target.y = distance, 0.0
+    assert state.pirate_chance(target) == pytest.approx(10.0 * factor)
+
+
+def test_pirate_chance_is_capped(state, monkeypatch):
+    monkeypatch.setattr(state, "chance_of_being_robbed_in_transit", lambda: 90.0)
+    target = state.planets[1]
+    target.x, target.y = 1000.0, 0.0
+    assert state.pirate_chance(target) == const.MAX_PIRATE_CHANCE_PERCENTAGE
+
+
+def test_no_pirates_without_net_worth(state):
+    state.money = 0
+    state.items.remove_all_items()
+    target = state.planets[1]
+    target.x, target.y = 1000.0, 0.0
+    assert state.pirate_chance(target) == 0.0
+
+
+def test_remote_price_factor():
+    outer = const.INITIAL_GALAXY_RADIUS * (const.MAX_SCOUT_LEVEL + 1)
+    assert State.remote_price_factor(0) == 1.0
+    assert State.remote_price_factor(const.INITIAL_GALAXY_RADIUS) == 1.0
+    assert State.remote_price_factor(outer) == pytest.approx(const.REMOTE_PRICE_FACTOR)
+    assert State.remote_price_factor(outer * 2) == pytest.approx(const.REMOTE_PRICE_FACTOR)
+    middle = (const.INITIAL_GALAXY_RADIUS + outer) / 2
+    assert State.remote_price_factor(middle) == pytest.approx((1.0 + const.REMOTE_PRICE_FACTOR) / 2)
+
+
+def test_remote_planets_have_cheaper_items(state):
+    # Compare average prices relative to each item's base price, near and far
+    random.seed(12)
+    state.scout_level = const.MAX_SCOUT_LEVEL
+    state.expand_planets(1500)
+
+    def relative_prices(planets):
+        prices = [i.value / i.type.base_value for p in planets for i in p.items.iter_items()]
+        return sum(prices) / len(prices)
+
+    inner, outer = state.discovery_distances()
+    near = [p for p in state.planets if inner <= p.distance_to(state.home_planet) < inner + 30]
+    far = [p for p in state.planets if p.distance_to(state.home_planet) > outer - 30]
+    assert near and far
+    assert relative_prices(far) < relative_prices(near) * 0.65

@@ -24,7 +24,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         self.buttonLayout.addWidget(self.selectButton)
         self.selectButton.setToolTip(self.tr("destroy the selected planets"))
 
-        self.all_planets_cost = const.PLANET_DESTRUCTION_COST * (len(self.state.planets) - 1)
+        self.all_planets_cost = const.PLANET_DESTRUCTION_COST * len(self.destroyablePlanets(include_current=False))
         self.allButton = QtWidgets.QPushButton()
 
         if self.all_planets_cost > 0:
@@ -36,7 +36,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         self.allButton.setText(text)
         self.allButton.clicked.connect(self.allButtonClicked)
         self.buttonLayout.addWidget(self.allButton)
-        self.allButton.setToolTip(self.tr("destroy all planets except the one you are currently on"))
+        self.allButton.setToolTip(self.tr("destroy all planets except your home planet and the one you are currently on"))
 
         if self.state.money < self.all_planets_cost:
             self.allButton.setEnabled(False)
@@ -89,17 +89,26 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         else:
             self.selectButton.setEnabled(True)
 
+    def destroyablePlanets(self, include_current=True):
+        """
+        Planets that can be destroyed: all except the home planet (where the
+        warehouse is), and optionally except the current planet
+        """
+        return [p for p in self.state.planets
+                if (p is not self.state.home_planet) and (include_current or (p is not self.state.current_planet))]
+
     def populateTable(self):
         self.table.setUpdatesEnabled(False)
         self.table.blockSignals(True)
         self.table.setSortingEnabled(False)
 
+        planets = self.destroyablePlanets()
         self.table.clearContents()
         self.table.setRowCount(0)
-        self.table.setRowCount(len(self.state.planets))
+        self.table.setRowCount(len(planets))
 
-        for row in range(len(self.state.planets)):
-            planet = self.state.planets[row]
+        for row in range(len(planets)):
+            planet = planets[row]
             item1 = QtWidgets.QTableWidgetItem(planet.full_name)
             # Keep a reference to the planet on the row, since the player can
             # sort the table, and then row numbers no longer match state.planets
@@ -205,15 +214,15 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
     def allButtonClicked(self):
         proceed = yesNoDialog(self, self.tr("Are you sure?"),
                               message=self.tr("Are you sure you want to destroy all planets for {0}? "
-                                              "All planets except for the one you are currently "
-                                              "on will cease to exist, and all tradeable items "
+                                              "All planets except for your home planet and the one you "
+                                              "are currently on will cease to exist, and all tradeable items "
                                               "that currently exist on those planets will be "
                                               "shipped to your warehouse.").format(formatNumber(self.all_planets_cost)))
         if not proceed:
             return
 
         self.accepted = True
-        planets_to_destroy = [p for p in self.state.planets if id(p) != id(self.state.current_planet)]
+        planets_to_destroy = self.destroyablePlanets(include_current=False)
 
         planets_to_destroy, resisting_planet = self.handlePlanetResistance(planets_to_destroy)
         self.final_price = const.PLANET_DESTRUCTION_COST * len(planets_to_destroy)
@@ -230,9 +239,10 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         for planet in planets_to_destroy:
             self.state.warehouse.add_all_items(planet.items)
 
-        self.parent.state.planets = [self.parent.state.current_planet]
-        if resisting_planet is not None:
-            self.parent.state.planets.append(resisting_planet)
+        # Keep the current planet, the home planet and any planet that resisted, in their usual order
+        state = self.parent.state
+        state.planets = [p for p in state.planets
+                         if (p is state.current_planet) or (p is state.home_planet) or (p is resisting_planet)]
 
         self.parent.locationBrowser.update()
 

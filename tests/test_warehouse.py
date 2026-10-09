@@ -148,3 +148,50 @@ def test_dump_all_warehouse_items(game, dialogs):
     assert game.state.warehouse.count() == 0
     assert game.warehouseItemBrowser.table.rowCount() == 0
     assert game.audio.played == ["DumpSound"]
+
+
+# ----- The warehouse is on the home planet -----
+
+@pytest.fixture
+def away_from_home(game):
+    state = game.state
+    state.change_current_planet(next(p for p in state.planets if p is not state.home_planet))
+    return state.current_planet
+
+
+def test_warehouse_moves_only_at_home(game, dialogs, away_from_home):
+    state = game.state
+    give(state.items, "tin", 10)
+    give(state.warehouse, "gold", 10)
+    select(game.playerItemBrowser, "tin")
+    select(game.warehouseItemBrowser, "gold")
+
+    game.playerItemBrowser.warehouseButtonClicked()
+    game.warehouseItemBrowser.removeButtonClicked()
+    game.warehouseItemBrowser.removeAllButtonClicked()
+    game.warehouseItemBrowser.onDoubleClick()
+
+    message = "Your warehouse is on %s. Travel there to use it." % state.home_planet.full_name
+    assert dialogs.messages("error") == [message] * 4
+    assert dialogs.executed == []
+    assert state.warehouse_trips == 0
+    assert state.warehouse.items["gold"].quantity == 10
+    assert state.items.items["tin"].quantity == 10
+
+
+def test_warehouse_dumping_works_away_from_home(game, dialogs, away_from_home):
+    give(game.state.warehouse, "gold", 10)
+    select(game.warehouseItemBrowser, "gold")
+    game.warehouseItemBrowser.dumpButtonClicked()
+    assert [type(d) for d in dialogs.executed] == [DumpWarehouseItem]
+
+    game.warehouseItemBrowser.dumpAllButtonClicked()
+    assert game.state.warehouse.count() == 0
+
+
+def test_warehouse_title_names_home_planet(game):
+    title = game.warehouseItemsBrowserGroup.title
+    assert title() == "Items in warehouse (on %s)" % game.state.home_planet.full_name
+
+    game.reset()
+    assert title() == "Items in warehouse (on %s)" % game.state.home_planet.full_name

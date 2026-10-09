@@ -1,3 +1,4 @@
+import math
 import random
 from collections import deque
 
@@ -32,7 +33,7 @@ class State(object):
     def initialize(self):
         self.planets = []
         self.money = const.INITIAL_MONEY
-        self.travel_cost = const.INITIAL_TRAVEL_COST
+        self.engine_level = 0
         self.capacity = const.INITIAL_ITEM_CAPACITY
         self.items = ItemCollection()
         self.warehouse = ItemCollection()
@@ -58,7 +59,13 @@ class State(object):
 
         self.warehouse_trips = 0
         self.expand_planets(const.INITIAL_PLANET_COUNT)
-        self.current_planet = self.planets[0]
+
+        # The first planet is home: the centre of the galaxy, where the warehouse is
+        self.home_planet = self.planets[0]
+        self.home_planet.x = 0.0
+        self.home_planet.y = 0.0
+
+        self.current_planet = self.home_planet
         self.current_planet.visited = True
         self.previous_planet = None
         self.previous_planets_tail = None
@@ -113,6 +120,48 @@ class State(object):
             chance = 5.0
 
         return chance
+
+    def pirate_chance(self, planet):
+        """
+        Percentage chance of meeting pirates on the way to 'planet'. Grows with
+        net worth (see chance_of_being_robbed_in_transit) and with trip distance
+        """
+        low, high = const.PIRATE_DISTANCE_FACTOR_RANGE
+        distance = self.current_planet.distance_to(planet)
+        factor = min(high, max(low, distance / const.PIRATE_REFERENCE_DISTANCE))
+        return min(const.MAX_PIRATE_CHANCE_PERCENTAGE, self.chance_of_being_robbed_in_transit() * factor)
+
+    def travel_cost_per_ly(self):
+        return const.TRAVEL_COST_PER_LY * (const.ENGINE_TRAVEL_COST_FACTOR ** self.engine_level)
+
+    def travel_cost_to(self, planet):
+        """
+        Cost of travelling from the current planet to 'planet'
+        """
+        distance = self.current_planet.distance_to(planet)
+        return max(const.MIN_TRAVEL_COST, int(round(distance * self.travel_cost_per_ly())))
+
+    def discovery_distances(self):
+        """
+        (smallest, largest) distance from the home planet for newly discovered planets
+        """
+        if self.scout_level == 0:
+            # Only the starting planets are discovered without a scout fleet
+            return 0.0, const.INITIAL_GALAXY_RADIUS
+
+        return const.INITIAL_GALAXY_RADIUS, const.INITIAL_GALAXY_RADIUS * (self.scout_level + 1)
+
+    @staticmethod
+    def remote_price_factor(distance):
+        """
+        How much cheaper items are on a planet this far from home: 1.0 (normal
+        prices) out to INITIAL_GALAXY_RADIUS, falling steadily to
+        REMOTE_PRICE_FACTOR at the edge of the largest scout range
+        """
+        inner = const.INITIAL_GALAXY_RADIUS
+        outer = const.INITIAL_GALAXY_RADIUS * (const.MAX_SCOUT_LEVEL + 1)
+        progress = min(1.0, max(0.0, (distance - inner) / (outer - inner)))
+        return 1.0 - progress * (1.0 - const.REMOTE_PRICE_FACTOR)
 
     def battle_victory_chance_percentage(self):
         return self.battle_level_chance_map[self.battle_level]
@@ -192,9 +241,18 @@ class State(object):
             num_new = random.randrange(1, 10)
 
         new_planets = Planet.random(num=num_new, used_names=self.used_planet_names)
+        low, high = self.discovery_distances()
         for new in new_planets:
             new.discovery_day = self.day
-            new.items = ItemCollection.random(value_multiplier=self.level,
+
+            # Random position between 'low' and 'high' ly from home (which is at 0, 0),
+            # spread evenly over that area
+            distance = math.sqrt(random.uniform(low ** 2, high ** 2))
+            angle = random.uniform(0.0, 2.0 * math.pi)
+            new.x = distance * math.cos(angle)
+            new.y = distance * math.sin(angle)
+
+            new.items = ItemCollection.random(value_multiplier=self.level * self.remote_price_factor(distance),
                                               quantity_multiplier=self.level)
 
         self.planets += new_planets

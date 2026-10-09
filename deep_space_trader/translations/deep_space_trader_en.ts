@@ -4,12 +4,12 @@
 <context>
     <name>About</name>
     <message>
-        <location filename="../constants.py" line="122"/>
+        <location filename="../constants.py" line="150"/>
         <source>The year is 5208, and humanity has solved the problem of bridging the vast distances between stars by bending the fabric of spacetime. Commerce between thousands of newly colonized planets is now possible.&lt;br&gt;&lt;br&gt;You are the owner of an inter-planetary commercial trading vessel. You make your living by purchasing and harvesting raw materials and resources from countless planets across the universe, and selling them to other planets.&lt;br&gt;&lt;br&gt;If you encounter pirates and do not have sufficient weaponry to defend yourself, you will be robbed, or you will die.&lt;br&gt;&lt;br&gt;If you don&apos;t make enough money to keep up with your daily costs, you will die.&lt;br&gt;&lt;br&gt;Your daily costs will increase as you purchase services that require daily maintenance.&lt;br&gt;&lt;br&gt;Don&apos;t die, and make as much money as you possibly can before your time runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../constants.py" line="144"/>
+        <location filename="../constants.py" line="172"/>
         <source>&lt;ul&gt;Recommended strategy: &lt;br&gt;&lt;li&gt;Buy the &apos;Increase ship capacity&apos; upgrade from the store as early and as frequently as possible&lt;/li&gt;&lt;br&gt;&lt;li&gt;Destroy as many planets as you can, by buying the &apos;Planet destruction kit&apos; from the store&lt;/li&gt;&lt;br&gt;&lt;li&gt;Discover new planets by buying &apos;Scout expedition&apos; from the store, and sell them the resources you obtained from destroying other planets. Rinse and repeat.&lt;/li&gt;&lt;br&gt;&lt;li&gt;Watch out for pirates and planets that resist destruction; buy the Battle Fleet from the store and upgrade it as often as you can to increase your chances of winning battles against pirate fleets and planet defense fleets.&lt;/li&gt;&lt;/ul&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -318,6 +318,54 @@
     </message>
 </context>
 <context>
+    <name>EngineUpgrade</name>
+    <message>
+        <location filename="../store.py" line="263"/>
+        <source>Are you sure?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../store.py" line="271"/>
+        <source>Success</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../store.py" line="249"/>
+        <source>Increase engine power</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../store.py" line="250"/>
+        <source>Increase your engine power, allowing you to make two more trips to the warehouse per day, and making travel {0} cheaper per light-year.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../store.py" line="259"/>
+        <source>Sorry!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../store.py" line="259"/>
+        <source>Your engines are already at full power.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../store.py" line="263"/>
+        <source>Are you sure you want to increase your engine power?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../store.py" line="271"/>
+        <source>Engine power successfully increased.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../store.py" line="278"/>
+        <source>You cannot buy this item anymore.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>HighScoreSharing</name>
     <message>
         <location filename="../high_scores.py" line="120"/>
@@ -414,72 +462,72 @@
 <context>
     <name>InfoBar</name>
     <message>
-        <location filename="../information_bar.py" line="24"/>
+        <location filename="../information_bar.py" line="28"/>
         <source>Current planet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="34"/>
+        <location filename="../information_bar.py" line="38"/>
         <source>Money</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="44"/>
+        <location filename="../information_bar.py" line="48"/>
         <source>Daily cost</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="58"/>
+        <location filename="../information_bar.py" line="62"/>
         <source>Purchases</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="68"/>
+        <location filename="../information_bar.py" line="72"/>
         <source>Warehouse trips</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="82"/>
+        <location filename="../information_bar.py" line="86"/>
         <source>Planets discovered</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="92"/>
+        <location filename="../information_bar.py" line="96"/>
         <source>Current day</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="106"/>
+        <location filename="../information_bar.py" line="110"/>
         <source>Scout fleet level</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="116"/>
+        <location filename="../information_bar.py" line="120"/>
         <source>Battle fleet level</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="134"/>
+        <location filename="../information_bar.py" line="138"/>
         <source>Health</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="185"/>
+        <location filename="../information_bar.py" line="209"/>
         <source>the planet you are currently on</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="186"/>
+        <location filename="../information_bar.py" line="210"/>
         <source>how much money you currently have</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="187"/>
+        <location filename="../information_bar.py" line="211"/>
         <source>how many planets you have discovered since day 1</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../information_bar.py" line="192"/>
+        <location filename="../information_bar.py" line="216"/>
         <source>%Ln days remaining</source>
         <translation>
             <numerusform>%Ln day remaining</numerusform>
@@ -487,7 +535,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../information_bar.py" line="193"/>
+        <location filename="../information_bar.py" line="217"/>
         <source>%Ln store purchases remaining today</source>
         <translation>
             <numerusform>%Ln store purchase remaining today</numerusform>
@@ -495,7 +543,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../information_bar.py" line="194"/>
+        <location filename="../information_bar.py" line="218"/>
         <source>%Ln warehouse trips remaining today</source>
         <translation>
             <numerusform>%Ln warehouse trip remaining today</numerusform>
@@ -503,7 +551,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../information_bar.py" line="198"/>
+        <location filename="../information_bar.py" line="222"/>
         <source>{0} - %Ln new planets per scout expedition</source>
         <comment>{0} is the smallest number of planets</comment>
         <translation>
@@ -512,29 +560,39 @@
         </translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="202"/>
+        <location filename="../information_bar.py" line="226"/>
         <source>Scout expeditions are not possible</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="204"/>
+        <location filename="../information_bar.py" line="228"/>
         <source>{0} chance of winning battles</source>
         <comment>{0} is a percentage</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="207"/>
+        <location filename="../information_bar.py" line="235"/>
         <source>{0} per day is required to feed yourself and maintain all purchased services</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="234"/>
+        <location filename="../information_bar.py" line="263"/>
         <source>No battle fleet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="242"/>
+        <location filename="../information_bar.py" line="271"/>
         <source>No scout fleet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../information_bar.py" line="154"/>
+        <source>Engine power</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../information_bar.py" line="231"/>
+        <source>Engine power {0}/{1}. Travel costs {2} per light-year.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -549,13 +607,24 @@
 <context>
     <name>ItemBrowser</name>
     <message>
-        <location filename="../item_browsers.py" line="121"/>
+        <location filename="../item_browsers.py" line="136"/>
         <source>Item type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="121"/>
+        <location filename="../item_browsers.py" line="136"/>
         <source>Quantity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../item_browsers.py" line="80"/>
+        <source>Warehouse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../item_browsers.py" line="80"/>
+        <source>Your warehouse is on {0}. Travel there to use it.</source>
+        <comment>{0} is a planet name</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -630,13 +699,13 @@
 <context>
     <name>Lists</name>
     <message>
-        <location filename="../i18n.py" line="63"/>
+        <location filename="../i18n.py" line="80"/>
         <source>, </source>
         <comment>separator between the items of a list, except the last two</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../i18n.py" line="64"/>
+        <location filename="../i18n.py" line="81"/>
         <source>{0} and {1}</source>
         <comment>joins the last two items of a list, e.g. &quot;A and B&quot;</comment>
         <translation type="unfinished"></translation>
@@ -650,324 +719,355 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="45"/>
+        <location filename="../location_browser.py" line="56"/>
         <source>Search for planets by name...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="49"/>
+        <location filename="../location_browser.py" line="60"/>
         <source>Travel...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="53"/>
+        <location filename="../location_browser.py" line="64"/>
         <source>Travel to previous</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="57"/>
+        <location filename="../location_browser.py" line="72"/>
         <source>Trading console</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="73"/>
+        <location filename="../location_browser.py" line="92"/>
         <source>Planet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="73"/>
+        <location filename="../location_browser.py" line="92"/>
         <source>visited?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="101"/>
+        <location filename="../location_browser.py" line="126"/>
         <source>travel to the selected planet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="102"/>
+        <location filename="../location_browser.py" line="127"/>
         <source>travel back to the planet you were on before the current planet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="111"/>
+        <location filename="../location_browser.py" line="140"/>
         <source>opens the trading console for the selected planet, allowing you to see item prices without travelling there</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="190"/>
+        <location filename="../location_browser.py" line="219"/>
         <source>yes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="190"/>
+        <location filename="../location_browser.py" line="219"/>
         <source>no</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="231"/>
+        <location filename="../location_browser.py" line="309"/>
         <source>You are already on {0}!</source>
         <comment>{0} is a planet name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="235"/>
+        <location filename="../location_browser.py" line="314"/>
         <source>You don&apos;t have enough money! ({0} required)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="239"/>
+        <location filename="../location_browser.py" line="319"/>
         <source>Travel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="239"/>
-        <source>Travel to {0}?&lt;br&gt;&lt;br&gt;(cost is {1}, you have {2})</source>
-        <comment>{0} is a planet name</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../location_browser.py" line="251"/>
+        <location filename="../location_browser.py" line="331"/>
         <source>Attacked by pirates!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="251"/>
+        <location filename="../location_browser.py" line="331"/>
         <source>You have encountered a pirate fleet while travelling between planets!&lt;br&gt;&lt;br&gt;Your battle fleet must defeat them if you want to continue.&lt;br&gt;&lt;br&gt;If you fight and lose, you will die.&lt;br&gt;&lt;br&gt;If you fight and win, you will lose some health, but you will be able to continue your travels and will not lose any money or resources.&lt;br&gt;&lt;br&gt;If you do not fight, then the only other option is surrender; you will not die or lose any health, but you may lose some of your money and resources.&lt;br&gt;&lt;br&gt;Do you want to fight?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="270"/>
+        <location filename="../location_browser.py" line="350"/>
         <source>Battle won!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="270"/>
+        <location filename="../location_browser.py" line="350"/>
         <source>You have defeated the pirate fleet, and can continue with your travels.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="275"/>
+        <location filename="../location_browser.py" line="355"/>
         <source>Battle lost!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="275"/>
+        <location filename="../location_browser.py" line="355"/>
         <source>You have been defeated by the pirate fleet.&lt;br&gt;&lt;br&gt;You are dead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="293"/>
+        <location filename="../location_browser.py" line="373"/>
         <source>Surrender</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="293"/>
+        <location filename="../location_browser.py" line="373"/>
         <source>You decide not to fight the pirate fleet. &lt;br&gt;&lt;br&gt;The pirates spare your life, but they rob you of everything you&apos;ve got!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="309"/>
+        <location filename="../location_browser.py" line="391"/>
         <source>Please select a planet first!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="317"/>
+        <location filename="../location_browser.py" line="399"/>
         <source>Please select a planet to travel to first!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="329"/>
+        <location filename="../location_browser.py" line="414"/>
         <source>No previous planet to travel to!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="333"/>
+        <location filename="../location_browser.py" line="418"/>
         <source>{0} no longer exists!</source>
         <comment>{0} is a planet name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../location_browser.py" line="68"/>
+        <source>Travel home</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../location_browser.py" line="77"/>
+        <source>Star map...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../location_browser.py" line="92"/>
+        <source>Distance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../location_browser.py" line="128"/>
+        <source>travel back to your home planet, where your warehouse is</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../location_browser.py" line="130"/>
+        <source>show a map of all the planets you have discovered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../location_browser.py" line="238"/>
+        <source>Your home planet. Your warehouse is here.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../location_browser.py" line="319"/>
+        <source>Travel to {0}?&lt;br&gt;&lt;br&gt;(distance {1}, cost {2}, you have {3})</source>
+        <comment>{0} is a planet name, and {1} is a distance, e.g. 27.4 ly</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>MainWidget</name>
     <message>
-        <location filename="../main_widget.py" line="106"/>
+        <location filename="../main_widget.py" line="108"/>
         <source>Planets ({0})</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="62"/>
+        <location filename="../main_widget.py" line="63"/>
         <source>Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="80"/>
+        <location filename="../main_widget.py" line="81"/>
         <source>Items on current planet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="89"/>
-        <source>Items in warehouse</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../main_widget.py" line="120"/>
+        <location filename="../main_widget.py" line="122"/>
         <source>Items on your ship ({0}/{1})</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="125"/>
+        <location filename="../main_widget.py" line="132"/>
         <source>Travel log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="130"/>
+        <location filename="../main_widget.py" line="137"/>
         <source>Transaction log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="150"/>
+        <location filename="../main_widget.py" line="162"/>
         <source>Are you sure?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="150"/>
+        <location filename="../main_widget.py" line="162"/>
         <source>Are you sure you want to quit?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="196"/>
+        <location filename="../main_widget.py" line="209"/>
         <source>The rumour you heard about {0} was true!&lt;br&gt;&lt;br&gt;{0} prices are through the roof.</source>
         <comment>{0} is an item name, e.g. tin</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="199"/>
+        <location filename="../main_widget.py" line="212"/>
         <source>The rumour you heard about {0} was true!&lt;br&gt;&lt;br&gt;{0} prices are at an all-time low.</source>
         <comment>{0} is an item name, e.g. tin</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="203"/>
+        <location filename="../main_widget.py" line="216"/>
         <source>Rumour was true!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="207"/>
+        <location filename="../main_widget.py" line="220"/>
         <source>Rumour was false</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="207"/>
+        <location filename="../main_widget.py" line="220"/>
         <source>The rumour you heard about {0} on {1} was false!</source>
         <comment>{0} is an item name, e.g. tin, and {1} is a planet name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="236"/>
+        <location filename="../main_widget.py" line="249"/>
         <source>You hear a rumour that {0} will be very expensive on {1} tomorrow!</source>
         <comment>{0} is an item name, e.g. tin, and {1} is a planet name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="236"/>
+        <location filename="../main_widget.py" line="249"/>
         <source>You hear a rumour that {0} will be extremely expensive on {1} tomorrow!</source>
         <comment>{0} is an item name, e.g. tin, and {1} is a planet name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="236"/>
+        <location filename="../main_widget.py" line="249"/>
         <source>You hear a rumour that {0} will be unreasonably expensive on {1} tomorrow!</source>
         <comment>{0} is an item name, e.g. tin, and {1} is a planet name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="236"/>
+        <location filename="../main_widget.py" line="249"/>
         <source>You hear a rumour that {0} will be unusually expensive on {1} tomorrow!</source>
         <comment>{0} is an item name, e.g. tin, and {1} is a planet name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="247"/>
+        <location filename="../main_widget.py" line="260"/>
         <source>You hear a rumour that {0} will be very cheap on {1} tomorrow!</source>
         <comment>{0} is an item name, e.g. tin, and {1} is a planet name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="247"/>
+        <location filename="../main_widget.py" line="260"/>
         <source>You hear a rumour that {0} will be extremely cheap on {1} tomorrow!</source>
         <comment>{0} is an item name, e.g. tin, and {1} is a planet name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="247"/>
+        <location filename="../main_widget.py" line="260"/>
         <source>You hear a rumour that {0} will be unreasonably cheap on {1} tomorrow!</source>
         <comment>{0} is an item name, e.g. tin, and {1} is a planet name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="247"/>
+        <location filename="../main_widget.py" line="260"/>
         <source>You hear a rumour that {0} will be unusually cheap on {1} tomorrow!</source>
         <comment>{0} is an item name, e.g. tin, and {1} is a planet name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="261"/>
+        <location filename="../main_widget.py" line="274"/>
         <source>Rumour overheard!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="269"/>
+        <location filename="../main_widget.py" line="282"/>
         <source>Dead!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="269"/>
+        <location filename="../main_widget.py" line="282"/>
         <source>You have starved to death.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="280"/>
+        <location filename="../main_widget.py" line="293"/>
         <source>Game complete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="280"/>
+        <location filename="../main_widget.py" line="293"/>
         <source>Time is up!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="295"/>
+        <location filename="../main_widget.py" line="308"/>
         <source>High score!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="295"/>
+        <location filename="../main_widget.py" line="308"/>
         <source>You have achieved a high score ({0}) ! would you like to enter your name? (high scores are only stored locally)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="308"/>
+        <location filename="../main_widget.py" line="321"/>
         <source>Enter name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="308"/>
+        <location filename="../main_widget.py" line="321"/>
         <source>Enter your name for the high score table</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="318"/>
+        <location filename="../main_widget.py" line="331"/>
         <source>Too long</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../main_widget.py" line="318"/>
+        <location filename="../main_widget.py" line="331"/>
         <source>Name is too long (max %Ln characters)</source>
         <translation>
             <numerusform>Name is too long (max %Ln character)</numerusform>
             <numerusform>Name is too long (max %Ln characters)</numerusform>
         </translation>
+    </message>
+    <message>
+        <location filename="../main_widget.py" line="128"/>
+        <source>Items in warehouse (on {0})</source>
+        <comment>{0} is a planet name</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1023,73 +1123,83 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../__main__.py" line="59"/>
+        <location filename="../__main__.py" line="64"/>
         <source>Show travel log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../__main__.py" line="61"/>
+        <location filename="../__main__.py" line="66"/>
         <source>Show a log of planets travelled to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../__main__.py" line="64"/>
+        <location filename="../__main__.py" line="69"/>
         <source>Show transaction log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../__main__.py" line="66"/>
+        <location filename="../__main__.py" line="71"/>
         <source>Show a log of all materials bought/sold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../__main__.py" line="69"/>
+        <location filename="../__main__.py" line="74"/>
         <source>Dark theme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../__main__.py" line="71"/>
+        <location filename="../__main__.py" line="76"/>
         <source>Enable/disable dark theme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../__main__.py" line="76"/>
+        <location filename="../__main__.py" line="81"/>
         <source>Show tooltips</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../__main__.py" line="78"/>
+        <location filename="../__main__.py" line="83"/>
         <source>Enable/disable tooltips when hovering over game elements</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../__main__.py" line="83"/>
+        <location filename="../__main__.py" line="88"/>
         <source>Sounds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../__main__.py" line="85"/>
+        <location filename="../__main__.py" line="90"/>
         <source>Enable/disable game sounds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../__main__.py" line="92"/>
+        <location filename="../__main__.py" line="97"/>
         <source>File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../__main__.py" line="97"/>
+        <location filename="../__main__.py" line="102"/>
         <source>Tools</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../__main__.py" line="102"/>
+        <location filename="../__main__.py" line="108"/>
         <source>Preferences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../__main__.py" line="107"/>
+        <location filename="../__main__.py" line="113"/>
         <source>Help</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../__main__.py" line="59"/>
+        <source>Star map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../__main__.py" line="61"/>
+        <source>Show a map of all the planets you have discovered</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1115,6 +1225,12 @@
         <location filename="../i18n.py" line="53"/>
         <source>{0}%</source>
         <comment>a percentage, e.g. 12.5%</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../i18n.py" line="62"/>
+        <source>{0} ly</source>
+        <comment>a distance in light-years, e.g. 27.4 ly</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1154,11 +1270,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="39"/>
-        <source>destroy all planets except the one you are currently on</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../location_picker.py" line="55"/>
         <source>Planet name</source>
         <translation type="unfinished"></translation>
@@ -1184,108 +1295,103 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="107"/>
+        <location filename="../location_picker.py" line="116"/>
         <source>yes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="107"/>
+        <location filename="../location_picker.py" line="116"/>
         <source>no</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="155"/>
+        <location filename="../location_picker.py" line="164"/>
         <source>Planet {0} is resisting destruction! A battle fleet from {0} has been dispatched, and is prepared to defend the planet if you try to destroy it. You must defeat them if you want to continue with the destruction of {0}.&lt;br&gt;&lt;br&gt;If you fight and lose, you will die and the game will be over.&lt;br&gt;&lt;br&gt;If you fight and win, you will destroy this planet and gain its materials, but you will lose some health.&lt;br&gt;&lt;br&gt;If you choose not to fight, you will not be able to destroy this planet, but will continue unscathed.</source>
         <comment>{0} is a planet name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="167"/>
+        <location filename="../location_picker.py" line="176"/>
         <source>Since you have no battle fleet, your chances of victory are slim.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="169"/>
+        <location filename="../location_picker.py" line="178"/>
         <source>Do you want to fight?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="172"/>
+        <location filename="../location_picker.py" line="181"/>
         <source>Planet is resisting!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="175"/>
+        <location filename="../location_picker.py" line="184"/>
         <source>Chickened out!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="175"/>
+        <location filename="../location_picker.py" line="184"/>
         <source>You have declined to fight {0}. They win, this time.</source>
         <comment>{0} is a planet name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="187"/>
+        <location filename="../location_picker.py" line="196"/>
         <source>Victory!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="187"/>
+        <location filename="../location_picker.py" line="196"/>
         <source>You have defeated {0}!</source>
         <comment>{0} is a planet name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="195"/>
+        <location filename="../location_picker.py" line="204"/>
         <source>Defeat!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="195"/>
+        <location filename="../location_picker.py" line="204"/>
         <source>You have been defeated in battle by {0}.&lt;br&gt;&lt;br&gt;&lt;br&gt;You are dead :(</source>
         <comment>{0} is a planet name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="276"/>
+        <location filename="../location_picker.py" line="286"/>
         <source>Are you sure?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="206"/>
-        <source>Are you sure you want to destroy all planets for {0}? All planets except for the one you are currently on will cease to exist, and all tradeable items that currently exist on those planets will be shipped to your warehouse.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../location_picker.py" line="317"/>
+        <location filename="../location_picker.py" line="327"/>
         <source>Success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="242"/>
+        <location filename="../location_picker.py" line="252"/>
         <source>Destruction of all planets is complete.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="248"/>
+        <location filename="../location_picker.py" line="258"/>
         <source>Please select planets to destroy first!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="254"/>
+        <location filename="../location_picker.py" line="264"/>
         <source>Are you sure you want to destroy the planet {0}? {0} will cease to exist, and all tradeable items that currently exist on {0} will be shipped to your warehouse.</source>
         <comment>{0} is a planet name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="258"/>
+        <location filename="../location_picker.py" line="268"/>
         <source>Are you sure you want to destroy {0}? These planets will cease to exist, and all tradeable items that currently exist on these planets will be shipped to your warehouse.</source>
         <comment>{0} is a list of 2 to 5 planet names, e.g. &quot;A, B and C&quot;</comment>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../location_picker.py" line="263"/>
+        <location filename="../location_picker.py" line="273"/>
         <source>Are you sure you want to destroy %Ln planets? These planets will cease to exist, and all tradeable items that currently exist on these planets will be shipped to your warehouse.</source>
         <translation>
             <numerusform>Are you sure you want to destroy %Ln planet? This planet will cease to exist, and all tradeable items that currently exist on this planet will be shipped to your warehouse.</numerusform>
@@ -1293,25 +1399,25 @@
         </translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="272"/>
+        <location filename="../location_picker.py" line="282"/>
         <source>Oh, and you are currently on {0}, so you will also die.</source>
         <comment>{0} is a planet name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="305"/>
+        <location filename="../location_picker.py" line="315"/>
         <source>Destruction of {0} is complete.</source>
         <comment>{0} is a planet name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="308"/>
+        <location filename="../location_picker.py" line="318"/>
         <source>Destruction of {0} is complete.</source>
         <comment>{0} is a list of 2 to 5 planet names, e.g. &quot;A, B and C&quot;</comment>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../location_picker.py" line="312"/>
+        <location filename="../location_picker.py" line="322"/>
         <source>Destruction of %Ln planets is complete.</source>
         <translation>
             <numerusform>Destruction of %Ln planet is complete.</numerusform>
@@ -1319,13 +1425,23 @@
         </translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="321"/>
+        <location filename="../location_picker.py" line="331"/>
         <source>Dead!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="321"/>
+        <location filename="../location_picker.py" line="331"/>
         <source>You destroyed the planet you were on, and killed yourself.&lt;br&gt;&lt;br&gt;You are dead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../location_picker.py" line="39"/>
+        <source>destroy all planets except your home planet and the one you are currently on</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../location_picker.py" line="215"/>
+        <source>Are you sure you want to destroy all planets for {0}? All planets except for your home planet and the one you are currently on will cease to exist, and all tradeable items that currently exist on those planets will be shipped to your warehouse.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1378,63 +1494,63 @@
 <context>
     <name>PlanetItemBrowser</name>
     <message>
-        <location filename="../item_browsers.py" line="367"/>
+        <location filename="../item_browsers.py" line="385"/>
         <source>Item type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="367"/>
+        <location filename="../item_browsers.py" line="385"/>
         <source>Quantity available</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="367"/>
+        <location filename="../item_browsers.py" line="385"/>
         <source>Cost</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="367"/>
+        <location filename="../item_browsers.py" line="385"/>
         <source>Base price delta</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="459"/>
+        <location filename="../item_browsers.py" line="477"/>
         <source>Buy item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="459"/>
+        <location filename="../item_browsers.py" line="477"/>
         <source>buy one or more of the selected item from the current planet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="484"/>
+        <location filename="../item_browsers.py" line="502"/>
         <source>No item selected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="484"/>
+        <location filename="../item_browsers.py" line="502"/>
         <source>Please select an item to buy first!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="489"/>
+        <location filename="../item_browsers.py" line="507"/>
         <source>None available</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="489"/>
+        <location filename="../item_browsers.py" line="507"/>
         <source>{0} has no {1} left to sell</source>
         <comment>{0} is a planet name, and {1} is an item name, e.g. tin</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="496"/>
+        <location filename="../item_browsers.py" line="514"/>
         <source>Maximum capacity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="496"/>
+        <location filename="../item_browsers.py" line="514"/>
         <source>You have no more room on your ship. You need to increase your ship capacity, or sell some items, or dump some items, or move some items to the warehouse before you can buy more.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1442,57 +1558,57 @@
 <context>
     <name>PlayerItemBrowser</name>
     <message>
-        <location filename="../item_browsers.py" line="153"/>
+        <location filename="../item_browsers.py" line="168"/>
         <source>Sell items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="153"/>
+        <location filename="../item_browsers.py" line="168"/>
         <source>sell one or more of the selected item to the current planet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="155"/>
+        <location filename="../item_browsers.py" line="170"/>
         <source>Sell all</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="155"/>
+        <location filename="../item_browsers.py" line="170"/>
         <source>sell all items on your ship to the current planet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="157"/>
+        <location filename="../item_browsers.py" line="172"/>
         <source>To warehouse</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="157"/>
+        <location filename="../item_browsers.py" line="172"/>
         <source>move one or more of the selected item from your ship to the warehouse</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="159"/>
+        <location filename="../item_browsers.py" line="174"/>
         <source>Dump</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="159"/>
+        <location filename="../item_browsers.py" line="174"/>
         <source>dump one or more of the selected item from your ship</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="161"/>
+        <location filename="../item_browsers.py" line="176"/>
         <source>Dump all</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="161"/>
+        <location filename="../item_browsers.py" line="176"/>
         <source>dump all items from your ship</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../item_browsers.py" line="176"/>
+        <location filename="../item_browsers.py" line="191"/>
         <source>{0} has never been seen on {1}, and you will have to persuade them that it is worth buying. If you provide a free sample of %Ln {0}, this may help your cause.&lt;br&gt;&lt;br&gt;Provide a free sample of %Ln {0}?</source>
         <comment>{0} is an item name, e.g. tin, and {1} is a planet name</comment>
         <translation>
@@ -1501,111 +1617,111 @@
         </translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="183"/>
+        <location filename="../item_browsers.py" line="198"/>
         <source>Provide sample?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="188"/>
+        <location filename="../item_browsers.py" line="203"/>
         <source>Already sampled today</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="188"/>
+        <location filename="../item_browsers.py" line="203"/>
         <source>{0} has already sampled {1} today, try again on a different day</source>
         <comment>{0} is a planet name, and {1} is an item name, e.g. tin</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="212"/>
+        <location filename="../item_browsers.py" line="227"/>
         <source>Good news!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="213"/>
+        <location filename="../item_browsers.py" line="228"/>
         <source>Your sample achieved its intended purpose! {0} is now actively trading in {1}.</source>
         <comment>{0} is a planet name, and {1} is an item name, e.g. tin</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="220"/>
+        <location filename="../item_browsers.py" line="235"/>
         <source>Bad news!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="221"/>
+        <location filename="../item_browsers.py" line="236"/>
         <source>Your sample was not well received, and {0} has decided not to trade in {1}.</source>
         <comment>{0} is a planet name, and {1} is an item name, e.g. tin</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="329"/>
+        <location filename="../item_browsers.py" line="344"/>
         <source>No items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="249"/>
+        <location filename="../item_browsers.py" line="264"/>
         <source>You have no items to dump.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="234"/>
+        <location filename="../item_browsers.py" line="249"/>
         <source>Dump everything?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="234"/>
+        <location filename="../item_browsers.py" line="249"/>
         <source>Are you sure you want to dump all your items? You will lose all the items in your ship, and you will not be able to get them back.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="339"/>
+        <location filename="../item_browsers.py" line="357"/>
         <source>Please select an item first!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="283"/>
+        <location filename="../item_browsers.py" line="298"/>
         <source>You have no items to sell.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="268"/>
+        <location filename="../item_browsers.py" line="283"/>
         <source>Please select an item to sell first!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="298"/>
+        <location filename="../item_browsers.py" line="313"/>
         <source>Items cannot be sold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="298"/>
+        <location filename="../item_browsers.py" line="313"/>
         <source>This planet is not buying any of the items you are selling.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="302"/>
+        <location filename="../item_browsers.py" line="317"/>
         <source>Sell all?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="302"/>
+        <location filename="../item_browsers.py" line="317"/>
         <source>Are you sure you want to sell all items that are currently being traded on {0}? (total gain: {1})</source>
         <comment>{0} is a planet name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="329"/>
+        <location filename="../item_browsers.py" line="344"/>
         <source>You have no items to put in the warehouse.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="333"/>
+        <location filename="../item_browsers.py" line="351"/>
         <source>Warehouse</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="333"/>
+        <location filename="../item_browsers.py" line="351"/>
         <source>You cannot put anything else in the warehouse until tomorrow</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1802,9 +1918,108 @@
     </message>
 </context>
 <context>
+    <name>StarMap</name>
+    <message>
+        <location filename="../star_map.py" line="367"/>
+        <source>Star map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../star_map.py" line="563"/>
+        <source>You are here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../star_map.py" line="382"/>
+        <source>Previous planets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../star_map.py" line="383"/>
+        <source>Home planet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../star_map.py" line="385"/>
+        <source>Visited</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../star_map.py" line="386"/>
+        <source>Not visited</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../star_map.py" line="387"/>
+        <source>Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../star_map.py" line="565"/>
+        <source>{0} away, travel cost {1}</source>
+        <comment>{0} is a distance, e.g. 27.4 ly</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../star_map.py" line="570"/>
+        <source>Home planet. Your warehouse is here.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../star_map.py" line="407"/>
+        <source>Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../star_map.py" line="416"/>
+        <source>Click</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../star_map.py" line="416"/>
+        <source>Select a planet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../star_map.py" line="417"/>
+        <source>Double-click</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../star_map.py" line="417"/>
+        <source>Travel to a planet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../star_map.py" line="418"/>
+        <source>Scroll</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../star_map.py" line="418"/>
+        <source>Zoom in and out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../star_map.py" line="419"/>
+        <source>Drag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../star_map.py" line="419"/>
+        <source>Move the map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../star_map.py" line="433"/>
+        <source>Controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>State</name>
     <message numerus="yes">
-        <location filename="../game_state.py" line="147"/>
+        <location filename="../game_state.py" line="196"/>
         <source>Day {0}: {1}, bought %Ln {2} for {3} each</source>
         <comment>{1} is a planet name, and {2} is an item name, e.g. tin</comment>
         <translation>
@@ -1813,7 +2028,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../game_state.py" line="150"/>
+        <location filename="../game_state.py" line="199"/>
         <source>Day {0}: {1}, sold %Ln {2} for {3} each</source>
         <comment>{1} is a planet name, and {2} is an item name, e.g. tin</comment>
         <translation>
@@ -1822,7 +2037,7 @@
         </translation>
     </message>
     <message>
-        <location filename="../game_state.py" line="158"/>
+        <location filename="../game_state.py" line="207"/>
         <source>Day {0}: {1}</source>
         <comment>{1} is a planet name</comment>
         <translation type="unfinished"></translation>
@@ -1831,47 +2046,47 @@
 <context>
     <name>Store</name>
     <message>
-        <location filename="../store.py" line="324"/>
+        <location filename="../store.py" line="333"/>
         <source>Buy item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../store.py" line="345"/>
+        <location filename="../store.py" line="354"/>
         <source>Item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../store.py" line="345"/>
+        <location filename="../store.py" line="354"/>
         <source>description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../store.py" line="345"/>
+        <location filename="../store.py" line="354"/>
         <source>Price</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../store.py" line="365"/>
+        <location filename="../store.py" line="374"/>
         <source>Store</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../store.py" line="371"/>
+        <location filename="../store.py" line="380"/>
         <source>Your money: {0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../store.py" line="377"/>
+        <location filename="../store.py" line="386"/>
         <source>N/A</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../store.py" line="412"/>
+        <location filename="../store.py" line="421"/>
         <source>Sorry!</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../store.py" line="402"/>
+        <location filename="../store.py" line="411"/>
         <source>You can only make %Ln store purchases per day. Come back tomorrow.</source>
         <translation>
             <numerusform>You can only make %Ln store purchase per day. Come back tomorrow.</numerusform>
@@ -1879,23 +2094,23 @@
         </translation>
     </message>
     <message>
-        <location filename="../store.py" line="408"/>
+        <location filename="../store.py" line="417"/>
         <source>You cannot buy this item anymore</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../store.py" line="412"/>
+        <location filename="../store.py" line="421"/>
         <source>You don&apos;t have enough money to buy &apos;{0}&apos;</source>
         <comment>{0} is the name of a store item</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../store.py" line="448"/>
+        <location filename="../store.py" line="457"/>
         <source>Oops!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../store.py" line="448"/>
+        <location filename="../store.py" line="457"/>
         <source>Please select an item first</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1912,37 +2127,37 @@
 <context>
     <name>TradingConsoleItem</name>
     <message>
-        <location filename="../store.py" line="275"/>
+        <location filename="../store.py" line="284"/>
         <source>Trading console</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../store.py" line="276"/>
+        <location filename="../store.py" line="285"/>
         <source>Allows you to view current item prices on any planet without travelling. Increases your daily costs by {0}.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../store.py" line="284"/>
+        <location filename="../store.py" line="293"/>
         <source>Are you sure?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../store.py" line="284"/>
+        <location filename="../store.py" line="293"/>
         <source>Are you sure you want to buy the trading console?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../store.py" line="292"/>
+        <location filename="../store.py" line="301"/>
         <source>Success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../store.py" line="292"/>
+        <location filename="../store.py" line="301"/>
         <source>Trading console successfully purchased</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../store.py" line="298"/>
+        <location filename="../store.py" line="307"/>
         <source>You have already purchased this item.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1968,102 +2183,102 @@
 <context>
     <name>WarehouseItemBrowser</name>
     <message>
-        <location filename="../item_browsers.py" line="518"/>
+        <location filename="../item_browsers.py" line="536"/>
         <source>Retrieve</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="518"/>
+        <location filename="../item_browsers.py" line="536"/>
         <source>move one or more of the selected item from the warehouse to your ship</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="520"/>
+        <location filename="../item_browsers.py" line="538"/>
         <source>Retrieve all</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="520"/>
+        <location filename="../item_browsers.py" line="538"/>
         <source>move all items from the warehouse to your ship</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="522"/>
+        <location filename="../item_browsers.py" line="540"/>
         <source>Dump</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="522"/>
+        <location filename="../item_browsers.py" line="540"/>
         <source>dump one or more of the selected item from your warehouse</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="524"/>
+        <location filename="../item_browsers.py" line="542"/>
         <source>Dump all</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="524"/>
+        <location filename="../item_browsers.py" line="542"/>
         <source>dump all items from your warehouse</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="531"/>
+        <location filename="../item_browsers.py" line="549"/>
         <source>No items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="531"/>
+        <location filename="../item_browsers.py" line="549"/>
         <source>You have no items to dump.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="534"/>
+        <location filename="../item_browsers.py" line="552"/>
         <source>Dump everything?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="534"/>
+        <location filename="../item_browsers.py" line="552"/>
         <source>Are you sure you want to dump all your items? You will lose all the items in your warehouse, and you will not be able to get them back.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="617"/>
+        <location filename="../item_browsers.py" line="641"/>
         <source>Warehouse</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="549"/>
+        <location filename="../item_browsers.py" line="567"/>
         <source>There is nothing in your warehouse to dump.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="623"/>
+        <location filename="../item_browsers.py" line="647"/>
         <source>Please select an item first!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="564"/>
+        <location filename="../item_browsers.py" line="582"/>
         <source>There is nothing in your warehouse to retrieve.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="568"/>
+        <location filename="../item_browsers.py" line="589"/>
         <source>You cannot take anything else from the warehouse until tomorrow.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="576"/>
+        <location filename="../item_browsers.py" line="597"/>
         <source>Maximum capacity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="576"/>
+        <location filename="../item_browsers.py" line="597"/>
         <source>You have no more room on your ship. You need to increase your ship capacity, or sell some items, or dump some items before you can retrieve items from the warehouse.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../item_browsers.py" line="583"/>
+        <location filename="../item_browsers.py" line="604"/>
         <source>You do not have room for all items, the maximum number of items that can be retrieved is %Ln. Are you sure you want to retrieve %Ln items? </source>
         <translation>
             <numerusform>You do not have room for all items, the maximum number of items that can be retrieved is %Ln. Are you sure you want to retrieve %Ln item? </numerusform>
@@ -2071,56 +2286,23 @@
         </translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="588"/>
+        <location filename="../item_browsers.py" line="609"/>
         <source>Are you sure you want to retrieve all items?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="590"/>
+        <location filename="../item_browsers.py" line="611"/>
         <source>Are you sure?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="613"/>
+        <location filename="../item_browsers.py" line="634"/>
         <source>There is nothing in your warehouse to remove.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="617"/>
+        <location filename="../item_browsers.py" line="641"/>
         <source>You cannot take anything else from the warehouse until tomorrow</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>WarehouseSpeedIncrease</name>
-    <message>
-        <location filename="../store.py" line="249"/>
-        <source>Increase max. warehouse trips per day</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../store.py" line="250"/>
-        <source>Increase your engine power, allowing you to make two more trips to the warehouse per day.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../store.py" line="258"/>
-        <source>Are you sure?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../store.py" line="258"/>
-        <source>Are you sure you want to increase max. number of warehouse trips per day?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../store.py" line="267"/>
-        <source>Success</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../store.py" line="267"/>
-        <source>Max. warehouse trips per day successfully increased.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

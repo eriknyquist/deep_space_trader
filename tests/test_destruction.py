@@ -28,8 +28,22 @@ def choose(dialog, planets):
         dialog.table.selectRow(row_of(dialog.table, planet))
 
 
+def leave_home(game):
+    """
+    Move the player off the home planet (which can't be destroyed), and return
+    the planet they are now on
+    """
+    state = game.state
+    state.change_current_planet(next(p for p in state.planets if p is not state.home_planet))
+    return state.current_planet
+
+
 def others(game, count):
-    return [p for p in game.state.planets if p is not game.state.current_planet][:count]
+    """
+    Up to 'count' planets that can be destroyed, other than the current planet
+    """
+    state = game.state
+    return [p for p in state.planets if p is not state.current_planet and p is not state.home_planet][:count]
 
 
 def test_picker_columns(game):
@@ -99,6 +113,7 @@ def test_destroy_nothing_selected(game, dialogs):
 
 
 def test_destroy_own_planet_kills_player(game, dialogs, no_resistance):
+    leave_home(game)
     dialog = picker(game)
     choose(dialog, [game.state.current_planet])
     dialog.selectButtonClicked()
@@ -132,7 +147,7 @@ def test_declining_to_fight_the_only_selected_planet(game, dialogs, monkeypatch)
 def test_declining_to_fight_own_planet(game, dialogs, monkeypatch):
     # Bug 19: you used to die even though your planet wasn't destroyed
     state = game.state
-    home = state.current_planet
+    home = leave_home(game)
     victim = others(game, 1)[0]
     resisting(monkeypatch, home)
     dialogs.answers["Planet is resisting!"] = False
@@ -272,7 +287,7 @@ def test_buying_the_destruction_kit(game, dialogs, no_resistance):
 
 def test_destroying_own_planet_from_the_store_ends_the_game(game, dialogs, no_resistance):
     state = game.state
-    home = state.current_planet
+    home = leave_home(game)
 
     def destroy(dialog):
         choose(dialog, [home])
@@ -285,3 +300,37 @@ def test_destroying_own_planet_from_the_store_ends_the_game(game, dialogs, no_re
     assert state.day == 1
     assert len(state.planets) == const.INITIAL_PLANET_COUNT
     assert state.store_purchases == 0
+
+
+# ----- The home planet can't be destroyed -----
+
+def test_home_planet_is_not_in_the_picker(game):
+    leave_home(game)
+    dialog = picker(game)
+    shown = [dialog.table.item(row, 0).data(QtCore.Qt.UserRole) for row in range(dialog.table.rowCount())]
+    assert game.state.home_planet not in shown
+    assert game.state.current_planet in shown
+    assert len(shown) == len(game.state.planets) - 1
+
+
+def test_destroy_all_away_from_home_spares_home(game, dialogs, no_resistance):
+    state = game.state
+    current = leave_home(game)
+    destroyed = others(game, 100)
+    dialog = picker(game)
+    assert dialog.all_planets_cost == len(destroyed) * const.PLANET_DESTRUCTION_COST
+    assert len(destroyed) == const.INITIAL_PLANET_COUNT - 2
+
+    dialog.allButtonClicked()
+    assert state.planets == [state.home_planet, current]
+    assert "All planets except for your home planet and the one you are currently on" in \
+        dialogs.messages("question")[0]
+
+
+def test_destroy_all_disabled_with_only_home_and_current_planet(game):
+    state = game.state
+    current = leave_home(game)
+    state.planets = [state.home_planet, current]
+    dialog = picker(game)
+    assert not dialog.allButton.isEnabled()
+    assert dialog.allButton.text() == "Destroy all"

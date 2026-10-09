@@ -12,6 +12,7 @@ from deep_space_trader.top_button_bar import ButtonBar
 from deep_space_trader.high_scores import HighScoreTable, HighScoreSharing
 from deep_space_trader.item_browsers import PlayerItemBrowser, PlanetItemBrowser, WarehouseItemBrowser
 from deep_space_trader.item_prices import PricesTable
+from deep_space_trader.star_map import StarMap
 from deep_space_trader.information_bar import InfoBar
 from deep_space_trader.sounds import AudioPlayer
 from deep_space_trader.items import itemDisplayName
@@ -86,11 +87,12 @@ class MainWidget(QtWidgets.QDialog):
         warehouseItemsLayout = QtWidgets.QHBoxLayout()
         self.warehouseItemBrowser = WarehouseItemBrowser(self)
         warehouseItemsLayout.addWidget(self.warehouseItemBrowser)
-        warehouseItemsBrowserGroup = QtWidgets.QGroupBox(self.tr("Items in warehouse"))
-        warehouseItemsBrowserGroup.setStyleSheet("QGroupBox{ font-weight: bold; }")
-        warehouseItemsBrowserGroup.setAlignment(QtCore.Qt.AlignCenter)
-        warehouseItemsBrowserGroup.setLayout(warehouseItemsLayout)
-        lastColumnLayout.addWidget(warehouseItemsBrowserGroup)
+        self.warehouseItemsBrowserGroup = QtWidgets.QGroupBox()
+        self.warehouseItemsBrowserGroup.setStyleSheet("QGroupBox{ font-weight: bold; }")
+        self.warehouseItemsBrowserGroup.setAlignment(QtCore.Qt.AlignCenter)
+        self.warehouseItemsBrowserGroup.setLayout(warehouseItemsLayout)
+        self.updateWarehouseLabel()
+        lastColumnLayout.addWidget(self.warehouseItemsBrowserGroup)
 
 
         self.mainLayout = QtWidgets.QVBoxLayout(self)
@@ -121,6 +123,11 @@ class MainWidget(QtWidgets.QDialog):
                                              formatNumber(self.state.items.count()),
                                              formatNumber(self.state.capacity)))
 
+    def updateWarehouseLabel(self):
+        # The warehouse is on the home planet, which is different in every game
+        self.warehouseItemsBrowserGroup.setTitle(self.tr("Items in warehouse (on {0})", "{0} is a planet name").format(
+                                                 self.state.home_planet.full_name))
+
     def showTravelLog(self):
         dialog = ScrollableTextDisplay(self.tr("Travel log"), self.state.read_travel_log())
         dialog.setWindowModality(QtCore.Qt.ApplicationModal)
@@ -141,6 +148,11 @@ class MainWidget(QtWidgets.QDialog):
         dialog.setWindowModality(QtCore.Qt.ApplicationModal)
         dialog.exec_()
 
+    def showStarMap(self):
+        dialog = StarMap(self)
+        dialog.setWindowModality(QtCore.Qt.ApplicationModal)
+        dialog.exec_()
+
     def showPrices(self):
         dialog = PricesTable(self)
         dialog.setWindowModality(QtCore.Qt.ApplicationModal)
@@ -158,6 +170,7 @@ class MainWidget(QtWidgets.QDialog):
         self.planetItemBrowser.update()
         self.warehouseItemBrowser.update()
         self.updatePlayerItemsLabel()
+        self.updateWarehouseLabel()
 
     def quit(self):
         if self.warningBeforeQuit():

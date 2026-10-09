@@ -68,6 +68,21 @@ def selectedItemName(table):
     return selectedRowKey(table)
 
 
+def atWarehouse(browser):
+    """
+    True if the player is on their home planet, where the warehouse is. If not,
+    shows an error saying where the warehouse is, and returns False
+    """
+    state = browser.parent.state
+    if state.current_planet is state.home_planet:
+        return True
+
+    errorDialog(browser, translate("ItemBrowser", "Warehouse"),
+                message=translate("ItemBrowser", "Your warehouse is on {0}. Travel there to use it.",
+                                  "{0} is a planet name").format(state.home_planet.full_name))
+    return False
+
+
 class ItemBrowser(QtWidgets.QWidget):
     def __init__(self, parent):
         super(ItemBrowser, self).__init__(parent)
@@ -329,6 +344,9 @@ class PlayerItemBrowser(ItemBrowser):
             errorDialog(self, self.tr("No items"), self.tr("You have no items to put in the warehouse."))
             return
 
+        if not atWarehouse(self):
+            return
+
         if self.parent.state.warehouse_trips == self.parent.state.warehouse_trips_per_day:
             errorDialog(self, self.tr("Warehouse"), message=self.tr("You cannot put anything else "
                                                                     "in the warehouse until tomorrow"))
@@ -564,6 +582,9 @@ class WarehouseItemBrowser(ItemBrowser):
             errorDialog(self, self.tr("Warehouse"), message=self.tr("There is nothing in your warehouse to retrieve."))
             return
 
+        if not atWarehouse(self):
+            return
+
         if self.parent.state.warehouse_trips == self.parent.state.warehouse_trips_per_day:
             errorDialog(self, self.tr("Warehouse"), message=self.tr("You cannot take anything else "
                                                                     "from the warehouse until tomorrow."))
@@ -611,6 +632,9 @@ class WarehouseItemBrowser(ItemBrowser):
         totalitemcount = self.parent.state.warehouse.count()
         if totalitemcount == 0:
             errorDialog(self, self.tr("Warehouse"), message=self.tr("There is nothing in your warehouse to remove."))
+            return
+
+        if not atWarehouse(self):
             return
 
         if self.parent.state.warehouse_trips == self.parent.state.warehouse_trips_per_day:

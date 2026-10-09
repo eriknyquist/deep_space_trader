@@ -1,7 +1,11 @@
 from PyQt5 import QtWidgets, QtCore
 
 from deep_space_trader.planet_image import PlanetImage
+from deep_space_trader import constants as const
 from deep_space_trader.i18n import translate, formatNumber, formatPercent
+
+# Engine power bar colour: solid blue, so it isn't confused with the health bar
+ENGINE_BAR_COLOR = "#3399ff"
 
 GROUPBOX_STYLE= "QGroupBox{ font-size: 12px; }"
 LABEL_STYLE = "QLabel{ font-size: 14px; }"
@@ -138,12 +142,32 @@ class InfoBar(QtWidgets.QWidget):
         self.healthGroup.setFixedWidth(60)
         healthLayout.setContentsMargins(5, 5, 5, 5)
 
+        # Engine power: a bar that fills up towards the max. engine power
+        engineLayout = QtWidgets.QHBoxLayout()
+        self.engineBar = QtWidgets.QProgressBar(self)
+        self.engineBar.setOrientation(QtCore.Qt.Vertical)
+        self.engineBar.setRange(0, const.MAX_ENGINE_LEVEL)
+        self.engineBar.setFixedWidth(20)
+        self.engineBar.setStyleSheet("QProgressBar::chunk { background-color: %s; }" % ENGINE_BAR_COLOR)
+        self.engineBar.setFormat(None)
+        engineLayout.addWidget(self.engineBar)
+        self.engineGroup = QtWidgets.QGroupBox(self.tr("Engine power"))
+        self.engineGroup.setStyleSheet(GROUPBOX_STYLE)
+        self.engineGroup.setAlignment(QtCore.Qt.AlignCenter)
+        self.engineGroup.setLayout(engineLayout)
+        engineLayout.setContentsMargins(5, 5, 5, 5)
+
+        # Wide enough for the title, which is longer than "Health" (especially when translated)
+        titleWidth = self.engineGroup.fontMetrics().horizontalAdvance(self.engineGroup.title())
+        self.engineGroup.setFixedWidth(max(60, titleWidth + 20))
+
         self.mainLayout = QtWidgets.QHBoxLayout(self)
         self.mainLayout.addWidget(self.planetGroup)
         self.mainLayout.addLayout(moneyLayout)
         self.mainLayout.addLayout(purchasesWarehouseLayout)
         self.mainLayout.addLayout(scoutBattleLayout)
         self.mainLayout.addLayout(planetDayLayout)
+        self.mainLayout.addWidget(self.engineGroup)
         self.mainLayout.addWidget(self.healthGroup)
 
         self.update()
@@ -203,6 +227,10 @@ class InfoBar(QtWidgets.QWidget):
 
             self.battleFleetGroup.setToolTip(self.tr("{0} chance of winning battles", "{0} is a percentage").format(
                                              formatPercent(int(self.parent.state.battle_victory_chance_percentage()))))
+            cost_per_ly = QtCore.QLocale().toString(self.parent.state.travel_cost_per_ly(), 'f', 2)
+            self.engineGroup.setToolTip(self.tr("Engine power {0}/{1}. Travel costs {2} per light-year.").format(
+                                        formatNumber(self.parent.state.engine_level),
+                                        formatNumber(const.MAX_ENGINE_LEVEL), cost_per_ly))
             self.healthGroup.setToolTip(formatPercent(self.parent.state.health))
             self.dailyCostGroup.setToolTip(self.tr("{0} per day is required to feed yourself and "
                                                    "maintain all purchased services").format(
@@ -216,6 +244,7 @@ class InfoBar(QtWidgets.QWidget):
             self.warehouseTripsGroup.setToolTip(None)
             self.scoutFleetGroup.setToolTip(None)
             self.battleFleetGroup.setToolTip(None)
+            self.engineGroup.setToolTip(None)
             self.healthGroup.setToolTip(None)
             self.dailyCostGroup.setToolTip(None)
 
@@ -245,6 +274,7 @@ class InfoBar(QtWidgets.QWidget):
                                          formatNumber(self.parent.state.max_scout_level))
 
         self.scoutFleetLabel.setText(scout_label_txt)
+        self.engineBar.setValue(self.parent.state.engine_level)
 
         self.dailyCostLabel.setText(formatNumber(self.parent.state.daily_cost))
 

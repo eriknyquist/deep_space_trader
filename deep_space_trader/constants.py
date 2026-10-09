@@ -3,10 +3,9 @@ from PyQt5.QtCore import QT_TRANSLATE_NOOP
 
 # ------ Initial values for player data on day 1 ------
 
-INITIAL_MONEY = 2000
-INITIAL_TRAVEL_COST = 100
+INITIAL_MONEY = 2000000000
 INITIAL_ITEM_CAPACITY = 100
-INITIAL_PLANET_COUNT = 8
+INITIAL_PLANET_COUNT = 20000
 INITIAL_MAX_DAYS = 30
 INITIAL_SCOUT_LEVEL = 0
 INITIAL_BATTLE_LEVEL = 0
@@ -67,6 +66,35 @@ DAILY_LIVING_COST = 200
 DAILY_TRADING_CONSOLE_COST = 500
 DAILY_BATTLE_FLEET_COST_PER_LEVEL = 100000
 DAILY_SCOUT_FLEET_COST_PER_LEVEL = 50000
+
+# ----- Distances and travel -----
+
+# Starting planets are placed up to this many light-years (ly) from the home planet.
+# Scout expeditions find planets between this distance and
+# (INITIAL_GALAXY_RADIUS * (scout level + 1)) ly from the home planet
+INITIAL_GALAXY_RADIUS = 30.0
+
+# Travel cost per light-year, before any engine upgrades
+TRAVEL_COST_PER_LY = 5.0
+
+# Smallest possible travel cost
+MIN_TRAVEL_COST = 10
+
+# Each engine power increase multiplies the travel cost per light-year by this
+ENGINE_TRAVEL_COST_FACTOR = 0.75
+
+# Max. number of times the engine power store item can be bought
+MAX_ENGINE_LEVEL = 10
+
+# Item prices on remote planets are lower, falling steadily from normal prices at
+# INITIAL_GALAXY_RADIUS to this fraction of normal at the edge of the largest scout range
+REMOTE_PRICE_FACTOR = 0.5
+
+# The chance of meeting pirates is multiplied by (trip distance / PIRATE_REFERENCE_DISTANCE),
+# kept within PIRATE_DISTANCE_FACTOR_RANGE, and capped at MAX_PIRATE_CHANCE_PERCENTAGE
+PIRATE_REFERENCE_DISTANCE = 30.0
+PIRATE_DISTANCE_FACTOR_RANGE = (0.5, 3.0)
+MAX_PIRATE_CHANCE_PERCENTAGE = 95.0
 
 # ----- Misc. values -----
 

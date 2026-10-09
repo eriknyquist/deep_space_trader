@@ -59,18 +59,19 @@ def search(game, text):
 
 @pytest.fixture
 def no_pirates(game, monkeypatch):
-    monkeypatch.setattr(game.state, "chance_of_being_robbed_in_transit", lambda: 0)
+    monkeypatch.setattr(game.state, "pirate_chance", lambda planet: 0)
 
 
 @pytest.fixture
 def pirates(game, monkeypatch):
-    monkeypatch.setattr(game.state, "chance_of_being_robbed_in_transit", lambda: 100)
+    monkeypatch.setattr(game.state, "pirate_chance", lambda planet: 100)
 
 
 def test_travel(game, dialogs, no_pirates):
     state = game.state
     target = state.planets[3]
     money = state.money
+    cost = state.travel_cost_to(target)
 
     select(game, target)
     game.locationBrowser.travelButtonClicked()
@@ -78,7 +79,7 @@ def test_travel(game, dialogs, no_pirates):
     assert state.current_planet is target
     assert target.visited
     assert state.day == 2
-    assert state.money == money - state.travel_cost - state.daily_cost
+    assert state.money == money - cost - state.daily_cost
     assert dialogs.titles("question") == ["Travel"]
     assert game.audio.played == ["TravelSound"]
     assert game.infoBar.planetLabel.text() == target.full_name
@@ -107,10 +108,13 @@ def test_travel_needs_a_selection(game, dialogs):
 
 
 def test_travel_without_enough_money(game, dialogs, no_pirates):
-    game.state.money = game.state.travel_cost - 1
-    select(game, game.state.planets[3])
+    target = game.state.planets[3]
+    target.x, target.y = 100.0, 0.0      # cost 500, so the number has no thousands separator
+    cost = game.state.travel_cost_to(target)
+    game.state.money = cost - 1
+    select(game, target)
     game.locationBrowser.travelButtonClicked()
-    assert dialogs.messages("error") == ["You don't have enough money! (%d required)" % game.state.travel_cost]
+    assert dialogs.messages("error") == ["You don't have enough money! (%d required)" % cost]
     assert game.state.day == 1
 
 
@@ -248,13 +252,14 @@ def test_win_against_pirates(game, dialogs, pirates, monkeypatch):
     give(state.items, "tin", 10)
     money = state.money
     target = state.planets[3]
+    cost = state.travel_cost_to(target)
 
     select(game, target)
     game.locationBrowser.travelButtonClicked()
     assert state.current_planet is target
     assert state.health < 100
     assert state.items.count() == 10
-    assert state.money == money - state.travel_cost - state.daily_cost
+    assert state.money == money - cost - state.daily_cost
     assert dialogs.titles("info") == ["Battle won!"]
 
 
@@ -302,11 +307,12 @@ def test_surrender_with_items_on_board(game, dialogs, pirates, monkeypatch):
     game.updatePlayerItemsLabel()
     assert game.playerItemBrowserGroup.title() == "Items on your ship (40/%d)" % state.capacity
     money = state.money
+    cost = state.travel_cost_to(state.planets[3])
 
     select(game, state.planets[3])
     game.locationBrowser.travelButtonClicked()
     assert state.items.count() == 0
-    assert state.money == money - state.travel_cost - state.daily_cost
+    assert state.money == money - cost - state.daily_cost
     # Bug 16: the ship label wasn't updated after the robbery
     assert game.playerItemBrowserGroup.title() == "Items on your ship (0/%d)" % state.capacity
     assert dialogs.titles("info") == ["Surrender"]
@@ -316,9 +322,10 @@ def test_surrender_with_empty_ship_loses_money(game, dialogs, pirates):
     state = game.state
     dialogs.answers["pirates"] = False
     state.money = 1000000
+    cost = state.travel_cost_to(state.planets[3])
     select(game, state.planets[3])
     game.locationBrowser.travelButtonClicked()
-    left = 1000000 - state.travel_cost
+    left = 1000000 - cost
     assert left * 0.01 - state.daily_cost - 1 <= state.money <= left * 0.05
 
 
@@ -327,3 +334,124 @@ def test_tooltips_can_be_turned_off(game):
     assert game.locationBrowser.travelButton.toolTip() == ""
     game.enableTooltips(True)
     assert game.locationBrowser.travelButton.toolTip() == "travel to the selected planet"
+
+
+# ----- Distances -----
+
+def test_travel_prompt_shows_distance_and_cost(game, dialogs, no_pirates):
+    state = game.state
+    target = state.planets[3]
+    target.x, target.y = 30.0, 40.0
+    state.money = 5000
+    select(game, target)
+    game.locationBrowser.travelButtonClicked()
+    assert dialogs.messages("question") == [
+        "Travel to %s?<br><br>(distance 50.0 ly, cost 250, you have 5,000)" % target.full_name]
+
+
+def test_travel_home(game, dialogs, no_pirates):
+    state = game.state
+    home = state.home_planet
+    select(game, state.planets[3])
+    game.locationBrowser.travelButtonClicked()
+    assert state.current_planet is not home
+
+    game.locationBrowser.homeButtonClicked()
+    assert state.current_planet is home
+
+    game.locationBrowser.homeButtonClicked()
+    assert dialogs.messages("error") == ["You are already on %s!" % home.full_name]
+
+
+def distance(table, row):
+    """
+    Distance stored in a row's distance cell (a number, so the table sorts quickly)
+    """
+    return table.item(row, 2).data(QtCore.Qt.DisplayRole)
+
+
+def distances_shown(game):
+    """
+    {planet name: distance text, as displayed}
+    """
+    browser = game.locationBrowser
+    table = browser.table
+    return {table.item(row, 0).text(): browser.distanceDelegate.displayText(distance(table, row), QtCore.QLocale())
+            for row in range(table.rowCount())}
+
+
+def test_distance_column(game, no_pirates):
+    state = game.state
+    expected = {p.full_name: "%.1f ly" % state.home_planet.distance_to(p) for p in state.planets}
+    assert distances_shown(game) == expected
+    assert distances_shown(game)[state.home_planet.full_name] == "0.0 ly"
+
+    # Distances are measured from wherever the player is
+    target = state.planets[4]
+    select(game, target)
+    game.locationBrowser.travelButtonClicked()
+    expected = {p.full_name: "%.1f ly" % target.distance_to(p) for p in state.planets}
+    assert distances_shown(game) == expected
+
+
+def test_sort_planets_by_distance(game, no_pirates):
+    game.state.expand_planets(30)
+    game.locationBrowser.update()
+    table = game.locationBrowser.table
+    header = table.horizontalHeader()
+    QtTest.QTest.mouseClick(header.viewport(), QtCore.Qt.LeftButton,
+                            pos=QtCore.QPoint(header.sectionViewportPosition(2) + 5, header.height() // 2))
+    distances = [distance(table, row) for row in range(table.rowCount())]
+    assert distances in (sorted(distances), sorted(distances, reverse=True))
+    assert distances != [distance(table, 0)] * len(distances)
+
+    # Travelling keeps the sort order, and colours still follow the right planets
+    target = table.item(5, 0).data(QtCore.Qt.UserRole)
+    select(game, target)
+    game.locationBrowser.travelButtonClicked()
+    distances = [distance(table, row) for row in range(table.rowCount())]
+    assert distances in (sorted(distances), sorted(distances, reverse=True))
+    assert shown_colours(game) == expected_colours(game)
+
+
+def test_home_planet_is_bold(game):
+    table = game.locationBrowser.table
+    for row in range(table.rowCount()):
+        is_home = table.item(row, 0).data(QtCore.Qt.UserRole) is game.state.home_planet
+        assert table.item(row, 0).font().bold() == is_home
+        assert bool(table.item(row, 0).toolTip()) == is_home
+
+
+def test_travelling_updates_table_without_rebuilding_it(game, no_pirates):
+    # Rebuilding every row after each trip was slow with thousands of planets
+    table = game.locationBrowser.table
+    cells = [table.item(row, 0) for row in range(table.rowCount())]
+    select(game, game.state.planets[3])
+    game.locationBrowser.travelButtonClicked()
+    after = [table.item(row, 0) for row in range(table.rowCount())]
+    assert all(any(a is c for c in cells) for a in after)
+    assert distances_shown(game)[game.state.planets[3].full_name] == "0.0 ly"
+
+
+def test_travel_home_selects_home_planet(game, dialogs, no_pirates):
+    state = game.state
+    away = state.planets[3]
+    select(game, away)
+    game.locationBrowser.travelButtonClicked()
+    assert game.locationBrowser.selectedPlanet() is away
+
+    game.locationBrowser.homeButtonClicked()
+    assert state.current_planet is state.home_planet
+    assert game.locationBrowser.selectedPlanet() is state.home_planet
+
+
+def test_declined_trip_home_keeps_selection(game, dialogs, no_pirates):
+    state = game.state
+    away = state.planets[3]
+    select(game, away)
+    game.locationBrowser.travelButtonClicked()
+
+    dialogs.answers["Travel"] = False
+    game.locationBrowser.homeButtonClicked()
+    assert state.current_planet is away
+    assert game.locationBrowser.selectedPlanet() is away

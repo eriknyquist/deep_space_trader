@@ -53,6 +53,23 @@ def formatPercent(value, decimals=0):
     return translate("Numbers", "{0}%", "a percentage, e.g. 12.5%").format(number)
 
 
+def distanceFormatter():
+    """
+    Function that formats a distance in light-years for the current locale
+    (e.g. 27.4 ly). Faster than formatDistance for formatting many distances
+    """
+    locale = QLocale()
+    text = translate("Numbers", "{0} ly", "a distance in light-years, e.g. 27.4 ly")
+    return lambda lightyears: text.format(locale.toString(float(lightyears), 'f', 1))
+
+
+def formatDistance(lightyears):
+    """
+    Format a distance in light-years for the current locale (e.g. 27.4 ly)
+    """
+    return distanceFormatter()(lightyears)
+
+
 def joinList(names):
     """
     Join a list of names for use in a sentence, e.g. "A, B and C"

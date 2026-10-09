@@ -4,7 +4,7 @@ from deep_space_trader.utils import (
     errorDialog, yesNoDialog, infoDialog, selectedRowKey, selectRowByKey, percentChance
 )
 from deep_space_trader.item_browsers import TradingConsolePlanetDisplay
-from deep_space_trader.i18n import translate, formatNumber
+from deep_space_trader.i18n import translate, formatNumber, formatDistance
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import QT_TRANSLATE_NOOP
@@ -32,6 +32,16 @@ class TradingConsole(QtWidgets.QDialog):
         return QtCore.QSize(600, 400)
 
 
+class DistanceDelegate(QtWidgets.QStyledItemDelegate):
+    """
+    Shows distances as text (e.g. "27.4 ly"). The cells store the distance as
+    a number, so that Qt can sort thousands of rows quickly, without calling
+    Python code for every comparison; the text is only made for visible rows
+    """
+    def displayText(self, value, locale):
+        return formatDistance(value)
+
+
 class LocationBrowser(QtWidgets.QWidget):
     def __init__(self, parent):
         super(LocationBrowser, self).__init__(parent)
@@ -40,6 +50,7 @@ class LocationBrowser(QtWidgets.QWidget):
         self.mainLayout = QtWidgets.QVBoxLayout(self)
         self.planetSearchLayout = QtWidgets.QHBoxLayout()
         self.buttonLayout = QtWidgets.QHBoxLayout()
+        self.toolButtonLayout = QtWidgets.QHBoxLayout()
 
         self.planetSearchText = QtWidgets.QLineEdit()
         self.planetSearchText.setPlaceholderText(self.tr("Search for planets by name..."))
@@ -54,10 +65,18 @@ class LocationBrowser(QtWidgets.QWidget):
         self.previousButton.clicked.connect(self.previousButtonClicked)
         self.buttonLayout.addWidget(self.previousButton)
 
+        self.homeButton = QtWidgets.QPushButton(self.tr("Travel home"))
+        self.homeButton.clicked.connect(self.homeButtonClicked)
+        self.buttonLayout.addWidget(self.homeButton)
+
         self.pricesButton = QtWidgets.QPushButton(self.tr("Trading console"))
         self.pricesButton.clicked.connect(self.pricesButtonClicked)
-        self.buttonLayout.addWidget(self.pricesButton)
+        self.toolButtonLayout.addWidget(self.pricesButton)
         self.pricesButton.setEnabled(self.parent.state.have_trading_console)
+
+        self.starMapButton = QtWidgets.QPushButton(self.tr("Star map..."))
+        self.starMapButton.clicked.connect(self.parent.showStarMap)
+        self.toolButtonLayout.addWidget(self.starMapButton)
 
         self.table = QtWidgets.QTableWidget()
 
@@ -69,10 +88,11 @@ class LocationBrowser(QtWidgets.QWidget):
         palette.setColor(QtGui.QPalette.Highlight, default_highlight)
         self.table.setPalette(palette)
 
-        self.table.setColumnCount(2)
-        self.table.setHorizontalHeaderLabels([self.tr('Planet'), self.tr('visited?')])
+        self.table.setColumnCount(3)
+        self.table.setHorizontalHeaderLabels([self.tr('Planet'), self.tr('visited?'), self.tr('Distance')])
         self.table.verticalHeader().setVisible(False)
-        self.table.horizontalHeader().setSectionsClickable(False)
+        # Clicking a column header sorts by that column (e.g. by distance)
+        self.table.horizontalHeader().setSectionsClickable(True)
         self.table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
         self.table.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.table.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
@@ -81,9 +101,14 @@ class LocationBrowser(QtWidgets.QWidget):
         header = self.table.horizontalHeader()
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
         header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
+
+        self.distanceDelegate = DistanceDelegate(self.table)
+        self.table.setItemDelegateForColumn(2, self.distanceDelegate)
 
         self.mainLayout.addLayout(self.planetSearchLayout)
         self.mainLayout.addLayout(self.buttonLayout)
+        self.mainLayout.addLayout(self.toolButtonLayout)
         self.mainLayout.addWidget(self.table)
 
         self.tradingConsoleTooltip = translate("LocationBrowser", TRADING_CONSOLE_MESSAGE)
@@ -100,11 +125,15 @@ class LocationBrowser(QtWidgets.QWidget):
         if self.tooltipsEnabled:
             self.travelButton.setToolTip(self.tr("travel to the selected planet"))
             self.previousButton.setToolTip(self.tr("travel back to the planet you were on before the current planet"))
+            self.homeButton.setToolTip(self.tr("travel back to your home planet, where your warehouse is"))
             self.pricesButton.setToolTip(self.tradingConsoleTooltip)
+            self.starMapButton.setToolTip(self.tr("show a map of all the planets you have discovered"))
         else:
             self.travelButton.setToolTip(None)
             self.previousButton.setToolTip(None)
+            self.homeButton.setToolTip(None)
             self.pricesButton.setToolTip(None)
+            self.starMapButton.setToolTip(None)
 
     def enableTradingConsole(self):
         self.pricesButton.setEnabled(True)
@@ -182,15 +211,35 @@ class LocationBrowser(QtWidgets.QWidget):
         for col in range(columns):
             self.table.item(row, col).setBackground(QtGui.QColor(0, 0xAA, 0))
 
-    def addRow(self, planet, row):
+    def rowTexts(self):
+        """
+        Text used in every row, looked up once per refresh rather than once per
+        row (there can be 20,000 rows)
+        """
+        return {"yes": self.tr("yes"), "no": self.tr("no")}
+
+    def addRow(self, planet, row, texts):
         item1 = QtWidgets.QTableWidgetItem(planet.full_name)
         # Keep a reference to the planet on the row, so the planet can be found
         # without looking it up by name or by row number
         item1.setData(QtCore.Qt.UserRole, planet)
-        item2 = QtWidgets.QTableWidgetItem(self.tr("yes") if planet.visited else self.tr("no"))
+        item2 = QtWidgets.QTableWidgetItem(texts["yes"] if planet.visited else texts["no"])
         item2.setTextAlignment(QtCore.Qt.AlignHCenter)
+
+        # Shown as text by DistanceDelegate
+        item3 = QtWidgets.QTableWidgetItem()
+        item3.setData(QtCore.Qt.DisplayRole, self.parent.state.current_planet.distance_to(planet))
+        item3.setTextAlignment(QtCore.Qt.AlignHCenter)
+
+        if planet is self.parent.state.home_planet:
+            font = item1.font()
+            font.setBold(True)
+            item1.setFont(font)
+            item1.setToolTip(self.tr("Your home planet. Your warehouse is here."))
+
         self.table.setItem(row, 0, item1)
         self.table.setItem(row, 1, item2)
+        self.table.setItem(row, 2, item3)
 
     def populateTable(self, planets):
         selectedKey = selectedRowKey(self.table)
@@ -201,9 +250,10 @@ class LocationBrowser(QtWidgets.QWidget):
         self.table.clearContents()
         self.table.setRowCount(0)
         self.table.setRowCount(len(planets))
+        texts = self.rowTexts()
 
         for row in range(len(planets)):
-            self.addRow(planets[row], row)
+            self.addRow(planets[row], row, texts)
 
         self.table.setSortingEnabled(True)
         selectRowByKey(self.table, selectedKey)
@@ -211,6 +261,34 @@ class LocationBrowser(QtWidgets.QWidget):
         self.table.setUpdatesEnabled(True)
 
         self.parent.updatePlanetsGroupBoxTitle(len(planets))
+
+    def refreshDistances(self):
+        """
+        Update the distance column and colours after travelling. Much faster
+        than rebuilding the table (update) when there are thousands of planets
+        """
+        current = self.parent.state.current_planet
+        model = self.table.model()
+        self.table.setUpdatesEnabled(False)
+        self.table.setSortingEnabled(False)
+
+        # The view would otherwise handle a "data changed" signal for every cell
+        model.blockSignals(True)
+        for row in range(self.table.rowCount()):
+            planet = self.table.item(row, 0).data(QtCore.Qt.UserRole)
+            # A new cell, rather than changing the old one: after sorting, Qt
+            # searches the whole table to find a changed cell's position
+            item = QtWidgets.QTableWidgetItem()
+            item.setData(QtCore.Qt.DisplayRole, current.distance_to(planet))
+            item.setTextAlignment(QtCore.Qt.AlignHCenter)
+            self.table.setItem(row, 2, item)
+        model.blockSignals(False)
+
+        # Sorts once, by the current sort column, if there is one
+        self.table.setSortingEnabled(True)
+        self.table.setUpdatesEnabled(True)
+        self.table.viewport().update()
+        self.colorPreviousPlanets()
 
     def update(self):
         # Keep the search filter, so the table always matches the search box
@@ -231,22 +309,24 @@ class LocationBrowser(QtWidgets.QWidget):
             errorDialog(self, message=self.tr("You are already on {0}!", "{0} is a planet name").format(planetname))
             return
 
-        if self.parent.state.money < self.parent.state.travel_cost:
+        cost = self.parent.state.travel_cost_to(planet)
+        if self.parent.state.money < cost:
             errorDialog(self, message=self.tr("You don't have enough money! ({0} required)").format(
-                                      formatNumber(self.parent.state.travel_cost)))
+                                      formatNumber(cost)))
             return
 
+        distance = self.parent.state.current_planet.distance_to(planet)
         accepted = yesNoDialog(self, self.tr("Travel"),
-                               self.tr("Travel to {0}?<br><br>(cost is {1}, you have {2})",
-                                       "{0} is a planet name").format(
-                               planetname, formatNumber(self.parent.state.travel_cost),
+                               self.tr("Travel to {0}?<br><br>(distance {1}, cost {2}, you have {3})",
+                                       "{0} is a planet name, and {1} is a distance, e.g. 27.4 ly").format(
+                               planetname, formatDistance(distance), formatNumber(cost),
                                formatNumber(self.parent.state.money)))
         if not accepted:
             return
 
-        self.parent.state.money -= self.parent.state.travel_cost
+        self.parent.state.money -= cost
 
-        if percentChance(self.parent.state.chance_of_being_robbed_in_transit()):
+        if percentChance(self.parent.state.pirate_chance(planet)):
             self.parent.audio.play(self.parent.audio.BattleSound)
             accepted = yesNoDialog(self, self.tr("Attacked by pirates!"),
                                    self.tr("You have encountered a pirate fleet while travelling "
@@ -297,7 +377,9 @@ class LocationBrowser(QtWidgets.QWidget):
         self.parent.audio.play(self.parent.audio.TravelSound)
         self.parent.state.change_current_planet(planet)
         self.parent.advanceDay()
-        self.colorPreviousPlanets()
+
+        # Every distance in the table has changed
+        self.refreshDistances()
 
     def openTradingConsole(self, planet):
         trading_console = TradingConsole(self.parent, planet)
@@ -323,6 +405,14 @@ class LocationBrowser(QtWidgets.QWidget):
         planet = self.selectedPlanet()
         if planet is not None:
             self.travelToPlanet(planet)
+
+    def homeButtonClicked(self):
+        home = self.parent.state.home_planet
+        self.travelToPlanet(home)
+
+        # If the trip happened, select the home planet in the table (unless the search box hides it)
+        if self.parent.state.current_planet is home:
+            selectRowByKey(self.table, home)
 
     def previousButtonClicked(self):
         if self.parent.state.previous_planet is None:

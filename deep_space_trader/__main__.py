@@ -56,6 +56,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pricesAction.setStatusTip(self.tr("Show base prices for tradeable items"))
         self.pricesAction.triggered.connect(self.widget.showPrices)
 
+        self.starMapAction = QtWidgets.QAction(self.tr("Star map"), self)
+        self.starMapAction.setShortcut("Ctrl+g")
+        self.starMapAction.setStatusTip(self.tr("Show a map of all the planets you have discovered"))
+        self.starMapAction.triggered.connect(self.widget.showStarMap)
+
         self.travelLogAction = QtWidgets.QAction(self.tr("Show travel log"), self)
         self.travelLogAction.setShortcut("Ctrl+s")
         self.travelLogAction.setStatusTip(self.tr("Show a log of planets travelled to"))
@@ -96,6 +101,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         toolMenu = menu.addMenu(self.tr("Tools"))
         toolMenu.addAction(self.pricesAction)
+        toolMenu.addAction(self.starMapAction)
         toolMenu.addAction(self.travelLogAction)
         toolMenu.addAction(self.transactionLogAction)
 

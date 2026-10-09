@@ -158,7 +158,7 @@ def test_menu_shortcuts_are_unique(game):
     # Bug 1: Ctrl+H was used for both "About" and "Sounds"
     actions = game.main.findChildren(QtWidgets.QAction)
     shortcuts = [a.shortcut().toString() for a in actions if not a.shortcut().isEmpty()]
-    assert len(shortcuts) == 10
+    assert len(shortcuts) == 11
     assert len(set(shortcuts)) == len(shortcuts)
 
 

@@ -2,7 +2,7 @@ import random
 from deep_space_trader.utils import errorDialog, infoDialog, yesNoDialog, ICON_PATH
 from deep_space_trader.location_picker import PlanetDestructionPicker
 from deep_space_trader import constants as const
-from deep_space_trader.i18n import translate, formatNumber
+from deep_space_trader.i18n import translate, formatNumber, formatPercent
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
@@ -243,31 +243,40 @@ class BattleFleetUpgrade(StoreItem):
             self.price *= 2
 
 
-class WarehouseSpeedIncrease(StoreItem):
+class EngineUpgrade(StoreItem):
     def __init__(self, parent):
         price = const.WAREHOUSE_SPEED_INCREASE_COST
-        name = translate("WarehouseSpeedIncrease", "Increase max. warehouse trips per day")
-        desc = translate("WarehouseSpeedIncrease",
-            "Increase your engine power, allowing you to make two more trips to "
-            "the warehouse per day."
-        )
+        name = translate("EngineUpgrade", "Increase engine power")
+        desc = translate("EngineUpgrade",
+            "Increase your engine power, allowing you to make two more trips to the warehouse "
+            "per day, and making travel {0} cheaper per light-year."
+        ).format(formatPercent((1.0 - const.ENGINE_TRAVEL_COST_FACTOR) * 100.0))
 
-        super(WarehouseSpeedIncrease, self).__init__(parent, name, desc, price)
+        super(EngineUpgrade, self).__init__(parent, name, desc, price)
 
     def use(self):
-        if not yesNoDialog(self.parent, translate("WarehouseSpeedIncrease", "Are you sure?"),
-                           message=translate("WarehouseSpeedIncrease",
-                                             "Are you sure you want to increase max. number of "
-                                             "warehouse trips per day?")):
+        if self.parent.state.engine_level >= const.MAX_ENGINE_LEVEL:
+            errorDialog(self.parent, translate("EngineUpgrade", "Sorry!"),
+                        translate("EngineUpgrade", "Your engines are already at full power."))
+            return False
+
+        if not yesNoDialog(self.parent, translate("EngineUpgrade", "Are you sure?"),
+                           message=translate("EngineUpgrade", "Are you sure you want to increase your engine power?")):
             return False
 
         self.parent.state.warehouse_trips_per_day += 2
+        self.parent.state.engine_level += 1
 
         self.parent.audio.play(self.parent.audio.WarehouseTripsUpgradeSound)
-        infoDialog(self.parent, translate("WarehouseSpeedIncrease", "Success"),
-                   message=translate("WarehouseSpeedIncrease", "Max. warehouse trips per day successfully increased."))
+        infoDialog(self.parent, translate("EngineUpgrade", "Success"),
+                   message=translate("EngineUpgrade", "Engine power successfully increased."))
 
         return True
+
+    def after_use(self):
+        if self.parent.state.engine_level >= const.MAX_ENGINE_LEVEL:
+            self.description = translate("EngineUpgrade", "You cannot buy this item anymore.")
+            self.price = None
 
 class TradingConsole(StoreItem):
     def __init__(self, parent):
@@ -307,7 +316,7 @@ def load_store_items(parent):
         PlanetDestruction(parent),
         ScoutFleetUpgrade(parent),
         BattleFleetUpgrade(parent),
-        WarehouseSpeedIncrease(parent),
+        EngineUpgrade(parent),
         TradingConsole(parent)
     ])
 

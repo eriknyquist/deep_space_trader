@@ -101,6 +101,9 @@ shows useful information about the current state of the game.
 * **"Warehouse trips"**: Shows the number of trips to the warehouse made by the player so far on the current day,
   against the total number of warehouse trips allowed on the current day (see `"Store" window`_ for
   more information).
+* **"Engine power"**: A blue bar, next to the health bar, that fills up as the player increases their
+  engine power, up to the maximum of 10 (see `"Store" window`_). When tooltips are enabled, hovering over
+  this section shows the engine power and the current travel cost per light-year.
 * **"Scout fleet level"**: Shows the current upgrade level of the players scout fleet, against the
   maximum possible upgrade level for the players scout fleet. (see `"Store" window`_ for more information
   about upgrading the scout fleet).
@@ -142,9 +145,13 @@ to select the planet they want to travel to. The "Planets" section is displayed 
 left area of the main game window.
 
 * **"Travel..." button**: Causes the player to travel to the selected planet. The player can also
-  travel to a planet by double-clicking on the planet name in the "Planets" section. Travelling
-  to a planet costs 100 of the player's money, and advances the current day by 1. Travelling always
-  incurs a risk of encountering a pirate fleet. When encountered, the player will be given the choice
+  travel to a planet by double-clicking on the planet name in the "Planets" section, or on the
+  planet in the `"Star map" window`_. Every planet has a position in the galaxy, and the cost of
+  travelling depends on the distance to the planet, in light-years (ly): 5 per light-year, with a
+  minimum of 10. Engine upgrades make travel cheaper (see `"Store" window`_). The travel prompt shows
+  the distance and the cost. Travelling always advances the current day by 1, however far the player
+  goes. Travelling incurs a risk of encountering a pirate fleet. The risk grows with the player's
+  wealth, and with the length of the trip: longer trips are riskier, and short hops are safer. When encountered, the player will be given the choice
   to fight or not. If the player chooses to fight, and wins, then the player can continue their journey
   without losing any money or items, but will lose some health (and will not recover health on the next
   day). If winning the fight brings the player's health down to 0, then the player will die. If the player
@@ -157,19 +164,26 @@ left area of the main game window.
   Items stored in the warehouse cannot be touched by pirates.
 
 * **"Travel to previous" button**: Causes the player to travel to the planet that they were on
-  directly before the current planet. Travelling to a planet costs 100 of the player's money,
-  and advances the current day by 1.
+  directly before the current planet. The cost depends on the distance, as for the "Travel..." button,
+  and travelling advances the current day by 1.
+
+* **"Travel home" button**: Causes the player to travel back to their home planet (the planet the
+  game starts on), where their warehouse is. The cost depends on the distance, as for the "Travel..."
+  button. The home planet can't be destroyed.
 
 * **"Trading console" button**: Opens the trading console, which allows current item prices
   on the selected planet to be seen without travelling to the planet. Pressing the Enter key while a
   planet is selected will also open the trading console. The trading console can only be used if the
   "Trading console" item has been purchased from the `"Store" window`_.
 
-* **Planet display table**: shows a list of all planets available to the player. Consists of two
-  columns: The rightmost column, labelled "visited?", shows "yes" or "no" indicating whether
-  the player has travelled to the planet. The leftmost column, labelled "Planet", shows the
-  name of the planet. The player can travel to a planet by double-clicking on the planet name
-  within the planet display table. The last 3 planets visited will be colored different shades of
+* **"Star map..." button**: Opens the `"Star map" window`_, which shows where all the planets are.
+
+* **Planet display table**: shows a list of all planets available to the player. Consists of three
+  columns: "Planet" shows the name of the planet, "visited?" shows "yes" or "no" indicating whether
+  the player has travelled to the planet, and "Distance" shows how far the planet is from the current
+  planet, in light-years. Clicking a column's header sorts the table by that column (e.g. click
+  "Distance" to see the nearest planets first). The home planet is shown in bold. The player can travel
+  to a planet by double-clicking on the planet name within the planet display table. The last 3 planets visited will be colored different shades of
   green- the current planet will be a bright green, the previous planet a darker green, and the
   planet before that the darkest green.
 
@@ -231,9 +245,10 @@ right area of the main game window.
   (free samples can only be provided via the "Sell items" button).
 
 * **"To warehouse" button**: Allows the player to move 1 or more of the selected item
-  from their ship to the warehouse. Unlike the player's ship, the warehouse has infinite
+  from their ship to the warehouse. The warehouse is on the player's home planet, so this only works
+  while the player is there. Unlike the player's ship, the warehouse has infinite
   capacity, but only two moves to/from the warehouse per day are allowed (i.e. two trips
-  to the warehouse per day). Additional warehouse trips per day can be purchased from the Store
+  to the warehouse per day). Additional warehouse trips per day come with engine upgrades from the Store
   (See `"Store" window`_ for more details about the store window).
   Clicking this button opens a new window that allows the player to select the quantity of
   the item they want to move to the warehouse (see `"Move to warehouse" window`_).
@@ -258,16 +273,19 @@ right area of the main game window.
 This section describes the functionality of the "Items in warehouse" section of the main
 game window. The "Items in warehouse" section is used for browsing / managing items that
 reside in the warehouse. The "Items in warehouse" section is displayed in the bottom
-right area of the main game window.
+right area of the main game window. Its title shows the name of the player's home planet,
+which is where the warehouse is. Items can only be moved to or from the warehouse while the player
+is on their home planet, but items in the warehouse can be dumped from anywhere.
 
 * **"Retrieve" button**: Allows the player to move 1 or more of the selected items
-  from the warehouse to their ship. Only two moves to/from the warehouse per day are allowed
-  (i.e. two trips to the warehouse per day), unless more have been purchased from the Store. Clicking this button opens a new window that
+  from the warehouse to their ship, while the player is on their home planet. Only two moves to/from
+  the warehouse per day are allowed (i.e. two trips to the warehouse per day), unless engine upgrades
+  have been purchased from the Store. Clicking this button opens a new window that
   allows the player to select the quantity of the item they want to move to their ship (see
   `"Retrieve from warehouse" window`_).
 
 * **"Retrieve all" button**: Moves all warehouse items (or however many will fit) to the
-  player's ship.
+  player's ship, while the player is on their home planet.
 
 * **"Dump" button**: Throws away the selected items from the warehouse. Opens a new
   window that allows the player to select the quantity they wish to dump of the selected items
@@ -297,14 +315,17 @@ purchases can be made per day, but this number is increased when the player reac
 
 * **Scout expedition**: Buying this item allows the player to discover new planets (between 4-8
   new planets with a level 1 scout fleet), which will become available in the `"Planets" section`_. This item cannot be purchased unless
-  the player has already purchased a scout fleet. More planets can be discovered per
-  scout expedition by purchasing the "Upgrade scout fleet" store item.
+  the player has already purchased a scout fleet. More planets, further away, can be discovered per
+  scout expedition by purchasing the "Upgrade scout fleet" store item. Items on remote planets are
+  cheaper: the further a planet is from home, the lower its prices, down to half the usual price at
+  the edge of the largest scout range.
 
 * **Planet destruction kit**: Buying this item allows the player to destroy one or more planets and
   obtain all of their materials. Destroyed planets will disappear from the `"Planets" section`_ and all
   materials held by them will be transferred to the player's warehouse. Opens a new window that allows
   the player to pick which planets they want to destroy (each planet destroyed adds to the price), or
-  optionally destroy all planets at once (except for the current planet). There is a small chance that a single planet may
+  optionally destroy all planets at once (except for the current planet). The player's home planet
+  can never be destroyed, since the warehouse is there. There is a small chance that a single planet may
   resist destruction and attempt to fight back. The higher number of planets being destroyed, the
   higher the chance of one planet resisting will be. The player must decide whether to fight, or leave
   the planet alone. If the player fights and loses, the player will die and the game will be over.
@@ -314,8 +335,10 @@ purchases can be made per day, but this number is increased when the player reac
 * **Buy/upgrade scout fleet**: Buying this item for the first time gives the player a
   scout fleet that allows the player to discover new planets to trade with. Subsequent
   purchases of this item upgrade the player's scout fleet, which increases the number of
-  planets than can be discovered on a single scout expedition. The scout fleet can be upgraded
-  9 times, from level 1 through level 10.
+  planets than can be discovered on a single scout expedition, and how far away they can be.
+  Starting planets are up to 30 light-years from home, and a scout fleet at level N finds new planets
+  between 30 and 30 × (N + 1) light-years from home (e.g. 30-60 ly at level 1, and 30-330 ly at level 10).
+  The scout fleet can be upgraded 9 times, from level 1 through level 10.
 
   * *Scout fleet level 1*: between 4 and 8 new planets per scout expedition
   * *Scout fleet level 2*: between 8 and 16 new planets per scout expedition
@@ -347,8 +370,9 @@ purchases can be made per day, but this number is increased when the player reac
   * *Battle fleet level 9*: 90% chance of winning battles
   * *Battle fleet level 10*: 99% chance of winning battles
 
-* **Increase max. warehouse trips per day**: Buying this item will increase by 2 the number of
-  warehouse trips that the player can make in a single day.
+* **Increase engine power**: Buying this item will increase by 2 the number of warehouse trips that the
+  player can make in a single day, and will make travel 25% cheaper per light-year. Engine power can be
+  increased 10 times.
 
 * **Trading console**: Buying this item will enable the "Trading console" button
   in the `"Planets" section`_, allowing you to see current item prices on any planet without
@@ -480,6 +504,27 @@ own high scores.
 * **To add someone elses high scores to your game**: Paste the string provided by another player into
   the bottom section of the "High score sharing" window, and click the "Add high scores" button at the
   bottom of the "High score sharing" window. The other players scores will be added to your high score table.
+
+**"Star map" window**
+#####################
+
+The "Star map" window shows every planet the player has discovered, at its position in the galaxy.
+It is displayed when the "Star map" option is selected from the "Tools" menu in the main game window
+(e.g. **Tools->Star map**), or when the "Star map..." button in the `"Planets" section`_ is clicked.
+It can also be opened via the keyboard shortcut Ctrl-G.
+
+* The current planet is shown as a large yellow dot with a ring around it, and its name is always shown.
+  The two previous planets are shown in two shades of green.
+* The home planet has a blue ring.
+* Visited planets are filled grey dots, and planets not visited yet are hollow grey rings.
+* The selected planet has a white ring.
+* Faint dashed circles show the area of the starting planets, and the range of the player's scout fleet.
+* While the planets search box has text in it, planets that don't match are dimmed.
+
+Moving the mouse over (or near) a planet shows its name straight away, and holding the mouse still
+shows its distance and the cost of travelling there. Clicking a planet
+selects it in the `"Planets" section`_, and double-clicking it travels there. The mouse wheel zooms in and
+out, and dragging moves the map.
 
 **"Prices" window**
 ###################
