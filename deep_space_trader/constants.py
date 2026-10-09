@@ -3,7 +3,7 @@ from PyQt5.QtCore import QT_TRANSLATE_NOOP
 
 # ------ Initial values for player data on day 1 ------
 
-INITIAL_MONEY = 2000000000
+INITIAL_MONEY = 2000
 INITIAL_ITEM_CAPACITY = 100
 INITIAL_PLANET_COUNT = 8
 INITIAL_MAX_DAYS = 30
