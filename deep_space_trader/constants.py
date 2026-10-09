@@ -5,7 +5,7 @@ from PyQt5.QtCore import QT_TRANSLATE_NOOP
 
 INITIAL_MONEY = 2000000000
 INITIAL_ITEM_CAPACITY = 100
-INITIAL_PLANET_COUNT = 20000
+INITIAL_PLANET_COUNT = 8
 INITIAL_MAX_DAYS = 30
 INITIAL_SCOUT_LEVEL = 0
 INITIAL_BATTLE_LEVEL = 0
@@ -85,6 +85,20 @@ ENGINE_TRAVEL_COST_FACTOR = 0.75
 
 # Max. number of times the engine power store item can be bought
 MAX_ENGINE_LEVEL = 10
+
+# Planets are grouped in clusters rather than spread evenly. This fraction of new
+# planets is placed near a cluster centre, and the rest anywhere in their area
+CLUSTER_FRACTION = 0.7
+
+# Average number of new planets per new cluster
+CLUSTER_SIZE = 8
+
+# How far planets in a cluster are scattered around its centre (standard deviation, in ly)
+CLUSTER_SPREAD_LY = 4.0
+
+# Planets with the same name and number, but different letters (e.g. "Kandar 12 c"
+# and "Kandar 12 d"), are in the same star system: scattered this closely (in ly)
+STAR_SYSTEM_SPREAD_LY = 1.0
 
 # Item prices on remote planets are lower, falling steadily from normal prices at
 # INITIAL_GALAXY_RADIUS to this fraction of normal at the edge of the largest scout range

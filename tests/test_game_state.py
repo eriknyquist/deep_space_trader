@@ -1,3 +1,4 @@
+import math
 import random
 
 import pytest
@@ -287,3 +288,81 @@ def test_remote_planets_have_cheaper_items(state):
     far = [p for p in state.planets if p.distance_to(state.home_planet) > outer - 30]
     assert near and far
     assert relative_prices(far) < relative_prices(near) * 0.65
+
+
+# ----- Clusters -----
+
+def nearest_neighbour_ratio(planets, area):
+    """
+    Average distance to each planet's nearest neighbour, divided by what it would
+    be for planets spread evenly at random over 'area' (about 1.0). Clustered
+    planets have a smaller ratio
+    """
+    total = 0.0
+    for p in planets:
+        total += min(p.distance_to(q) for q in planets if q is not p)
+
+    expected = 0.5 * math.sqrt(area / len(planets))
+    return (total / len(planets)) / expected
+
+
+def test_planets_are_clustered(state):
+    random.seed(13)
+    state.scout_level = 3
+    start = len(state.planets)
+    state.expand_planets(300)
+    new = state.planets[start:]
+    low, high = state.discovery_distances()
+    ratio = nearest_neighbour_ratio(new, math.pi * (high ** 2 - low ** 2))
+    # Evenly spread planets give about 1.0 (see the next test); these give about 0.72
+    assert ratio < 0.8
+
+
+def test_planets_are_not_all_clustered(state, monkeypatch):
+    # With clustering turned off, planets are spread evenly (ratio close to 1)
+    monkeypatch.setattr(const, "CLUSTER_FRACTION", 0.0)
+    monkeypatch.setattr(const, "STAR_SYSTEM_SPREAD_LY", 1000.0)
+    random.seed(13)
+    state.scout_level = 3
+    start = len(state.planets)
+    state.expand_planets(300)
+    new = state.planets[start:]
+    low, high = state.discovery_distances()
+    assert nearest_neighbour_ratio(new, math.pi * (high ** 2 - low ** 2)) > 0.85
+
+
+def test_star_systems_are_close_together(state):
+    random.seed(14)
+    state.scout_level = 2
+    state.expand_planets(400)
+    pairs = [(a, b) for a, b in zip(state.planets, state.planets[1:])
+             if b.letter is not None and (a.name, a.number) == (b.name, b.number)]
+    assert pairs
+    # Almost all within 3 spreads, allowing for planets moved back inside the scout range
+    close = [a.distance_to(b) < 3 * 1.5 * const.STAR_SYSTEM_SPREAD_LY for a, b in pairs]
+    assert sum(close) >= 0.95 * len(close)
+
+
+def test_home_star_system_is_around_home(monkeypatch):
+    # Start a game whose home planet is in a star system of three planets
+    from deep_space_trader.planet import Planet
+    system = [Planet("kandar", 12, letter) for letter in "abc"]
+    others = [Planet("zorb%d" % i) for i in range(const.INITIAL_PLANET_COUNT - 3)]
+    monkeypatch.setattr(Planet, "random", classmethod(lambda cls, num=1, used_names=None: (system + others)[:num]))
+    random.seed(15)
+    state = State(None)
+    assert state.home_planet is system[0]
+    for planet in system[1:]:
+        assert planet.distance_to(state.home_planet) < 4 * const.STAR_SYSTEM_SPREAD_LY
+
+
+def test_later_expeditions_can_join_existing_clusters(state):
+    random.seed(16)
+    state.scout_level = 2
+    state.expand_planets(20)
+    clusters = list(state.cluster_centres)
+    state.expand_planets(200)
+    # Some of the new planets are near the earlier clusters
+    near_old = [p for p in state.planets[-200:]
+                if any(math.hypot(p.x - cx, p.y - cy) < 2 * const.CLUSTER_SPREAD_LY for cx, cy in clusters)]
+    assert len(near_old) > 10

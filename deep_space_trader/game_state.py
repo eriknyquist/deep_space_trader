@@ -57,6 +57,9 @@ class State(object):
         # ones, so that no two planets ever share a name
         self.used_planet_names = set()
 
+        # Centres (x, y) of the clusters planets are grouped in (see expand_planets)
+        self.cluster_centres = []
+
         self.warehouse_trips = 0
         self.expand_planets(const.INITIAL_PLANET_COUNT)
 
@@ -64,6 +67,13 @@ class State(object):
         self.home_planet = self.planets[0]
         self.home_planet.x = 0.0
         self.home_planet.y = 0.0
+
+        # Keep the rest of the home planet's star system (if any) next to it
+        low, high = self.discovery_distances()
+        for planet in self.planets[1:]:
+            if (planet.letter is None) or ((planet.name, planet.number) != (self.home_planet.name, self.home_planet.number)):
+                break
+            planet.x, planet.y = self.positionNear((0.0, 0.0), const.STAR_SYSTEM_SPREAD_LY, low, high)
 
         self.current_planet = self.home_planet
         self.current_planet.visited = True
@@ -236,24 +246,62 @@ class State(object):
         health_loss = random.randrange(lower, upper)
         self.health = max(self.health - (health_loss * 10), 0)
 
+    @staticmethod
+    def randomPosition(low, high):
+        """
+        Random (x, y) position between 'low' and 'high' ly from home (which is
+        at 0, 0), spread evenly over that area
+        """
+        distance = math.sqrt(random.uniform(low ** 2, high ** 2))
+        angle = random.uniform(0.0, 2.0 * math.pi)
+        return distance * math.cos(angle), distance * math.sin(angle)
+
+    @classmethod
+    def positionNear(cls, centre, spread, low, high):
+        """
+        Random (x, y) position scattered around 'centre' (standard deviation
+        'spread' ly), but still between 'low' and 'high' ly from home
+        """
+        for _ in range(20):
+            x = random.gauss(centre[0], spread)
+            y = random.gauss(centre[1], spread)
+            if low <= math.hypot(x, y) <= high:
+                return x, y
+
+        # Centre too close to the edge of the area: anywhere in the area will do
+        return cls.randomPosition(low, high)
+
     def expand_planets(self, num_new=None):
         if num_new is None:
             num_new = random.randrange(1, 10)
 
         new_planets = Planet.random(num=num_new, used_names=self.used_planet_names)
         low, high = self.discovery_distances()
+
+        # New planets may join existing clusters in their area, or new clusters
+        clusters = [c for c in self.cluster_centres if low <= math.hypot(*c) <= high]
+        for _ in range(int(math.ceil(num_new / float(const.CLUSTER_SIZE)))):
+            centre = self.randomPosition(low, high)
+            self.cluster_centres.append(centre)
+            clusters.append(centre)
+
+        previous = None
         for new in new_planets:
             new.discovery_day = self.day
 
-            # Random position between 'low' and 'high' ly from home (which is at 0, 0),
-            # spread evenly over that area
-            distance = math.sqrt(random.uniform(low ** 2, high ** 2))
-            angle = random.uniform(0.0, 2.0 * math.pi)
-            new.x = distance * math.cos(angle)
-            new.y = distance * math.sin(angle)
+            if (previous is not None) and (new.letter is not None) and \
+                    ((new.name, new.number) == (previous.name, previous.number)):
+                # Same star system as the previous planet
+                new.x, new.y = self.positionNear((previous.x, previous.y), const.STAR_SYSTEM_SPREAD_LY, low, high)
+            elif random.random() < const.CLUSTER_FRACTION:
+                new.x, new.y = self.positionNear(random.choice(clusters), const.CLUSTER_SPREAD_LY, low, high)
+            else:
+                new.x, new.y = self.randomPosition(low, high)
 
+            distance = math.hypot(new.x, new.y)
             new.items = ItemCollection.random(value_multiplier=self.level * self.remote_price_factor(distance),
                                               quantity_multiplier=self.level)
+            previous = new
 
         self.planets += new_planets
         self.planets_discovered += num_new

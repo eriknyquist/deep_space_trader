@@ -509,6 +509,8 @@ own high scores.
 #####################
 
 The "Star map" window shows every planet the player has discovered, at its position in the galaxy.
+Planets tend to be grouped in clusters, and planets with the same name and number but different letters
+(e.g. "Kandar 12 c" and "Kandar 12 d") are in the same star system, very close to each other.
 It is displayed when the "Star map" option is selected from the "Tools" menu in the main game window
 (e.g. **Tools->Star map**), or when the "Star map..." button in the `"Planets" section`_ is clicked.
 It can also be opened via the keyboard shortcut Ctrl-G.
