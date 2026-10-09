@@ -176,6 +176,8 @@ left area of the main game window.
   planet is selected will also open the trading console. The trading console can only be used if the
   "Trading console" item has been purchased from the `"Store" window`_.
 
+  .. image:: images/trading_console.png
+
 * **"Star map..." button**: Opens the `"Star map" window`_, which shows where all the planets are.
 
 * **Planet display table**: shows a list of all planets available to the player. Consists of three
@@ -507,6 +509,8 @@ own high scores.
 
 **"Star map" window**
 #####################
+
+.. image:: images/star_map.png
 
 The "Star map" window shows every planet the player has discovered, at its position in the galaxy.
 Planets tend to be grouped in clusters, and planets with the same name and number but different letters
