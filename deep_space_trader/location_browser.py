@@ -143,14 +143,21 @@ class LocationBrowser(QtWidgets.QWidget):
 
     def keyPressEvent(self, event: QtGui.QKeyEvent):
         if event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter):
-            if self.parent.state.have_trading_console:
-                planet = self.selectedPlanet()
-                if planet is None:
-                    return
+            self.enterPressed(self.selectedPlanet())
 
-                self.openTradingConsole(planet)
-            else:
-                errorDialog(self, message=translate("LocationBrowser", TRADING_CONSOLE_MESSAGE))
+    def enterPressed(self, planet):
+        """
+        What the Enter key does, here and on the star map: open the trading
+        console for 'planet' (None if no planet is selected), if the player
+        has bought it
+        """
+        if self.parent.state.have_trading_console:
+            if planet is None:
+                return
+
+            self.openTradingConsole(planet)
+        else:
+            errorDialog(self, message=translate("LocationBrowser", TRADING_CONSOLE_MESSAGE))
 
     def planetSearchTextChanged(self, newText):
         self.update()

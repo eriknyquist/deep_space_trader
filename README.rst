@@ -520,12 +520,16 @@ It can also be opened via the keyboard shortcut Ctrl-G.
 * The home planet has a blue ring.
 * Visited planets are filled grey dots, and planets not visited yet are hollow grey rings.
 * The selected planet has a white ring.
+* A blue line joins every planet the player has travelled to, in order, starting from the home planet,
+  showing the player's whole journey.
 * Faint dashed circles show the area of the starting planets, and the range of the player's scout fleet.
 * While the planets search box has text in it, planets that don't match are dimmed.
 
 Moving the mouse over (or near) a planet shows its name straight away, and holding the mouse still
 shows its distance and the cost of travelling there. Clicking a planet
-selects it in the `"Planets" section`_, and double-clicking it travels there. The mouse wheel zooms in and
+selects it in the `"Planets" section`_, and double-clicking it travels there. Pressing the Enter key opens the
+trading console for the selected planet, as in the `"Planets" section`_ (only if the "Trading console" item has been
+purchased from the `"Store" window`_). The mouse wheel zooms in and
 out, and dragging moves the map.
 
 **"Prices" window**

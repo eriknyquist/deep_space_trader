@@ -37,6 +37,9 @@ VISITED_COLOR = QtGui.QColor("#bbbbbb")
 UNVISITED_COLOR = QtGui.QColor("#888888")
 SELECTED_COLOR = QtGui.QColor("#ffffff")
 RANGE_COLOR = QtGui.QColor(255, 255, 255, 40)
+# Line through every planet the player has travelled to, in order
+JOURNEY_COLOR = QtGui.QColor(51, 153, 255, 160)
+JOURNEY_WIDTH = 1.5
 
 # Width of the ring drawn for planets not visited yet, in pixels
 UNVISITED_RING_WIDTH = 1.5
@@ -326,6 +329,14 @@ class StarMapView(QtWidgets.QGraphicsView):
 
         super(StarMapView, self).mousePressEvent(event)
 
+    def keyPressEvent(self, event):
+        if event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter):
+            # Same as in the planets table: the trading console for the selected planet
+            self.starMap.parent.locationBrowser.enterPressed(self.starMap.selected)
+            return
+
+        super(StarMapView, self).keyPressEvent(event)
+
     def mouseDoubleClickEvent(self, event):
         planet = self.planetAt(event.pos())
         if (planet is not None) and (event.button() == QtCore.Qt.LeftButton):
@@ -417,6 +428,7 @@ class StarMap(QtWidgets.QDialog):
             (self.tr("Double-click"), self.tr("Travel to a planet")),
             (self.tr("Scroll"), self.tr("Zoom in and out")),
             (self.tr("Drag"), self.tr("Move the map")),
+            (self.tr("Enter"), self.tr("Item prices on the selected planet")),
         ]
 
         layout = QtWidgets.QFormLayout()
@@ -456,6 +468,8 @@ class StarMap(QtWidgets.QDialog):
         search = self.parent.locationBrowser.planetSearchText.text().strip()
         self.matching = set(map(id, self.parent.locationBrowser.filteredPlanets())) if search else None
 
+        self.journeyLine = self.journeyPath()
+
         self.layer = PlanetsLayer(self)
         self.scene.addItem(self.layer)
 
@@ -466,6 +480,23 @@ class StarMap(QtWidgets.QDialog):
 
         # The current planet's name is always shown
         self.currentLabel = self.nameLabel(state.current_planet)
+
+    def journeyPath(self):
+        """
+        Blue line through every planet the player has travelled to, drawn
+        under the planets. Planets destroyed since are still on the line
+        """
+        journey = self.parent.state.journey
+        path = QtGui.QPainterPath(scenePos(journey[0]))
+        for planet in journey[1:]:
+            path.lineTo(scenePos(planet))
+
+        pen = QtGui.QPen(JOURNEY_COLOR, JOURNEY_WIDTH)
+        pen.setCosmetic(True)
+        pen.setJoinStyle(QtCore.Qt.RoundJoin)
+        line = self.scene.addPath(path, pen)
+        line.setZValue(-1)
+        return line
 
     def gridCell(self, x, y):
         return (int(math.floor(x / GRID_CELL_LY)), int(math.floor(y / GRID_CELL_LY)))

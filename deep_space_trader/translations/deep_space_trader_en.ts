@@ -4,12 +4,12 @@
 <context>
     <name>About</name>
     <message>
-        <location filename="../constants.py" line="150"/>
+        <location filename="../constants.py" line="164"/>
         <source>The year is 5208, and humanity has solved the problem of bridging the vast distances between stars by bending the fabric of spacetime. Commerce between thousands of newly colonized planets is now possible.&lt;br&gt;&lt;br&gt;You are the owner of an inter-planetary commercial trading vessel. You make your living by purchasing and harvesting raw materials and resources from countless planets across the universe, and selling them to other planets.&lt;br&gt;&lt;br&gt;If you encounter pirates and do not have sufficient weaponry to defend yourself, you will be robbed, or you will die.&lt;br&gt;&lt;br&gt;If you don&apos;t make enough money to keep up with your daily costs, you will die.&lt;br&gt;&lt;br&gt;Your daily costs will increase as you purchase services that require daily maintenance.&lt;br&gt;&lt;br&gt;Don&apos;t die, and make as much money as you possibly can before your time runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../constants.py" line="172"/>
+        <location filename="../constants.py" line="186"/>
         <source>&lt;ul&gt;Recommended strategy: &lt;br&gt;&lt;li&gt;Buy the &apos;Increase ship capacity&apos; upgrade from the store as early and as frequently as possible&lt;/li&gt;&lt;br&gt;&lt;li&gt;Destroy as many planets as you can, by buying the &apos;Planet destruction kit&apos; from the store&lt;/li&gt;&lt;br&gt;&lt;li&gt;Discover new planets by buying &apos;Scout expedition&apos; from the store, and sell them the resources you obtained from destroying other planets. Rinse and repeat.&lt;/li&gt;&lt;br&gt;&lt;li&gt;Watch out for pirates and planets that resist destruction; buy the Battle Fleet from the store and upgrade it as often as you can to increase your chances of winning battles against pirate fleets and planet defense fleets.&lt;/li&gt;&lt;/ul&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -764,88 +764,88 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="219"/>
+        <location filename="../location_browser.py" line="226"/>
         <source>yes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="219"/>
+        <location filename="../location_browser.py" line="226"/>
         <source>no</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="309"/>
+        <location filename="../location_browser.py" line="316"/>
         <source>You are already on {0}!</source>
         <comment>{0} is a planet name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="314"/>
+        <location filename="../location_browser.py" line="321"/>
         <source>You don&apos;t have enough money! ({0} required)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="319"/>
+        <location filename="../location_browser.py" line="326"/>
         <source>Travel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="331"/>
+        <location filename="../location_browser.py" line="338"/>
         <source>Attacked by pirates!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="331"/>
+        <location filename="../location_browser.py" line="338"/>
         <source>You have encountered a pirate fleet while travelling between planets!&lt;br&gt;&lt;br&gt;Your battle fleet must defeat them if you want to continue.&lt;br&gt;&lt;br&gt;If you fight and lose, you will die.&lt;br&gt;&lt;br&gt;If you fight and win, you will lose some health, but you will be able to continue your travels and will not lose any money or resources.&lt;br&gt;&lt;br&gt;If you do not fight, then the only other option is surrender; you will not die or lose any health, but you may lose some of your money and resources.&lt;br&gt;&lt;br&gt;Do you want to fight?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="350"/>
+        <location filename="../location_browser.py" line="357"/>
         <source>Battle won!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="350"/>
+        <location filename="../location_browser.py" line="357"/>
         <source>You have defeated the pirate fleet, and can continue with your travels.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="355"/>
+        <location filename="../location_browser.py" line="362"/>
         <source>Battle lost!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="355"/>
+        <location filename="../location_browser.py" line="362"/>
         <source>You have been defeated by the pirate fleet.&lt;br&gt;&lt;br&gt;You are dead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="373"/>
+        <location filename="../location_browser.py" line="380"/>
         <source>Surrender</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="373"/>
+        <location filename="../location_browser.py" line="380"/>
         <source>You decide not to fight the pirate fleet. &lt;br&gt;&lt;br&gt;The pirates spare your life, but they rob you of everything you&apos;ve got!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="391"/>
+        <location filename="../location_browser.py" line="398"/>
         <source>Please select a planet first!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="399"/>
+        <location filename="../location_browser.py" line="406"/>
         <source>Please select a planet to travel to first!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="414"/>
+        <location filename="../location_browser.py" line="426"/>
         <source>No previous planet to travel to!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="418"/>
+        <location filename="../location_browser.py" line="430"/>
         <source>{0} no longer exists!</source>
         <comment>{0} is a planet name</comment>
         <translation type="unfinished"></translation>
@@ -876,12 +876,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="238"/>
+        <location filename="../location_browser.py" line="245"/>
         <source>Your home planet. Your warehouse is here.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="319"/>
+        <location filename="../location_browser.py" line="326"/>
         <source>Travel to {0}?&lt;br&gt;&lt;br&gt;(distance {1}, cost {2}, you have {3})</source>
         <comment>{0} is a planet name, and {1} is a distance, e.g. 27.4 ly</comment>
         <translation type="unfinished"></translation>
@@ -1920,106 +1920,116 @@
 <context>
     <name>StarMap</name>
     <message>
-        <location filename="../star_map.py" line="367"/>
+        <location filename="../star_map.py" line="378"/>
         <source>Star map</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../star_map.py" line="563"/>
+        <location filename="../star_map.py" line="594"/>
         <source>You are here</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../star_map.py" line="382"/>
+        <location filename="../star_map.py" line="393"/>
         <source>Previous planets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../star_map.py" line="383"/>
+        <location filename="../star_map.py" line="394"/>
         <source>Home planet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../star_map.py" line="385"/>
+        <location filename="../star_map.py" line="396"/>
         <source>Visited</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../star_map.py" line="386"/>
+        <location filename="../star_map.py" line="397"/>
         <source>Not visited</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../star_map.py" line="387"/>
+        <location filename="../star_map.py" line="398"/>
         <source>Selected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../star_map.py" line="565"/>
+        <location filename="../star_map.py" line="596"/>
         <source>{0} away, travel cost {1}</source>
         <comment>{0} is a distance, e.g. 27.4 ly</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../star_map.py" line="570"/>
+        <location filename="../star_map.py" line="601"/>
         <source>Home planet. Your warehouse is here.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../star_map.py" line="407"/>
+        <location filename="../star_map.py" line="418"/>
         <source>Key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../star_map.py" line="416"/>
+        <location filename="../star_map.py" line="427"/>
         <source>Click</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../star_map.py" line="416"/>
+        <location filename="../star_map.py" line="427"/>
         <source>Select a planet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../star_map.py" line="417"/>
+        <location filename="../star_map.py" line="428"/>
         <source>Double-click</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../star_map.py" line="417"/>
+        <location filename="../star_map.py" line="428"/>
         <source>Travel to a planet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../star_map.py" line="418"/>
+        <location filename="../star_map.py" line="429"/>
         <source>Scroll</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../star_map.py" line="418"/>
+        <location filename="../star_map.py" line="429"/>
         <source>Zoom in and out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../star_map.py" line="419"/>
+        <location filename="../star_map.py" line="430"/>
         <source>Drag</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../star_map.py" line="419"/>
+        <location filename="../star_map.py" line="430"/>
         <source>Move the map</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../star_map.py" line="433"/>
+        <location filename="../star_map.py" line="445"/>
         <source>Controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../star_map.py" line="431"/>
+        <source>Enter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../star_map.py" line="431"/>
+        <source>Item prices on the selected planet</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>State</name>
     <message numerus="yes">
-        <location filename="../game_state.py" line="196"/>
+        <location filename="../game_state.py" line="210"/>
         <source>Day {0}: {1}, bought %Ln {2} for {3} each</source>
         <comment>{1} is a planet name, and {2} is an item name, e.g. tin</comment>
         <translation>
@@ -2028,7 +2038,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../game_state.py" line="199"/>
+        <location filename="../game_state.py" line="213"/>
         <source>Day {0}: {1}, sold %Ln {2} for {3} each</source>
         <comment>{1} is a planet name, and {2} is an item name, e.g. tin</comment>
         <translation>
@@ -2037,7 +2047,7 @@
         </translation>
     </message>
     <message>
-        <location filename="../game_state.py" line="207"/>
+        <location filename="../game_state.py" line="221"/>
         <source>Day {0}: {1}</source>
         <comment>{1} is a planet name</comment>
         <translation type="unfinished"></translation>

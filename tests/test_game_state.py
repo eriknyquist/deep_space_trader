@@ -366,3 +366,15 @@ def test_later_expeditions_can_join_existing_clusters(state):
     near_old = [p for p in state.planets[-200:]
                 if any(math.hypot(p.x - cx, p.y - cy) < 2 * const.CLUSTER_SPREAD_LY for cx, cy in clusters)]
     assert len(near_old) > 10
+
+
+def test_journey(state):
+    a, b = state.planets[1:3]
+    assert state.journey == [state.home_planet]
+    state.change_current_planet(a)
+    state.change_current_planet(b)
+    state.change_current_planet(a)
+    assert state.journey == [state.home_planet, a, b, a]
+
+    state.initialize()
+    assert state.journey == [state.home_planet]

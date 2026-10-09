@@ -77,6 +77,9 @@ class State(object):
 
         self.current_planet = self.home_planet
         self.current_planet.visited = True
+
+        # Every planet travelled to, in order, starting with home (drawn on the star map)
+        self.journey = [self.home_planet]
         self.previous_planet = None
         self.previous_planets_tail = None
         self.have_trading_console = False
@@ -191,6 +194,7 @@ class State(object):
         self.current_planet = new_planet
         self.current_planet.visited = True
         self.current_planet.clear_samples_today()
+        self.journey.append(new_planet)
 
     def record_sale(self, item_name, quantity, price):
         self.transaction_log.append((False, self.day, self.current_planet.full_name, item_name, quantity, price))

@@ -260,4 +260,64 @@ def test_legend(starmap):
 
     assert [(a.text(), d.text()) for a, d in starmap.controlLabels] == [
         ("Click", "Select a planet"), ("Double-click", "Travel to a planet"),
-        ("Scroll", "Zoom in and out"), ("Drag", "Move the map")]
+        ("Scroll", "Zoom in and out"), ("Drag", "Move the map"),
+        ("Enter", "Item prices on the selected planet")]
+
+
+def journey_points(starmap):
+    path = starmap.journeyLine.path()
+    return [(round(path.elementAt(i).x, 3), round(path.elementAt(i).y, 3)) for i in range(path.elementCount())]
+
+
+def expected_points(planets):
+    return [(round(scenePos(p).x(), 3), round(scenePos(p).y(), 3)) for p in planets]
+
+
+def test_journey_line(game, no_pirates):
+    state = game.state
+    for planet in (state.planets[3], state.planets[5], state.home_planet):
+        game.locationBrowser.travelToPlanet(planet)
+
+    dialog = StarMap(game)
+    assert journey_points(dialog) == expected_points(state.journey)
+    assert len(state.journey) == 4
+    assert dialog.journeyLine.pen().color() == star_map.JOURNEY_COLOR
+    # Drawn under the planets
+    assert dialog.journeyLine.zValue() < dialog.layer.zValue()
+
+
+def test_journey_line_grows_when_travelling_from_the_map(game, dialogs, starmap, no_pirates):
+    # No line until the first trip
+    assert journey_points(starmap) == []
+    target = game.state.planets[4]
+    QtTest.QTest.mouseDClick(starmap.view.viewport(), QtCore.Qt.LeftButton, pos=dot_pos(starmap, target))
+    assert journey_points(starmap) == expected_points([game.state.home_planet, target])
+
+
+def test_enter_opens_trading_console_for_selected_planet(game, dialogs, starmap):
+    from deep_space_trader.location_browser import TradingConsole
+    game.state.enable_trading_console()
+    target = game.state.planets[4]
+    QtTest.QTest.mouseClick(starmap.view.viewport(), QtCore.Qt.LeftButton, pos=dot_pos(starmap, target))
+    QtTest.QTest.keyClick(starmap.view, QtCore.Qt.Key_Return)
+    assert [type(d) for d in dialogs.executed] == [TradingConsole]
+    assert dialogs.executed[0].windowTitle() == "Item prices on %s" % target.full_name
+
+
+def test_enter_without_trading_console(game, dialogs, starmap):
+    target = game.state.planets[4]
+    QtTest.QTest.mouseClick(starmap.view.viewport(), QtCore.Qt.LeftButton, pos=dot_pos(starmap, target))
+    QtTest.QTest.keyClick(starmap.view, QtCore.Qt.Key_Enter)
+    assert dialogs.executed == []
+    assert len(dialogs.messages("error")) == 1
+    assert "trading console" in dialogs.messages("error")[0]
+
+
+def test_enter_with_no_planet_selected(game, dialogs):
+    game.state.enable_trading_console()
+    game.locationBrowser.table.setCurrentCell(-1, -1)
+    dialog = StarMap(game)
+    dialog.show()
+    QtTest.QTest.keyClick(dialog.view, QtCore.Qt.Key_Return)
+    assert dialogs.executed == []
+    assert dialogs.shown == []
