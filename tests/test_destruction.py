@@ -6,6 +6,7 @@ from PyQt5 import QtCore, QtTest
 from deep_space_trader import constants as const
 from deep_space_trader import store
 from deep_space_trader.location_picker import PlanetDestructionPicker
+from deep_space_trader.i18n import formatDistance
 
 from helpers import row_of, column
 
@@ -51,21 +52,41 @@ def test_picker_columns(game):
     dialog = picker(game)
     table = dialog.table
     headers = [table.horizontalHeaderItem(c).text() for c in range(table.columnCount())]
-    assert headers == ["Planet name", "Visited?", "Planet value"]
+    assert headers == ["Planet name", "Visited?", "Distance", "Planet value"]
 
     for row in range(table.rowCount()):
         planet = table.item(row, 0).data(QtCore.Qt.UserRole)
         assert table.item(row, 0).text() == planet.full_name
         assert table.item(row, 1).text() == ("yes" if planet.visited else "no")
-        assert table.item(row, 2).text() == "{:,}".format(int(planet.items.total_value))
+        distance = game.state.current_planet.distance_to(planet)
+        assert table.item(row, 2).data(QtCore.Qt.DisplayRole) == pytest.approx(distance)
+        assert shown_text(table, row, 2) == formatDistance(distance)
+        assert table.item(row, 3).text() == "{:,}".format(int(planet.items.total_value))
 
 
 def test_picker_sorts_by_value(game):
     game.state.expand_planets(20)
     table = picker(game).table
-    table.sortItems(2)
-    values = [table.item(row, 2).value for row in range(table.rowCount())]
+    table.sortItems(3)
+    values = [table.item(row, 3).value for row in range(table.rowCount())]
     assert values == sorted(values)
+
+
+def test_picker_sorts_by_distance(game):
+    game.state.expand_planets(20)
+    table = picker(game).table
+    table.sortItems(2)
+    current = game.state.current_planet
+    planets = [table.item(row, 0).data(QtCore.Qt.UserRole) for row in range(table.rowCount())]
+    distances = [current.distance_to(p) for p in planets]
+    # Sorted as numbers, not as text ("100 ly" would come before "9 ly")
+    assert distances == sorted(distances)
+
+
+def shown_text(table, row, column):
+    index = table.model().index(row, column)
+    delegate = table.itemDelegateForColumn(column)
+    return delegate.displayText(index.data(), QtCore.QLocale())
 
 
 def test_destroy_selected_after_sorting(game, no_resistance):

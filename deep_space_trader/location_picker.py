@@ -2,9 +2,15 @@ import random
 from deep_space_trader import constants as const
 from deep_space_trader.utils import errorDialog, yesNoDialog, infoDialog
 from deep_space_trader.item_browsers import TableWidgetNumber
+from deep_space_trader.location_browser import DistanceDelegate, LocationBrowser
 from deep_space_trader.i18n import translate, formatNumber, joinList
 
 from PyQt5 import QtWidgets, QtCore, QtGui
+
+
+# Columns of the planet table
+DISTANCE_COLUMN = 2
+VALUE_COLUMN = 3
 
 
 class PlanetDestructionPicker(QtWidgets.QDialog):
@@ -51,8 +57,10 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         palette.setColor(QtGui.QPalette.Highlight, default_highlight)
         self.table.setPalette(palette)
 
-        self.table.setColumnCount(3)
-        self.table.setHorizontalHeaderLabels([self.tr('Planet name'), self.tr('Visited?'), self.tr('Planet value')])
+        self.table.setColumnCount(4)
+        self.table.setHorizontalHeaderLabels([self.tr('Planet name'), self.tr('Visited?'), self.tr('Distance'),
+                                              self.tr('Planet value')])
+        self.table.setItemDelegateForColumn(DISTANCE_COLUMN, DistanceDelegate(self.table))
         self.table.verticalHeader().setVisible(False)
         self.table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
         self.table.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
@@ -63,6 +71,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
         header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
 
         self.mainLayout.addLayout(self.buttonLayout)
         self.mainLayout.addWidget(self.table)
@@ -118,10 +127,14 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             self.table.setItem(row, 0, item1)
             self.table.setItem(row, 1, item2)
 
+            # Distance from the current planet (the current planet itself is 0 ly away)
+            distance = self.state.current_planet.distance_to(planet)
+            self.table.setItem(row, DISTANCE_COLUMN, LocationBrowser.numberCell(distance))
+
             # Total value of the planet's items, which go to the warehouse if it's destroyed
             item3 = TableWidgetNumber(int(planet.items.total_value))
             item3.setTextAlignment(QtCore.Qt.AlignHCenter)
-            self.table.setItem(row, 2, item3)
+            self.table.setItem(row, VALUE_COLUMN, item3)
 
         self.table.setSortingEnabled(True)
         self.table.blockSignals(False)

@@ -146,34 +146,34 @@
 <context>
     <name>Buy</name>
     <message>
-        <location filename="../transaction_dialogs.py" line="110"/>
+        <location filename="../transaction_dialogs.py" line="126"/>
         <source>How much {0} do you want to buy?</source>
         <comment>{0} is an item name, e.g. tin</comment>
         <translation>Quantas unidades de {0} você quer comprar?</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="112"/>
+        <location filename="../transaction_dialogs.py" line="128"/>
         <source>Buy</source>
         <translation>Comprar</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="113"/>
+        <location filename="../transaction_dialogs.py" line="129"/>
         <source>Buy items</source>
         <translation>Comprar itens</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="125"/>
+        <location filename="../transaction_dialogs.py" line="145"/>
         <source>Buy quantity (cost: {0})</source>
         <translation>Quantidade a comprar (custo: {0})</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="132"/>
+        <location filename="../transaction_dialogs.py" line="152"/>
         <source>{0} would normally charge {2} for this much {1}, but they&apos;re willing to sell it to you for {3} because of your shining reputation! Well done!</source>
         <comment>{0} is a planet name, {1} is an item name, e.g. tin, and {2} and {3} are prices</comment>
         <translation>{0} normalmente cobraria {2} por essa quantidade de {1}, mas está disposto a vender para você por {3} por causa da sua reputação brilhante! Muito bem!</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="136"/>
+        <location filename="../transaction_dialogs.py" line="156"/>
         <source>{0} would normally charge {2} for this much {1}, but they&apos;re charging you {3}, because they don&apos;t trust you.</source>
         <comment>{0} is a planet name, {1} is an item name, e.g. tin, and {2} and {3} are prices</comment>
         <translation>{0} normalmente cobraria {2} por essa quantidade de {1}, mas está cobrando {3} de você, porque não confia em você.</translation>
@@ -256,28 +256,28 @@
 <context>
     <name>DumpPlayerItem</name>
     <message>
-        <location filename="../transaction_dialogs.py" line="295"/>
+        <location filename="../transaction_dialogs.py" line="318"/>
         <source>How much {0} do you want to dump?</source>
         <comment>{0} is an item name, e.g. tin</comment>
         <translation>Quantas unidades de {0} você quer descartar?</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="297"/>
+        <location filename="../transaction_dialogs.py" line="320"/>
         <source>Dump</source>
         <translation>Descartar</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="298"/>
+        <location filename="../transaction_dialogs.py" line="321"/>
         <source>Dump player items</source>
         <translation>Descartar itens da nave</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="301"/>
+        <location filename="../transaction_dialogs.py" line="324"/>
         <source>Dump items?</source>
         <translation>Descartar itens?</translation>
     </message>
     <message numerus="yes">
-        <location filename="../transaction_dialogs.py" line="301"/>
+        <location filename="../transaction_dialogs.py" line="324"/>
         <source>Are you sure you want to dump %Ln {0}? These items will be removed from your ship, and you will not be able to get them back.</source>
         <comment>{0} is an item name, e.g. tin</comment>
         <translation>
@@ -286,7 +286,7 @@
         </translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="315"/>
+        <location filename="../transaction_dialogs.py" line="338"/>
         <source>Dump quantity</source>
         <translation>Quantidade a descartar</translation>
     </message>
@@ -294,28 +294,28 @@
 <context>
     <name>DumpWarehouseItem</name>
     <message>
-        <location filename="../transaction_dialogs.py" line="264"/>
+        <location filename="../transaction_dialogs.py" line="287"/>
         <source>How much {0} do you want to dump?</source>
         <comment>{0} is an item name, e.g. tin</comment>
         <translation>Quantas unidades de {0} você quer descartar?</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="266"/>
+        <location filename="../transaction_dialogs.py" line="289"/>
         <source>Dump</source>
         <translation>Descartar</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="267"/>
+        <location filename="../transaction_dialogs.py" line="290"/>
         <source>Dump warehouse items</source>
         <translation>Descartar itens do armazém</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="270"/>
+        <location filename="../transaction_dialogs.py" line="293"/>
         <source>Dump items?</source>
         <translation>Descartar itens?</translation>
     </message>
     <message numerus="yes">
-        <location filename="../transaction_dialogs.py" line="270"/>
+        <location filename="../transaction_dialogs.py" line="293"/>
         <source>Are you sure you want to dump %Ln {0}? You will lose these items from your warehouse, and you will not be able to get them back.</source>
         <comment>{0} is an item name, e.g. tin</comment>
         <translation>
@@ -324,7 +324,7 @@
         </translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="284"/>
+        <location filename="../transaction_dialogs.py" line="307"/>
         <source>Dump quantity</source>
         <translation>Quantidade a descartar</translation>
     </message>
@@ -648,33 +648,33 @@
 <context>
     <name>ItemBrowser</name>
     <message>
-        <location filename="../item_browsers.py" line="151"/>
+        <location filename="../item_browsers.py" line="152"/>
         <source>Item type</source>
         <translation>Tipo de item</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="151"/>
+        <location filename="../item_browsers.py" line="152"/>
         <source>Quantity</source>
         <translation>Quantidade</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="80"/>
+        <location filename="../item_browsers.py" line="81"/>
         <source>Warehouse</source>
         <translation>Armazém</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="80"/>
+        <location filename="../item_browsers.py" line="81"/>
         <source>Your warehouse is on {0}. Travel there to use it.</source>
         <comment>{0} is a planet name</comment>
         <translation>Seu armazém fica em {0}. Viaje até lá para usá-lo.</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="94"/>
+        <location filename="../item_browsers.py" line="95"/>
         <source>Trade refused</source>
         <translation>Negociação recusada</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="94"/>
+        <location filename="../item_browsers.py" line="95"/>
         <source>{0} refuses to trade with you, because of what you&apos;ve done nearby.</source>
         <comment>{0} is a planet name</comment>
         <translation>{0} se recusa a negociar com você, por causa do que você fez nas redondezas.</translation>
@@ -766,180 +766,180 @@
 <context>
     <name>LocationBrowser</name>
     <message>
-        <location filename="../location_browser.py" line="14"/>
+        <location filename="../location_browser.py" line="16"/>
         <source>You must buy the trading console from the store if you want to be able to see planet item prices without travelling to the planet</source>
         <translation>Você precisa comprar o console de comércio na loja se quiser ver os preços dos itens de um planeta sem viajar até ele</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="72"/>
+        <location filename="../location_browser.py" line="74"/>
         <source>Search for planets by name...</source>
         <translation>Buscar planetas pelo nome...</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="76"/>
+        <location filename="../location_browser.py" line="78"/>
         <source>Travel...</source>
         <translation>Viajar...</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="80"/>
+        <location filename="../location_browser.py" line="82"/>
         <source>Travel to previous</source>
         <translation>Voltar ao anterior</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="88"/>
+        <location filename="../location_browser.py" line="90"/>
         <source>Trading console</source>
         <translation>Console de comércio</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="108"/>
+        <location filename="../location_browser.py" line="110"/>
         <source>Planet</source>
         <translation>Planeta</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="108"/>
+        <location filename="../location_browser.py" line="110"/>
         <source>visited?</source>
         <translation>visitado?</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="148"/>
+        <location filename="../location_browser.py" line="150"/>
         <source>travel to the selected planet</source>
         <translation>viajar para o planeta selecionado</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="149"/>
+        <location filename="../location_browser.py" line="151"/>
         <source>travel back to the planet you were on before the current planet</source>
         <translation>voltar ao planeta em que você estava antes do atual</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="162"/>
+        <location filename="../location_browser.py" line="164"/>
         <source>opens the trading console for the selected planet, allowing you to see item prices without travelling there</source>
         <translation>abre o console de comércio do planeta selecionado, permitindo ver os preços dos itens sem viajar até lá</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="248"/>
+        <location filename="../location_browser.py" line="246"/>
         <source>yes</source>
         <translation>sim</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="248"/>
+        <location filename="../location_browser.py" line="246"/>
         <source>no</source>
         <translation>não</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="364"/>
+        <location filename="../location_browser.py" line="419"/>
         <source>You are already on {0}!</source>
         <comment>{0} is a planet name</comment>
         <translation>Você já está em {0}!</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="369"/>
+        <location filename="../location_browser.py" line="424"/>
         <source>You don&apos;t have enough money! ({0} required)</source>
         <translation>Você não tem dinheiro suficiente! ({0} necessário)</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="374"/>
+        <location filename="../location_browser.py" line="429"/>
         <source>Travel</source>
         <translation>Viajar</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="386"/>
+        <location filename="../location_browser.py" line="441"/>
         <source>Attacked by pirates!</source>
         <translation>Atacado por piratas!</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="386"/>
+        <location filename="../location_browser.py" line="441"/>
         <source>You have encountered a pirate fleet while travelling between planets!&lt;br&gt;&lt;br&gt;Your battle fleet must defeat them if you want to continue.&lt;br&gt;&lt;br&gt;If you fight and lose, you will die.&lt;br&gt;&lt;br&gt;If you fight and win, you will lose some health, but you will be able to continue your travels and will not lose any money or resources.&lt;br&gt;&lt;br&gt;If you do not fight, then the only other option is surrender; you will not die or lose any health, but you may lose some of your money and resources.&lt;br&gt;&lt;br&gt;Do you want to fight?</source>
         <translation>Você encontrou uma frota pirata enquanto viajava entre planetas!&lt;br&gt;&lt;br&gt;Sua frota de batalha precisa derrotá-la se você quiser continuar.&lt;br&gt;&lt;br&gt;Se você lutar e perder, você morrerá.&lt;br&gt;&lt;br&gt;Se você lutar e vencer, perderá um pouco de saúde, mas poderá continuar sua viagem e não perderá dinheiro nem recursos.&lt;br&gt;&lt;br&gt;Se você não lutar, a única outra opção é se render; você não morrerá nem perderá saúde, mas poderá perder parte do seu dinheiro e dos seus recursos.&lt;br&gt;&lt;br&gt;Você quer lutar?</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="405"/>
+        <location filename="../location_browser.py" line="460"/>
         <source>Battle won!</source>
         <translation>Batalha vencida!</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="405"/>
+        <location filename="../location_browser.py" line="460"/>
         <source>You have defeated the pirate fleet, and can continue with your travels.</source>
         <translation>Você derrotou a frota pirata e pode continuar sua viagem.</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="410"/>
+        <location filename="../location_browser.py" line="465"/>
         <source>Battle lost!</source>
         <translation>Batalha perdida!</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="410"/>
+        <location filename="../location_browser.py" line="465"/>
         <source>You have been defeated by the pirate fleet.&lt;br&gt;&lt;br&gt;You are dead.</source>
         <translation>Você foi derrotado pela frota pirata.&lt;br&gt;&lt;br&gt;Você está morto.</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="428"/>
+        <location filename="../location_browser.py" line="483"/>
         <source>Surrender</source>
         <translation>Rendição</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="428"/>
+        <location filename="../location_browser.py" line="483"/>
         <source>You decide not to fight the pirate fleet. &lt;br&gt;&lt;br&gt;The pirates spare your life, but they rob you of everything you&apos;ve got!</source>
         <translation>Você decide não lutar contra a frota pirata. &lt;br&gt;&lt;br&gt;Os piratas poupam sua vida, mas roubam tudo o que você tem!</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="446"/>
+        <location filename="../location_browser.py" line="501"/>
         <source>Please select a planet first!</source>
         <translation>Selecione um planeta primeiro!</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="454"/>
+        <location filename="../location_browser.py" line="509"/>
         <source>Please select a planet to travel to first!</source>
         <translation>Selecione primeiro um planeta para onde viajar!</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="474"/>
+        <location filename="../location_browser.py" line="529"/>
         <source>No previous planet to travel to!</source>
         <translation>Não há planeta anterior para onde voltar!</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="478"/>
+        <location filename="../location_browser.py" line="533"/>
         <source>{0} no longer exists!</source>
         <comment>{0} is a planet name</comment>
         <translation>{0} não existe mais!</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="84"/>
+        <location filename="../location_browser.py" line="86"/>
         <source>Travel home</source>
         <translation>Voltar para casa</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="93"/>
+        <location filename="../location_browser.py" line="95"/>
         <source>Star map...</source>
         <translation>Mapa estelar...</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="108"/>
+        <location filename="../location_browser.py" line="110"/>
         <source>Distance</source>
         <translation>Distância</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="150"/>
+        <location filename="../location_browser.py" line="152"/>
         <source>travel back to your home planet, where your warehouse is</source>
         <translation>voltar ao seu planeta natal, onde fica o seu armazém</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="152"/>
+        <location filename="../location_browser.py" line="154"/>
         <source>show a map of all the planets you have discovered</source>
         <translation>mostrar um mapa de todos os planetas que você descobriu</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="276"/>
+        <location filename="../location_browser.py" line="298"/>
         <source>Your home planet. Your warehouse is here.</source>
         <translation>Seu planeta natal. Seu armazém fica aqui.</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="374"/>
+        <location filename="../location_browser.py" line="429"/>
         <source>Travel to {0}?&lt;br&gt;&lt;br&gt;(distance {1}, cost {2}, you have {3})</source>
         <comment>{0} is a planet name, and {1} is a distance, e.g. 27.4 ly</comment>
         <translation>Viajar para {0}?&lt;br&gt;&lt;br&gt;(distância {1}, custo {2}, você tem {3})</translation>
     </message>
     <message>
-        <location filename="../location_browser.py" line="108"/>
+        <location filename="../location_browser.py" line="110"/>
         <source>Reputation</source>
         <translation>Reputação</translation>
     </message>
@@ -1307,148 +1307,148 @@
 <context>
     <name>PlanetDestructionPicker</name>
     <message>
-        <location filename="../location_picker.py" line="83"/>
+        <location filename="../location_picker.py" line="92"/>
         <source>Destroy selected</source>
         <translation>Destruir selecionados</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="25"/>
+        <location filename="../location_picker.py" line="31"/>
         <source>destroy the selected planets</source>
         <translation>destruir os planetas selecionados</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="31"/>
+        <location filename="../location_picker.py" line="37"/>
         <source>Destroy all (cost {0})</source>
         <translation>Destruir todos (custo {0})</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="33"/>
+        <location filename="../location_picker.py" line="39"/>
         <source>Destroy all</source>
         <translation>Destruir todos</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="55"/>
+        <location filename="../location_picker.py" line="61"/>
         <source>Planet name</source>
         <translation>Nome do planeta</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="55"/>
+        <location filename="../location_picker.py" line="61"/>
         <source>Visited?</source>
         <translation>Visitado?</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="55"/>
+        <location filename="../location_picker.py" line="61"/>
         <source>Planet value</source>
         <translation>Valor do planeta</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="70"/>
+        <location filename="../location_picker.py" line="79"/>
         <source>Select a planet to destroy</source>
         <translation>Selecione um planeta para destruir</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="81"/>
+        <location filename="../location_picker.py" line="90"/>
         <source>Destroy selected (cost {0})</source>
         <translation>Destruir selecionados (custo {0})</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="116"/>
+        <location filename="../location_picker.py" line="125"/>
         <source>yes</source>
         <translation>sim</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="116"/>
+        <location filename="../location_picker.py" line="125"/>
         <source>no</source>
         <translation>não</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="164"/>
+        <location filename="../location_picker.py" line="177"/>
         <source>Planet {0} is resisting destruction! A battle fleet from {0} has been dispatched, and is prepared to defend the planet if you try to destroy it. You must defeat them if you want to continue with the destruction of {0}.&lt;br&gt;&lt;br&gt;If you fight and lose, you will die and the game will be over.&lt;br&gt;&lt;br&gt;If you fight and win, you will destroy this planet and gain its materials, but you will lose some health.&lt;br&gt;&lt;br&gt;If you choose not to fight, you will not be able to destroy this planet, but will continue unscathed.</source>
         <comment>{0} is a planet name</comment>
         <translation>O planeta {0} está resistindo à destruição! Uma frota de batalha de {0} foi enviada e está pronta para defender o planeta se você tentar destruí-lo. Você precisa derrotá-la se quiser continuar com a destruição de {0}.&lt;br&gt;&lt;br&gt;Se você lutar e perder, você morrerá e o jogo acabará.&lt;br&gt;&lt;br&gt;Se você lutar e vencer, destruirá este planeta e ganhará os materiais dele, mas perderá um pouco de saúde.&lt;br&gt;&lt;br&gt;Se você escolher não lutar, não poderá destruir este planeta, mas seguirá ileso.</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="176"/>
+        <location filename="../location_picker.py" line="189"/>
         <source>Since you have no battle fleet, your chances of victory are slim.</source>
         <translation>Como você não tem frota de batalha, suas chances de vitória são pequenas.</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="178"/>
+        <location filename="../location_picker.py" line="191"/>
         <source>Do you want to fight?</source>
         <translation>Você quer lutar?</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="181"/>
+        <location filename="../location_picker.py" line="194"/>
         <source>Planet is resisting!</source>
         <translation>O planeta está resistindo!</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="184"/>
+        <location filename="../location_picker.py" line="197"/>
         <source>Chickened out!</source>
         <translation>Amarelou!</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="184"/>
+        <location filename="../location_picker.py" line="197"/>
         <source>You have declined to fight {0}. They win, this time.</source>
         <comment>{0} is a planet name</comment>
         <translation>Você se recusou a lutar contra {0}. Eles venceram, desta vez.</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="199"/>
+        <location filename="../location_picker.py" line="212"/>
         <source>Victory!</source>
         <translation>Vitória!</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="199"/>
+        <location filename="../location_picker.py" line="212"/>
         <source>You have defeated {0}!</source>
         <comment>{0} is a planet name</comment>
         <translation>Você derrotou {0}!</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="207"/>
+        <location filename="../location_picker.py" line="220"/>
         <source>Defeat!</source>
         <translation>Derrota!</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="207"/>
+        <location filename="../location_picker.py" line="220"/>
         <source>You have been defeated in battle by {0}.&lt;br&gt;&lt;br&gt;&lt;br&gt;You are dead :(</source>
         <comment>{0} is a planet name</comment>
         <translation>Você foi derrotado em batalha por {0}.&lt;br&gt;&lt;br&gt;&lt;br&gt;Você está morto :(</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="290"/>
+        <location filename="../location_picker.py" line="303"/>
         <source>Are you sure?</source>
         <translation>Tem certeza?</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="332"/>
+        <location filename="../location_picker.py" line="345"/>
         <source>Success</source>
         <translation>Sucesso</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="256"/>
+        <location filename="../location_picker.py" line="269"/>
         <source>Destruction of all planets is complete.</source>
         <translation>A destruição de todos os planetas foi concluída.</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="262"/>
+        <location filename="../location_picker.py" line="275"/>
         <source>Please select planets to destroy first!</source>
         <translation>Selecione primeiro os planetas que quer destruir!</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="268"/>
+        <location filename="../location_picker.py" line="281"/>
         <source>Are you sure you want to destroy the planet {0}? {0} will cease to exist, and all tradeable items that currently exist on {0} will be shipped to your warehouse.</source>
         <comment>{0} is a planet name</comment>
         <translation>Tem certeza de que quer destruir o planeta {0}? {0} deixará de existir, e todos os itens negociáveis que existem em {0} serão enviados para o seu armazém.</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="272"/>
+        <location filename="../location_picker.py" line="285"/>
         <source>Are you sure you want to destroy {0}? These planets will cease to exist, and all tradeable items that currently exist on these planets will be shipped to your warehouse.</source>
         <comment>{0} is a list of 2 to 5 planet names, e.g. &quot;A, B and C&quot;</comment>
         <translation>Tem certeza de que quer destruir {0}? Esses planetas deixarão de existir, e todos os itens negociáveis que existem neles serão enviados para o seu armazém.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../location_picker.py" line="277"/>
+        <location filename="../location_picker.py" line="290"/>
         <source>Are you sure you want to destroy %Ln planets? These planets will cease to exist, and all tradeable items that currently exist on these planets will be shipped to your warehouse.</source>
         <translation>
             <numerusform>Tem certeza de que quer destruir %Ln planeta? Esse planeta deixará de existir, e todos os itens negociáveis que existem nele serão enviados para o seu armazém.</numerusform>
@@ -1456,25 +1456,25 @@
         </translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="286"/>
+        <location filename="../location_picker.py" line="299"/>
         <source>Oh, and you are currently on {0}, so you will also die.</source>
         <comment>{0} is a planet name</comment>
         <translation>Ah, e você está em {0} agora, então você também vai morrer.</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="320"/>
+        <location filename="../location_picker.py" line="333"/>
         <source>Destruction of {0} is complete.</source>
         <comment>{0} is a planet name</comment>
         <translation>A destruição de {0} foi concluída.</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="323"/>
+        <location filename="../location_picker.py" line="336"/>
         <source>Destruction of {0} is complete.</source>
         <comment>{0} is a list of 2 to 5 planet names, e.g. &quot;A, B and C&quot;</comment>
         <translation>A destruição de {0} foi concluída.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../location_picker.py" line="327"/>
+        <location filename="../location_picker.py" line="340"/>
         <source>Destruction of %Ln planets is complete.</source>
         <translation>
             <numerusform>A destruição de %Ln planeta foi concluída.</numerusform>
@@ -1482,24 +1482,29 @@
         </translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="336"/>
+        <location filename="../location_picker.py" line="349"/>
         <source>Dead!</source>
         <translation>Morto!</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="336"/>
+        <location filename="../location_picker.py" line="349"/>
         <source>You destroyed the planet you were on, and killed yourself.&lt;br&gt;&lt;br&gt;You are dead.</source>
         <translation>Você destruiu o planeta em que estava e se matou.&lt;br&gt;&lt;br&gt;Você está morto.</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="39"/>
+        <location filename="../location_picker.py" line="45"/>
         <source>destroy all planets except your home planet and the one you are currently on</source>
         <translation>destruir todos os planetas, exceto seu planeta natal e aquele em que você está</translation>
     </message>
     <message>
-        <location filename="../location_picker.py" line="218"/>
+        <location filename="../location_picker.py" line="231"/>
         <source>Are you sure you want to destroy all planets for {0}? All planets except for your home planet and the one you are currently on will cease to exist, and all tradeable items that currently exist on those planets will be shipped to your warehouse.</source>
         <translation>Tem certeza de que quer destruir todos os planetas por {0}? Todos os planetas, exceto seu planeta natal e aquele em que você está, deixarão de existir, e todos os itens negociáveis que existem nesses planetas serão enviados para o seu armazém.</translation>
+    </message>
+    <message>
+        <location filename="../location_picker.py" line="61"/>
+        <source>Distance</source>
+        <translation>Distância</translation>
     </message>
 </context>
 <context>
@@ -1551,63 +1556,63 @@
 <context>
     <name>PlanetItemBrowser</name>
     <message>
-        <location filename="../item_browsers.py" line="425"/>
+        <location filename="../item_browsers.py" line="429"/>
         <source>Item type</source>
         <translation>Tipo de item</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="425"/>
+        <location filename="../item_browsers.py" line="429"/>
         <source>Quantity available</source>
         <translation>Quantidade disponível</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="425"/>
+        <location filename="../item_browsers.py" line="429"/>
         <source>Cost</source>
         <translation>Custo</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="425"/>
+        <location filename="../item_browsers.py" line="429"/>
         <source>Base price delta</source>
         <translation>Diferença do preço base</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="517"/>
+        <location filename="../item_browsers.py" line="521"/>
         <source>Buy item</source>
         <translation>Comprar item</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="517"/>
+        <location filename="../item_browsers.py" line="521"/>
         <source>buy one or more of the selected item from the current planet</source>
         <translation>comprar uma ou mais unidades do item selecionado no planeta atual</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="542"/>
+        <location filename="../item_browsers.py" line="546"/>
         <source>No item selected</source>
         <translation>Nenhum item selecionado</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="542"/>
+        <location filename="../item_browsers.py" line="546"/>
         <source>Please select an item to buy first!</source>
         <translation>Selecione primeiro um item para comprar!</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="550"/>
+        <location filename="../item_browsers.py" line="554"/>
         <source>None available</source>
         <translation>Nenhum disponível</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="550"/>
+        <location filename="../item_browsers.py" line="554"/>
         <source>{0} has no {1} left to sell</source>
         <comment>{0} is a planet name, and {1} is an item name, e.g. tin</comment>
         <translation>{0} não tem mais {1} para vender</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="557"/>
+        <location filename="../item_browsers.py" line="561"/>
         <source>Maximum capacity</source>
         <translation>Capacidade máxima</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="557"/>
+        <location filename="../item_browsers.py" line="561"/>
         <source>You have no more room on your ship. You need to increase your ship capacity, or sell some items, or dump some items, or move some items to the warehouse before you can buy more.</source>
         <translation>Não há mais espaço na sua nave. Você precisa aumentar a capacidade da nave, vender alguns itens, descartar alguns itens ou mover alguns itens para o armazém antes de poder comprar mais.</translation>
     </message>
@@ -1615,57 +1620,57 @@
 <context>
     <name>PlayerItemBrowser</name>
     <message>
-        <location filename="../item_browsers.py" line="183"/>
+        <location filename="../item_browsers.py" line="184"/>
         <source>Sell items</source>
         <translation>Vender itens</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="183"/>
+        <location filename="../item_browsers.py" line="184"/>
         <source>sell one or more of the selected item to the current planet</source>
         <translation>vender uma ou mais unidades do item selecionado ao planeta atual</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="185"/>
+        <location filename="../item_browsers.py" line="186"/>
         <source>Sell all</source>
         <translation>Vender tudo</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="185"/>
+        <location filename="../item_browsers.py" line="186"/>
         <source>sell all items on your ship to the current planet</source>
         <translation>vender todos os itens da sua nave ao planeta atual</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="187"/>
+        <location filename="../item_browsers.py" line="188"/>
         <source>To warehouse</source>
         <translation>Para o armazém</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="187"/>
+        <location filename="../item_browsers.py" line="188"/>
         <source>move one or more of the selected item from your ship to the warehouse</source>
         <translation>mover uma ou mais unidades do item selecionado da sua nave para o armazém</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="189"/>
+        <location filename="../item_browsers.py" line="190"/>
         <source>Dump</source>
         <translation>Descartar</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="189"/>
+        <location filename="../item_browsers.py" line="190"/>
         <source>dump one or more of the selected item from your ship</source>
         <translation>descartar uma ou mais unidades do item selecionado da sua nave</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="191"/>
+        <location filename="../item_browsers.py" line="192"/>
         <source>Dump all</source>
         <translation>Descartar tudo</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="191"/>
+        <location filename="../item_browsers.py" line="192"/>
         <source>dump all items from your ship</source>
         <translation>descartar todos os itens da sua nave</translation>
     </message>
     <message numerus="yes">
-        <location filename="../item_browsers.py" line="206"/>
+        <location filename="../item_browsers.py" line="207"/>
         <source>{0} has never been seen on {1}, and you will have to persuade them that it is worth buying. If you provide a free sample of %Ln {0}, this may help your cause.&lt;br&gt;&lt;br&gt;Provide a free sample of %Ln {0}?</source>
         <comment>{0} is an item name, e.g. tin, and {1} is a planet name</comment>
         <translation>
@@ -1674,75 +1679,75 @@
         </translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="213"/>
+        <location filename="../item_browsers.py" line="214"/>
         <source>Provide sample?</source>
         <translation>Oferecer amostra?</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="218"/>
+        <location filename="../item_browsers.py" line="219"/>
         <source>Already sampled today</source>
         <translation>Amostra já oferecida hoje</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="218"/>
+        <location filename="../item_browsers.py" line="219"/>
         <source>{0} has already sampled {1} today, try again on a different day</source>
         <comment>{0} is a planet name, and {1} is an item name, e.g. tin</comment>
         <translation>{0} já recebeu uma amostra de {1} hoje, tente novamente em outro dia</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="245"/>
+        <location filename="../item_browsers.py" line="246"/>
         <source>Good news!</source>
         <translation>Boas notícias!</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="246"/>
+        <location filename="../item_browsers.py" line="247"/>
         <source>Your sample achieved its intended purpose! {0} is now actively trading in {1}.</source>
         <comment>{0} is a planet name, and {1} is an item name, e.g. tin</comment>
         <translation>Sua amostra cumpriu o objetivo! {0} agora está negociando {1} ativamente.</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="253"/>
+        <location filename="../item_browsers.py" line="254"/>
         <source>Bad news!</source>
         <translation>Más notícias!</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="254"/>
+        <location filename="../item_browsers.py" line="255"/>
         <source>Your sample was not well received, and {0} has decided not to trade in {1}.</source>
         <comment>{0} is a planet name, and {1} is an item name, e.g. tin</comment>
         <translation>Sua amostra não foi bem recebida, e {0} decidiu não negociar {1}.</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="384"/>
+        <location filename="../item_browsers.py" line="388"/>
         <source>No items</source>
         <translation>Nenhum item</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="282"/>
+        <location filename="../item_browsers.py" line="283"/>
         <source>You have no items to dump.</source>
         <translation>Você não tem itens para descartar.</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="267"/>
+        <location filename="../item_browsers.py" line="268"/>
         <source>Dump everything?</source>
         <translation>Descartar tudo?</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="267"/>
+        <location filename="../item_browsers.py" line="268"/>
         <source>Are you sure you want to dump all your items? You will lose all the items in your ship, and you will not be able to get them back.</source>
         <translation>Tem certeza de que quer descartar todos os seus itens? Você perderá todos os itens da sua nave e não poderá recuperá-los.</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="397"/>
+        <location filename="../item_browsers.py" line="401"/>
         <source>Please select an item first!</source>
         <translation>Selecione um item primeiro!</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="318"/>
+        <location filename="../item_browsers.py" line="319"/>
         <source>You have no items to sell.</source>
         <translation>Você não tem itens para vender.</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="301"/>
+        <location filename="../item_browsers.py" line="302"/>
         <source>Please select an item to sell first!</source>
         <translation>Selecione primeiro um item para vender!</translation>
     </message>
@@ -1757,7 +1762,7 @@
         <translation>Este planeta não está comprando nenhum dos itens que você está vendendo.</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="358"/>
+        <location filename="../item_browsers.py" line="362"/>
         <source>Sell all?</source>
         <translation>Vender tudo?</translation>
     </message>
@@ -1768,28 +1773,28 @@
         <translation>Tem certeza de que quer vender todos os itens que estão sendo negociados em {0}? (ganho total: {1})</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="384"/>
+        <location filename="../item_browsers.py" line="388"/>
         <source>You have no items to put in the warehouse.</source>
         <translation>Você não tem itens para colocar no armazém.</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="391"/>
+        <location filename="../item_browsers.py" line="395"/>
         <source>Warehouse</source>
         <translation>Armazém</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="391"/>
+        <location filename="../item_browsers.py" line="395"/>
         <source>You cannot put anything else in the warehouse until tomorrow</source>
         <translation>Você não pode colocar mais nada no armazém até amanhã</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="348"/>
+        <location filename="../item_browsers.py" line="349"/>
         <source>{0} would normally pay {1} for these items, but they&apos;re willing to pay you {2} because of your shining reputation! Well done!</source>
         <comment>{0} is a planet name, and {1} and {2} are prices</comment>
         <translation>{0} normalmente pagaria {1} por esses itens, mas está disposto a pagar {2} a você por causa da sua reputação brilhante! Muito bem!</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="353"/>
+        <location filename="../item_browsers.py" line="354"/>
         <source>{0} would normally pay {1} for these items, but they&apos;ll only pay you {2}, because they don&apos;t trust you.</source>
         <comment>{0} is a planet name, and {1} and {2} are prices</comment>
         <translation>{0} normalmente pagaria {1} por esses itens, mas só vai pagar {2} a você, porque não confia em você.</translation>
@@ -1798,23 +1803,23 @@
 <context>
     <name>PlayerToWarehouse</name>
     <message>
-        <location filename="../transaction_dialogs.py" line="214"/>
+        <location filename="../transaction_dialogs.py" line="237"/>
         <source>How much {0} do you want to move to the warehouse?</source>
         <comment>{0} is an item name, e.g. tin</comment>
         <translation>Quantas unidades de {0} você quer mover para o armazém?</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="217"/>
+        <location filename="../transaction_dialogs.py" line="240"/>
         <source>Move</source>
         <translation>Mover</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="218"/>
+        <location filename="../transaction_dialogs.py" line="241"/>
         <source>Move to warehouse</source>
         <translation>Mover para o armazém</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="228"/>
+        <location filename="../transaction_dialogs.py" line="251"/>
         <source>Move quantity</source>
         <translation>Quantidade a mover</translation>
     </message>
@@ -1859,32 +1864,32 @@
 <context>
     <name>Reputation</name>
     <message>
-        <location filename="../reputation.py" line="120"/>
+        <location filename="../reputation.py" line="127"/>
         <source>Allied</source>
         <translation>Aliado</translation>
     </message>
     <message>
-        <location filename="../reputation.py" line="121"/>
+        <location filename="../reputation.py" line="128"/>
         <source>Friendly</source>
         <translation>Amigável</translation>
     </message>
     <message>
-        <location filename="../reputation.py" line="122"/>
+        <location filename="../reputation.py" line="129"/>
         <source>Wary</source>
         <translation>Desconfiado</translation>
     </message>
     <message>
-        <location filename="../reputation.py" line="123"/>
+        <location filename="../reputation.py" line="130"/>
         <source>Hostile</source>
         <translation>Hostil</translation>
     </message>
     <message>
-        <location filename="../reputation.py" line="124"/>
+        <location filename="../reputation.py" line="131"/>
         <source>Refuses to trade</source>
         <translation>Recusa negociar</translation>
     </message>
     <message>
-        <location filename="../reputation.py" line="187"/>
+        <location filename="../reputation.py" line="199"/>
         <source>{0} ({1})</source>
         <comment>{0} is a reputation level, e.g. Wary, and {1} is a number from 0 to 100</comment>
         <translation>{0} ({1})</translation>
@@ -1956,34 +1961,34 @@
 <context>
     <name>Sell</name>
     <message>
-        <location filename="../transaction_dialogs.py" line="164"/>
+        <location filename="../transaction_dialogs.py" line="183"/>
         <source>How much {0} do you want to sell?</source>
         <comment>{0} is an item name, e.g. tin</comment>
         <translation>Quantas unidades de {0} você quer vender?</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="166"/>
+        <location filename="../transaction_dialogs.py" line="185"/>
         <source>Sell</source>
         <translation>Vender</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="167"/>
+        <location filename="../transaction_dialogs.py" line="186"/>
         <source>Sell items</source>
         <translation>Vender itens</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="182"/>
+        <location filename="../transaction_dialogs.py" line="205"/>
         <source>Sell quantity (gain: {0})</source>
         <translation>Quantidade a vender (ganho: {0})</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="189"/>
+        <location filename="../transaction_dialogs.py" line="212"/>
         <source>{0} would normally pay {2} for this much {1}, but they&apos;re willing to pay you {3} because of your shining reputation! Well done!</source>
         <comment>{0} is a planet name, {1} is an item name, e.g. tin, and {2} and {3} are prices</comment>
         <translation>{0} normalmente pagaria {2} por essa quantidade de {1}, mas está disposto a pagar {3} a você por causa da sua reputação brilhante! Muito bem!</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="193"/>
+        <location filename="../transaction_dialogs.py" line="216"/>
         <source>{0} would normally pay {2} for this much {1}, but they&apos;ll only pay you {3}, because they don&apos;t trust you.</source>
         <comment>{0} is a planet name, {1} is an item name, e.g. tin, and {2} and {3} are prices</comment>
         <translation>{0} normalmente pagaria {2} por essa quantidade de {1}, mas só vai pagar {3} a você, porque não confia em você.</translation>
@@ -2160,7 +2165,7 @@
 <context>
     <name>State</name>
     <message numerus="yes">
-        <location filename="../game_state.py" line="267"/>
+        <location filename="../game_state.py" line="300"/>
         <source>Day {0}: {1}, bought %Ln {2} for {3} each</source>
         <comment>{1} is a planet name, and {2} is an item name, e.g. tin</comment>
         <translation>
@@ -2169,7 +2174,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../game_state.py" line="270"/>
+        <location filename="../game_state.py" line="303"/>
         <source>Day {0}: {1}, sold %Ln {2} for {3} each</source>
         <comment>{1} is a planet name, and {2} is an item name, e.g. tin</comment>
         <translation>
@@ -2178,7 +2183,7 @@
         </translation>
     </message>
     <message>
-        <location filename="../game_state.py" line="278"/>
+        <location filename="../game_state.py" line="317"/>
         <source>Day {0}: {1}</source>
         <comment>{1} is a planet name</comment>
         <translation>Dia {0}: {1}</translation>
@@ -2259,7 +2264,7 @@
 <context>
     <name>TradingConsole</name>
     <message>
-        <location filename="../location_browser.py" line="30"/>
+        <location filename="../location_browser.py" line="32"/>
         <source>Item prices on {0}</source>
         <comment>{0} is a planet name</comment>
         <translation>Preços dos itens em {0}</translation>
@@ -2306,17 +2311,17 @@
 <context>
     <name>TransactionDialog</name>
     <message>
-        <location filename="../transaction_dialogs.py" line="26"/>
+        <location filename="../transaction_dialogs.py" line="27"/>
         <source>(your money: {0})</source>
         <translation>(seu dinheiro: {0})</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="38"/>
+        <location filename="../transaction_dialogs.py" line="39"/>
         <source>Max</source>
         <translation>Máx.</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="49"/>
+        <location filename="../transaction_dialogs.py" line="50"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
@@ -2324,102 +2329,102 @@
 <context>
     <name>WarehouseItemBrowser</name>
     <message>
-        <location filename="../item_browsers.py" line="579"/>
+        <location filename="../item_browsers.py" line="583"/>
         <source>Retrieve</source>
         <translation>Retirar</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="579"/>
+        <location filename="../item_browsers.py" line="583"/>
         <source>move one or more of the selected item from the warehouse to your ship</source>
         <translation>mover uma ou mais unidades do item selecionado do armazém para a sua nave</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="581"/>
+        <location filename="../item_browsers.py" line="585"/>
         <source>Retrieve all</source>
         <translation>Retirar tudo</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="581"/>
+        <location filename="../item_browsers.py" line="585"/>
         <source>move all items from the warehouse to your ship</source>
         <translation>mover todos os itens do armazém para a sua nave</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="583"/>
+        <location filename="../item_browsers.py" line="587"/>
         <source>Dump</source>
         <translation>Descartar</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="583"/>
+        <location filename="../item_browsers.py" line="587"/>
         <source>dump one or more of the selected item from your warehouse</source>
         <translation>descartar uma ou mais unidades do item selecionado do seu armazém</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="585"/>
+        <location filename="../item_browsers.py" line="589"/>
         <source>Dump all</source>
         <translation>Descartar tudo</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="585"/>
+        <location filename="../item_browsers.py" line="589"/>
         <source>dump all items from your warehouse</source>
         <translation>descartar todos os itens do seu armazém</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="592"/>
+        <location filename="../item_browsers.py" line="596"/>
         <source>No items</source>
         <translation>Nenhum item</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="592"/>
+        <location filename="../item_browsers.py" line="596"/>
         <source>You have no items to dump.</source>
         <translation>Você não tem itens para descartar.</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="595"/>
+        <location filename="../item_browsers.py" line="599"/>
         <source>Dump everything?</source>
         <translation>Descartar tudo?</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="595"/>
+        <location filename="../item_browsers.py" line="599"/>
         <source>Are you sure you want to dump all your items? You will lose all the items in your warehouse, and you will not be able to get them back.</source>
         <translation>Tem certeza de que quer descartar todos os seus itens? Você perderá todos os itens do seu armazém e não poderá recuperá-los.</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="684"/>
+        <location filename="../item_browsers.py" line="688"/>
         <source>Warehouse</source>
         <translation>Armazém</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="610"/>
+        <location filename="../item_browsers.py" line="614"/>
         <source>There is nothing in your warehouse to dump.</source>
         <translation>Não há nada no seu armazém para descartar.</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="690"/>
+        <location filename="../item_browsers.py" line="694"/>
         <source>Please select an item first!</source>
         <translation>Selecione um item primeiro!</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="625"/>
+        <location filename="../item_browsers.py" line="629"/>
         <source>There is nothing in your warehouse to retrieve.</source>
         <translation>Não há nada no seu armazém para retirar.</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="632"/>
+        <location filename="../item_browsers.py" line="636"/>
         <source>You cannot take anything else from the warehouse until tomorrow.</source>
         <translation>Você não pode retirar mais nada do armazém até amanhã.</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="640"/>
+        <location filename="../item_browsers.py" line="644"/>
         <source>Maximum capacity</source>
         <translation>Capacidade máxima</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="640"/>
+        <location filename="../item_browsers.py" line="644"/>
         <source>You have no more room on your ship. You need to increase your ship capacity, or sell some items, or dump some items before you can retrieve items from the warehouse.</source>
         <translation>Não há mais espaço na sua nave. Você precisa aumentar a capacidade da nave, vender alguns itens ou descartar alguns itens antes de poder retirar itens do armazém.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../item_browsers.py" line="647"/>
+        <location filename="../item_browsers.py" line="651"/>
         <source>You do not have room for all items, the maximum number of items that can be retrieved is %Ln. Are you sure you want to retrieve %Ln items? </source>
         <translation>
             <numerusform>Não há espaço para todos os itens; o número máximo de itens que pode ser retirado é %Ln. Tem certeza de que quer retirar %Ln item? </numerusform>
@@ -2427,22 +2432,22 @@
         </translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="652"/>
+        <location filename="../item_browsers.py" line="656"/>
         <source>Are you sure you want to retrieve all items?</source>
         <translation>Tem certeza de que quer retirar todos os itens?</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="654"/>
+        <location filename="../item_browsers.py" line="658"/>
         <source>Are you sure?</source>
         <translation>Tem certeza?</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="677"/>
+        <location filename="../item_browsers.py" line="681"/>
         <source>There is nothing in your warehouse to remove.</source>
         <translation>Não há nada no seu armazém para retirar.</translation>
     </message>
     <message>
-        <location filename="../item_browsers.py" line="684"/>
+        <location filename="../item_browsers.py" line="688"/>
         <source>You cannot take anything else from the warehouse until tomorrow</source>
         <translation>Você não pode retirar mais nada do armazém até amanhã</translation>
     </message>
@@ -2450,23 +2455,23 @@
 <context>
     <name>WarehouseToPlayer</name>
     <message>
-        <location filename="../transaction_dialogs.py" line="239"/>
+        <location filename="../transaction_dialogs.py" line="262"/>
         <source>How much {0} do you want to retrieve?</source>
         <comment>{0} is an item name, e.g. tin</comment>
         <translation>Quantas unidades de {0} você quer retirar?</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="242"/>
+        <location filename="../transaction_dialogs.py" line="265"/>
         <source>Move</source>
         <translation>Mover</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="243"/>
+        <location filename="../transaction_dialogs.py" line="266"/>
         <source>Retrieve from warehouse</source>
         <translation>Retirar do armazém</translation>
     </message>
     <message>
-        <location filename="../transaction_dialogs.py" line="253"/>
+        <location filename="../transaction_dialogs.py" line="276"/>
         <source>Move quantity</source>
         <translation>Quantidade a mover</translation>
     </message>
