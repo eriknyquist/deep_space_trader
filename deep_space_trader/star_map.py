@@ -1,8 +1,9 @@
 import math
 
 from deep_space_trader import constants as const
+from deep_space_trader import reputation
 from deep_space_trader.utils import selectRowByKey, ICON_PATH
-from deep_space_trader.i18n import formatNumber, formatDistance
+from deep_space_trader.i18n import translate, formatNumber, formatDistance
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
@@ -165,33 +166,39 @@ class PlanetsLayer(QtWidgets.QGraphicsItem):
     Draws every planet. Thousands of separate graphics items, or thousands of
     separately drawn dots, made zooming slow. Instead, every planet is drawn as
     a copy of a small pre-drawn dot (one drawPixmapFragments() call for all
-    visited planets, and one for the rest), and the few special planets
-    (current, home, previous, selected) are drawn on top, one by one
+    visited planets, and one for the rest, or one per reputation level of
+    each when colouring by reputation), and the few special planets (current,
+    home, previous, selected) are drawn on top, one by one
     """
     def __init__(self, starMap):
         super(PlanetsLayer, self).__init__()
         self.starMap = starMap
         state = starMap.parent.state
 
-        # visited -> (x positions, y positions, opacities) of those planets, in scene coordinates
-        groups = {True: ([], [], []), False: ([], [], [])}
-        for planet in state.planets:
-            xs, ys, opacities = groups[planet.visited]
+        # (visited, reputation level) -> (x positions, y positions, opacities) of
+        # those planets, in scene coordinates
+        groups = {}
+        levels = [reputation.level(value) for value in state.reputations(state.planets)]
+        for planet, level in zip(state.planets, levels):
+            xs, ys, opacities = groups.setdefault((planet.visited, level), ([], [], []))
             pos = scenePos(planet)
             xs.append(pos.x())
             ys.append(pos.y())
             opacities.append(DIMMED_OPACITY if starMap.isDimmed(planet) else 1.0)
 
         if PrimitiveArray is not None:
-            self.groups = {visited: tuple(numpy.array(values, dtype=float) for values in group)
-                           for visited, group in groups.items()}
+            self.groups = {key: tuple(numpy.array(values, dtype=float) for values in group)
+                           for key, group in groups.items()}
             self.fragments = PrimitiveArray(QtGui.QPainter.PixmapFragment, 10)
         else:
-            self.groups = {visited: (QtGui.QPolygonF([QtCore.QPointF(x, y) for x, y in zip(xs, ys)]), opacities)
-                           for visited, (xs, ys, opacities) in groups.items()}
+            self.groups = {key: (QtGui.QPolygonF([QtCore.QPointF(x, y) for x, y in zip(xs, ys)]), opacities)
+                           for key, (xs, ys, opacities) in groups.items()}
+
+        # Planets not visited are drawn first, so the filled dots of visited planets are on top
+        self.drawOrder = sorted(self.groups)
 
         self.sprites = {}
-        self.spritesDpr = None
+        self.spritesKey = None
 
         # Leave room for the dots and rings around the outermost planets
         margin = 50 * PIXELS_PER_LY
@@ -202,9 +209,22 @@ class PlanetsLayer(QtWidgets.QGraphicsItem):
         return self.rect
 
     def spritesFor(self, dpr):
-        if dpr != self.spritesDpr:
-            self.sprites = {True: dotSprite(VISITED_COLOR, None, dpr), False: dotSprite(None, UNVISITED_COLOR, dpr)}
-            self.spritesDpr = dpr
+        """
+        (visited, reputation level) -> dot picture
+        """
+        colour = self.starMap.colourByReputation()
+        if (dpr, colour) != self.spritesKey:
+            levels = range(len(reputation.LEVEL_COLORS))
+            if colour:
+                colors = [QtGui.QColor(c) for c in reputation.LEVEL_COLORS]
+                self.sprites = {(visited, level): (dotSprite(colors[level], None, dpr) if visited else
+                                                   dotSprite(None, colors[level], dpr))
+                                for visited in (False, True) for level in levels}
+            else:
+                visited, unvisited = dotSprite(VISITED_COLOR, None, dpr), dotSprite(None, UNVISITED_COLOR, dpr)
+                self.sprites = {(v, level): (visited if v else unvisited) for v in (False, True) for level in levels}
+
+            self.spritesKey = (dpr, colour)
 
         return self.sprites
 
@@ -219,12 +239,12 @@ class PlanetsLayer(QtWidgets.QGraphicsItem):
         painter.save()
         # Draw in pixels, so the dots don't change size with the zoom
         painter.resetTransform()
-        for visited in (False, True):
-            sprite = sprites[visited]
+        for key in self.drawOrder:
+            sprite = sprites[key]
             if PrimitiveArray is not None:
-                self.paintFast(painter, transform, visible, self.groups[visited], sprite, dpr)
+                self.paintFast(painter, transform, visible, self.groups[key], sprite, dpr)
             else:
-                self.paintSlow(painter, transform, visible, self.groups[visited], sprite, dpr)
+                self.paintSlow(painter, transform, visible, self.groups[key], sprite, dpr)
 
         painter.restore()
 
@@ -411,6 +431,27 @@ class StarMap(QtWidgets.QDialog):
             layout.addWidget(icon, row, column * 2)
             layout.addWidget(label, row, column * 2 + 1)
 
+        # Colours of the reputation levels, only shown when colouring by reputation
+        first_row = layout.rowCount()
+        self.reputationCheckBox = QtWidgets.QCheckBox(self.tr("Colour by reputation"))
+        self.reputationCheckBox.setToolTip(self.tr("Colour each planet by what it thinks of you. "
+                                                   "Filled dots are still planets you have visited."))
+        self.reputationCheckBox.setChecked(self.parent.starMapColourByReputation)
+        self.reputationCheckBox.toggled.connect(self.colourByReputationToggled)
+        layout.addWidget(self.reputationCheckBox, first_row, 0, 1, columns * 2)
+
+        self.reputationKeyWidgets = []
+        for level, color in enumerate(reputation.LEVEL_COLORS):
+            icon = QtWidgets.QLabel()
+            icon.setPixmap(legendIcon(DotStyle(fill=QtGui.QColor(color)), dpr))
+            label = QtWidgets.QLabel(translate("Reputation", reputation.LEVEL_NAMES[level]))
+            row, column = divmod(level, columns)
+            layout.addWidget(icon, first_row + 1 + row, column * 2)
+            layout.addWidget(label, first_row + 1 + row, column * 2 + 1)
+            self.reputationKeyWidgets.extend([icon, label])
+
+        self.showReputationKey()
+
         # Space the columns evenly
         for column in range(columns):
             layout.setColumnStretch(column * 2 + 1, 1)
@@ -418,6 +459,19 @@ class StarMap(QtWidgets.QDialog):
         group = QtWidgets.QGroupBox(self.tr("Key"))
         group.setLayout(layout)
         return group
+
+    def colourByReputation(self):
+        return self.parent.starMapColourByReputation
+
+    def showReputationKey(self):
+        for widget in self.reputationKeyWidgets:
+            widget.setVisible(self.colourByReputation())
+
+    def colourByReputationToggled(self, checked):
+        self.parent.starMapColourByReputation = checked
+        self.showReputationKey()
+        if self.layer is not None:
+            self.layer.update()
 
     def controlsGroup(self):
         """
@@ -600,6 +654,8 @@ class StarMap(QtWidgets.QDialog):
         if planet is state.home_planet:
             lines.append(self.tr("Home planet. Your warehouse is here."))
 
+        lines.append(self.tr("Reputation: {0}", "{0} is a reputation, e.g. Wary (58)").format(
+                     reputation.describe(state.reputation_of(planet))))
         return "<br>".join(lines)
 
     def fitToPlanets(self):

@@ -7,6 +7,7 @@ from deep_space_trader.transaction_dialogs import (
 
 from deep_space_trader.price_graph import PriceHistoryGraph
 from deep_space_trader import constants as const
+from deep_space_trader import reputation
 from deep_space_trader.utils import (
     errorDialog, yesNoDialog, infoDialog, checkForMoneyBonus, selectedRowKey, selectRowByKey
 )
@@ -81,6 +82,21 @@ def atWarehouse(browser):
                 message=translate("ItemBrowser", "Your warehouse is on {0}. Travel there to use it.",
                                   "{0} is a planet name").format(state.home_planet.full_name))
     return False
+
+
+def refusesToTrade(browser):
+    """
+    If the current planet won't trade with the player, say so and return True
+    """
+    state = browser.parent.state
+    if state.trades_with_you(state.current_planet):
+        return False
+
+    errorDialog(browser, translate("ItemBrowser", "Trade refused"),
+                message=translate("ItemBrowser", "{0} refuses to trade with you, because of what "
+                                  "you've done nearby.", "{0} is a planet name").format(
+                                  state.current_planet.full_name))
+    return True
 
 
 class ItemBrowser(QtWidgets.QWidget):
@@ -218,7 +234,10 @@ class PlayerItemBrowser(ItemBrowser):
         successful = random.randrange(0, 100) < const.ITEM_SAMPLE_SUCCESS_PERCENT
         if successful:
             # Sample succesful, update planet item browser to show new item we added
+            self.parent.state.sample_accepted(planet)
+            self.parent.locationBrowser.refreshReputations()
             self.parent.planetItemBrowser.update()
+            self.parent.infoBar.update()
 
             # Reset item's value history
             item = planet.items.items[itemname]
@@ -282,6 +301,8 @@ class PlayerItemBrowser(ItemBrowser):
         if itemname is None:
             errorDialog(self, message=self.tr("Please select an item to sell first!"))
             return
+        if refusesToTrade(self):
+            return
         if itemname not in self.parent.state.current_planet.items.items:
             self.introduceNewItem(itemname)
             return
@@ -298,27 +319,47 @@ class PlayerItemBrowser(ItemBrowser):
             errorDialog(self, self.tr("No items"), self.tr("You have no items to sell."))
             return
 
+        if refusesToTrade(self):
+            return
+
         items_for_sale_on_planet = False
+        normal_gain = 0
 
         for name in self.parent.state.items.items:
             if name not in planet.items.items:
                 continue
 
             items_for_sale_on_planet = True
-            price = planet.items.items[name].value
             quantity = self.parent.state.items.items[name].quantity
-            gain += price * quantity
+            gain += self.parent.state.sell_total(planet, name, quantity)
+            normal_gain += planet.items.items[name].value * quantity
 
         if not items_for_sale_on_planet:
             errorDialog(self, self.tr("Items cannot be sold"),
                         self.tr("This planet is not buying any of the items you are selling."))
             return
 
-        proceed = yesNoDialog(self, self.tr("Sell all?"),
-                              message=self.tr("Are you sure you want to sell all items "
-                                              "that are currently being traded on {0}? (total "
-                                              "gain: {1})", "{0} is a planet name").format(
-                                              planet.full_name, formatNumber(gain)))
+        msg = self.tr("Are you sure you want to sell all items that are currently being traded "
+                      "on {0}? (total gain: {1})", "{0} is a planet name").format(
+                      planet.full_name, formatNumber(gain))
+
+        # How the planet's opinion of the player changes the price (green if better, red if worse)
+        if gain != normal_gain:
+            if gain > normal_gain:
+                text = self.tr("{0} would normally pay {1} for these items, but they're willing "
+                               "to pay you {2} because of your shining reputation! Well done!",
+                               "{0} is a planet name, and {1} and {2} are prices")
+                color = reputation.GOOD_PRICE_COLOR
+            else:
+                text = self.tr("{0} would normally pay {1} for these items, but they'll only "
+                               "pay you {2}, because they don't trust you.",
+                               "{0} is a planet name, and {1} and {2} are prices")
+                color = reputation.BAD_PRICE_COLOR
+
+            msg += '<br><br><span style="color: %s;">%s</span>' % (color, text.format(
+                   planet.full_name, formatNumber(normal_gain), formatNumber(gain)))
+
+        proceed = yesNoDialog(self, self.tr("Sell all?"), message=msg)
 
         if not proceed:
             return
@@ -328,11 +369,14 @@ class PlayerItemBrowser(ItemBrowser):
                 continue
 
             quantity = self.parent.state.items.items[name].quantity
+            item_gain = self.parent.state.sell_total(planet, name, quantity)
             planet.items.add_items(name, self.parent.state.items, quantity)
-            self.parent.state.record_sale(name, quantity, planet.items.items[name].value)
+            self.parent.state.record_sale(name, quantity, float(item_gain) / quantity)
 
         self.parent.audio.play(self.parent.audio.SellSound)
         self.parent.state.money += gain
+        self.parent.state.sold_to(planet)
+        self.parent.locationBrowser.refreshReputations()
         checkForMoneyBonus(self.parent)
         self.parent.infoBar.update()
         self.parent.planetItemBrowser.update()
@@ -501,6 +545,9 @@ class PlanetItemBrowser(ItemBrowser):
         if itemname is None:
             errorDialog(self, self.tr("No item selected"),
                         message=self.tr("Please select an item to buy first!"))
+            return
+
+        if refusesToTrade(self):
             return
 
         if self.parent.state.current_planet.items.items[itemname].quantity == 0:

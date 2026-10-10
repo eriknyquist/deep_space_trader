@@ -1,10 +1,13 @@
 import random
 
+import numpy
+
 from deep_space_trader.utils import (
     errorDialog, yesNoDialog, infoDialog, selectedRowKey, selectRowByKey, percentChance
 )
 from deep_space_trader.item_browsers import TradingConsolePlanetDisplay
 from deep_space_trader.i18n import translate, formatNumber, formatDistance
+from deep_space_trader import reputation
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import QT_TRANSLATE_NOOP
@@ -40,6 +43,21 @@ class DistanceDelegate(QtWidgets.QStyledItemDelegate):
     """
     def displayText(self, value, locale):
         return formatDistance(value)
+
+
+class ReputationDelegate(QtWidgets.QStyledItemDelegate):
+    """
+    Shows reputations as text (e.g. "Wary (58)"), for the same reason as DistanceDelegate
+    """
+    def displayText(self, value, locale):
+        return reputation.describe(value)
+
+
+# Columns of the planets table
+NAME_COLUMN = 0
+VISITED_COLUMN = 1
+DISTANCE_COLUMN = 2
+REPUTATION_COLUMN = 3
 
 
 class LocationBrowser(QtWidgets.QWidget):
@@ -88,9 +106,12 @@ class LocationBrowser(QtWidgets.QWidget):
         palette.setColor(QtGui.QPalette.Highlight, default_highlight)
         self.table.setPalette(palette)
 
-        self.table.setColumnCount(3)
-        self.table.setHorizontalHeaderLabels([self.tr('Planet'), self.tr('visited?'), self.tr('Distance')])
+        self.table.setColumnCount(4)
+        self.table.setHorizontalHeaderLabels([self.tr('Planet'), self.tr('visited?'), self.tr('Distance'),
+                                              self.tr('Reputation')])
         self.table.verticalHeader().setVisible(False)
+        # One line per planet: text that doesn't fit (e.g. "Refuses to trade (0)") is cut short with "..."
+        self.table.setWordWrap(False)
         # Clicking a column header sorts by that column (e.g. by distance)
         self.table.horizontalHeader().setSectionsClickable(True)
         self.table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
@@ -100,11 +121,14 @@ class LocationBrowser(QtWidgets.QWidget):
 
         header = self.table.horizontalHeader()
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
-        header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
 
         self.distanceDelegate = DistanceDelegate(self.table)
-        self.table.setItemDelegateForColumn(2, self.distanceDelegate)
+        self.table.setItemDelegateForColumn(DISTANCE_COLUMN, self.distanceDelegate)
+        self.reputationDelegate = ReputationDelegate(self.table)
+        self.table.setItemDelegateForColumn(REPUTATION_COLUMN, self.reputationDelegate)
 
         self.mainLayout.addLayout(self.planetSearchLayout)
         self.mainLayout.addLayout(self.buttonLayout)
@@ -180,13 +204,9 @@ class LocationBrowser(QtWidgets.QWidget):
 
         columns = self.table.columnCount()
 
-        # Find rows by the Planet stored in each row, since the search box may be
-        # filtering the table, so row numbers don't match state.planets. Planets
-        # hidden by the filter have no row, and are skipped
-        rows = {self.table.item(row, 0).data(QtCore.Qt.UserRole): row
-                for row in range(self.table.rowCount())}
-
-        tail_row = rows.get(self.parent.state.previous_planets_tail)
+        # Rows are found by planet, since the table may be sorted, or filtered by
+        # the search box. Planets hidden by the filter have no row, and are skipped
+        tail_row = self.rowOf(self.parent.state.previous_planets_tail)
         if tail_row is not None:
             for col in range(columns):
                 self.table.item(tail_row, col).setBackground(QtGui.QBrush())
@@ -200,12 +220,12 @@ class LocationBrowser(QtWidgets.QWidget):
                 continue
 
             color = colors.pop()
-            row = rows.get(planet)
+            row = self.rowOf(planet)
             if row is not None:
                 for col in range(columns):
                     self.table.item(row, col).setBackground(color)
 
-        row = rows.get(self.parent.state.current_planet)
+        row = self.rowOf(self.parent.state.current_planet)
         if row is None:
             return
 
@@ -225,7 +245,42 @@ class LocationBrowser(QtWidgets.QWidget):
         """
         return {"yes": self.tr("yes"), "no": self.tr("no")}
 
-    def addRow(self, planet, row, texts):
+    def reputationKey(self):
+        """
+        Identifies the reputations currently shown in the table: the same key means nothing has changed
+        """
+        reputation = self.parent.state.reputation
+        return (id(reputation), reputation.version)
+
+    def shownReputations(self, planets):
+        """
+        Reputations as stored in the table. Rounded, so that changes too small
+        to matter (e.g. long after an event, far away) don't cause any refreshing
+        """
+        return numpy.round(self.parent.state.reputations(planets), 2)
+
+    def rowOf(self, planet):
+        """
+        Row of a planet in the table, or None if it isn't in the table (e.g. hidden by the search box)
+        """
+        index = self.planetIndex.get(id(planet))
+        if index is None:
+            return None
+
+        return self.table.row(self.nameItems[index])
+
+    @staticmethod
+    def numberCell(value):
+        """
+        Cell holding a number, shown as text by a delegate. Qt sorts these
+        without calling Python code, which matters with thousands of rows
+        """
+        item = QtWidgets.QTableWidgetItem()
+        item.setData(QtCore.Qt.DisplayRole, float(value))
+        item.setTextAlignment(QtCore.Qt.AlignHCenter)
+        return item
+
+    def addRow(self, planet, row, texts, planet_reputation):
         item1 = QtWidgets.QTableWidgetItem(planet.full_name)
         # Keep a reference to the planet on the row, so the planet can be found
         # without looking it up by name or by row number
@@ -233,10 +288,8 @@ class LocationBrowser(QtWidgets.QWidget):
         item2 = QtWidgets.QTableWidgetItem(texts["yes"] if planet.visited else texts["no"])
         item2.setTextAlignment(QtCore.Qt.AlignHCenter)
 
-        # Shown as text by DistanceDelegate
-        item3 = QtWidgets.QTableWidgetItem()
-        item3.setData(QtCore.Qt.DisplayRole, self.parent.state.current_planet.distance_to(planet))
-        item3.setTextAlignment(QtCore.Qt.AlignHCenter)
+        item3 = self.numberCell(self.parent.state.current_planet.distance_to(planet))
+        item4 = self.numberCell(planet_reputation)
 
         if planet is self.parent.state.home_planet:
             font = item1.font()
@@ -247,6 +300,7 @@ class LocationBrowser(QtWidgets.QWidget):
         self.table.setItem(row, 0, item1)
         self.table.setItem(row, 1, item2)
         self.table.setItem(row, 2, item3)
+        self.table.setItem(row, 3, item4)
 
     def populateTable(self, planets):
         selectedKey = selectedRowKey(self.table)
@@ -259,8 +313,19 @@ class LocationBrowser(QtWidgets.QWidget):
         self.table.setRowCount(len(planets))
         texts = self.rowTexts()
 
+        # What the table shows, in the order 'planets' were added. Each row's
+        # name cell stays the same when the table is sorted, so it's used to find
+        # the row that a planet has moved to
+        self.tablePlanets = list(planets)
+        self.planetIndex = {id(planet): i for i, planet in enumerate(planets)}
+        self.tableReputations = self.shownReputations(planets)
+        self.shownReputationKey = self.reputationKey()
+
         for row in range(len(planets)):
-            self.addRow(planets[row], row, texts)
+            self.addRow(planets[row], row, texts, self.tableReputations[row])
+
+        self.nameItems = [self.table.item(row, 0) for row in range(len(planets))]
+        self.nameItemIndex = {id(item): i for i, item in enumerate(self.nameItems)}
 
         self.table.setSortingEnabled(True)
         selectRowByKey(self.table, selectedKey)
@@ -271,24 +336,62 @@ class LocationBrowser(QtWidgets.QWidget):
 
     def refreshDistances(self):
         """
-        Update the distance column and colours after travelling. Much faster
-        than rebuilding the table (update) when there are thousands of planets
+        Update the distance and reputation columns and colours after
+        travelling (reputation changes every day). Much faster than rebuilding
+        the table (update) when there are thousands of planets
         """
         current = self.parent.state.current_planet
-        model = self.table.model()
-        self.table.setUpdatesEnabled(False)
-        self.table.setSortingEnabled(False)
+        self.refreshColumns(lambda planets: [current.distance_to(p) for p in planets], DISTANCE_COLUMN)
+
+    def refreshReputations(self):
+        """
+        Update the reputation column, e.g. after selling, which improves the opinion of nearby planets
+        """
+        self.refreshColumns(None, None)
+
+    def refreshColumns(self, values, column):
+        """
+        Update the reputation column, and 'column' with 'values(planets)' if given
+        """
+        table = self.table
+
+        # Only reputations that have changed. Planets far from anything the
+        # player has done keep the same reputation, so usually most cells are
+        # left alone, and when nothing has changed no cells are even looked at,
+        # which matters with thousands of planets
+        changed = []
+        if self.reputationKey() != self.shownReputationKey:
+            reputations = self.shownReputations(self.tablePlanets)
+            changed = numpy.nonzero(reputations != self.tableReputations)[0]
+            self.tableReputations = reputations
+            self.shownReputationKey = self.reputationKey()
+
+        if (values is None) and (len(changed) == 0):
+            return
+
+        # Index (in self.tablePlanets) of the planet in each row
+        indexes = [self.nameItemIndex[id(table.item(row, 0))] for row in range(table.rowCount())]
+
+        changes = {}
+        if len(changed) > 0:
+            rows = numpy.empty(len(indexes), dtype=int)
+            rows[indexes] = numpy.arange(len(indexes))
+            changes[REPUTATION_COLUMN] = [(rows[i], reputations[i]) for i in changed]
+
+        if values is not None:
+            changes[column] = list(enumerate(values([self.tablePlanets[i] for i in indexes])))
+
+        model = table.model()
+        table.setUpdatesEnabled(False)
+        table.setSortingEnabled(False)
 
         # The view would otherwise handle a "data changed" signal for every cell
         model.blockSignals(True)
-        for row in range(self.table.rowCount()):
-            planet = self.table.item(row, 0).data(QtCore.Qt.UserRole)
-            # A new cell, rather than changing the old one: after sorting, Qt
-            # searches the whole table to find a changed cell's position
-            item = QtWidgets.QTableWidgetItem()
-            item.setData(QtCore.Qt.DisplayRole, current.distance_to(planet))
-            item.setTextAlignment(QtCore.Qt.AlignHCenter)
-            self.table.setItem(row, 2, item)
+        for column, column_changes in changes.items():
+            for row, value in column_changes:
+                # A new cell, rather than changing the old one: after sorting, Qt
+                # searches the whole table to find a changed cell's position
+                table.setItem(row, column, self.numberCell(value))
         model.blockSignals(False)
 
         # Sorts once, by the current sort column, if there is one

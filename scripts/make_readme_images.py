@@ -206,6 +206,15 @@ def setUpGame(game):
     home = state.home_planet
     nearby = sorted(state.planets[1:], key=lambda p: p.distance_to(home))
     stops = [nearby[i] for i in (2, 9, 5, 14, 7, 20, 11)]
+
+    # A few planets destroyed early on, so that reputation (the info bar, the
+    # planets table and the star map tooltip) has something to show
+    target = nearby[25]
+    destroyed = [target] + sorted((p for p in nearby if p is not target and p not in stops),
+                                  key=lambda p: p.distance_to(target))[:2]
+    state.planets_destroyed(destroyed)
+    for planet in destroyed:
+        state.planets.remove(planet)
     for stop in stops + [home]:
         stop.update_prices(state.day)
         names = sorted(stop.items.items)
@@ -214,6 +223,7 @@ def setUpGame(game):
             state.record_purchase(names[0], 250, item.value)
             if len(names) > 1:
                 state.record_sale(names[1], 120, stop.items.items[names[1]].value)
+                state.sold_to(stop)
 
         state.next_day()
         state.change_current_planet(stop)

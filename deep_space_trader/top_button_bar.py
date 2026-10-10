@@ -65,3 +65,7 @@ class ButtonBar(QtWidgets.QWidget):
 
     def dayButtonClicked(self):
         self.parent.advanceDay()
+
+        # Reputation recovers a little each day. (Travelling refreshes it along
+        # with the distances, so this is only needed here)
+        self.parent.locationBrowser.refreshReputations()

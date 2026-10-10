@@ -1,6 +1,7 @@
 from deep_space_trader.utils import yesNoDialog, checkForMoneyBonus, ICON_PATH
 from deep_space_trader.items import itemDisplayName
 from deep_space_trader.i18n import translate, formatNumber
+from deep_space_trader import reputation
 
 from PyQt5 import QtWidgets, QtGui
 
@@ -18,6 +19,11 @@ class TransactionDialog(QtWidgets.QDialog):
         buttonLayout = QtWidgets.QHBoxLayout()
 
         self.description = QtWidgets.QLabel()
+
+        # Says how the planet's opinion of the player changes the price (Buy and Sell only)
+        self.reputationLabel = QtWidgets.QLabel()
+        self.reputationLabel.setWordWrap(True)
+        self.reputationLabel.setVisible(False)
         moneyCount = QtWidgets.QLabel(translate("TransactionDialog", "(your money: {0})").format(
                                       formatNumber(parent.state.money)))
 
@@ -46,6 +52,7 @@ class TransactionDialog(QtWidgets.QDialog):
         buttonLayout.addWidget(cancelButton)
 
         mainLayout.addWidget(self.description)
+        mainLayout.addWidget(self.reputationLabel)
 
         if include_money:
             mainLayout.addWidget(moneyCount)
@@ -60,6 +67,16 @@ class TransactionDialog(QtWidgets.QDialog):
 
     def maxButtonClicked(self):
         self.spinbox.setValue(self.maximumQuantity())
+
+    def showReputationMessage(self, text, good):
+        """
+        Show how the planet's opinion of the player changes the price: green if
+        it's better than normal, red if it's worse
+        """
+        color = reputation.GOOD_PRICE_COLOR if good else reputation.BAD_PRICE_COLOR
+        self.reputationLabel.setStyleSheet("QLabel { color: %s; }" % color)
+        self.reputationLabel.setText(text)
+        self.reputationLabel.setVisible(True)
 
     def acceptButtonClicked(self):
         value = int(self.spinbox.value())
@@ -95,7 +112,7 @@ class TransactionDialog(QtWidgets.QDialog):
 
 class Buy(TransactionDialog):
     def __init__(self, parent, itemname):
-        self.value = parent.state.current_planet.items.items[itemname].value
+        self.normalValue = parent.state.current_planet.items.items[itemname].value
         self.quantity = parent.state.current_planet.items.items[itemname].quantity
 
         super(Buy, self).__init__(parent, itemname, include_money=True)
@@ -111,17 +128,41 @@ class Buy(TransactionDialog):
                                           quantity, delete_empty=False)
 
         self.parent.audio.play(self.parent.audio.WhooshPopSound)
-        self.parent.state.money -= self.value * quantity
-        self.parent.state.record_purchase(self.itemName, quantity, self.value)
+        cost = self.total(quantity)
+        self.parent.state.money -= cost
+        self.parent.state.record_purchase(self.itemName, quantity, float(cost) / quantity)
+
+    def total(self, quantity):
+        return self.parent.state.buy_total(self.parent.state.current_planet, self.itemName, quantity)
 
     def valueChanged(self):
         self.spinboxLabel.setText(self.tr("Buy quantity (cost: {0})").format(
-                                  formatNumber(int(self.spinbox.value()) * self.value)))
+                                  formatNumber(self.total(int(self.spinbox.value())))))
+
+        # Totals for the chosen quantity (or for one item, before a quantity is chosen)
+        quantity = max(1, int(self.spinbox.value()))
+        normal, actual = self.normalValue * quantity, self.total(quantity)
+        if actual < normal:
+            text = self.tr("{0} would normally charge {2} for this much {1}, but they're willing to sell "
+                           "it to you for {3} because of your shining reputation! Well done!",
+                           "{0} is a planet name, {1} is an item name, e.g. tin, and {2} and {3} are prices")
+        elif actual > normal:
+            text = self.tr("{0} would normally charge {2} for this much {1}, but they're charging you {3}, "
+                           "because they don't trust you.",
+                           "{0} is a planet name, {1} is an item name, e.g. tin, and {2} and {3} are prices")
+        else:
+            self.reputationLabel.setVisible(False)
+            return
+
+        self.showReputationMessage(text.format(self.parent.state.current_planet.full_name,
+                                               itemDisplayName(self.itemName),
+                                               formatNumber(normal), formatNumber(actual)),
+                                   good=actual < normal)
 
     def maximumQuantity(self):
         capacity = self.parent.state.capacity - self.parent.state.items.count()
-        max_buy = int(self.parent.state.money / self.value)
-        return min(max_buy, capacity, self.quantity)
+        return self.parent.state.max_affordable(self.parent.state.current_planet, self.itemName,
+                                                min(capacity, self.quantity))
 
     def sourceCollection(self):
         return self.parent.state.current_planet.items
@@ -129,7 +170,7 @@ class Buy(TransactionDialog):
 
 class Sell(TransactionDialog):
     def __init__(self, parent, itemname):
-        self.value = parent.state.current_planet.items.items[itemname].value
+        self.normalValue = parent.state.current_planet.items.items[itemname].value
         self.quantity = parent.state.items.items[itemname].quantity
 
         super(Sell, self).__init__(parent, itemname, include_money=False)
@@ -143,14 +184,40 @@ class Sell(TransactionDialog):
                                                          self.parent.state.items,
                                                          quantity)
 
-        self.parent.state.money += self.value * quantity
-        self.parent.state.record_sale(self.itemName, quantity, self.value)
+        gain = self.total(quantity)
+        self.parent.state.money += gain
+        self.parent.state.record_sale(self.itemName, quantity, float(gain) / quantity)
+        self.parent.state.sold_to(self.parent.state.current_planet)
+        self.parent.locationBrowser.refreshReputations()
         self.parent.audio.play(self.parent.audio.SellSound)
         checkForMoneyBonus(self.parent)
 
+    def total(self, quantity):
+        return self.parent.state.sell_total(self.parent.state.current_planet, self.itemName, quantity)
+
     def valueChanged(self):
         self.spinboxLabel.setText(self.tr("Sell quantity (gain: {0})").format(
-                                  formatNumber(int(self.spinbox.value()) * self.value)))
+                                  formatNumber(self.total(int(self.spinbox.value())))))
+
+        # Totals for the chosen quantity (or for one item, before a quantity is chosen)
+        quantity = max(1, int(self.spinbox.value()))
+        normal, actual = self.normalValue * quantity, self.total(quantity)
+        if actual > normal:
+            text = self.tr("{0} would normally pay {2} for this much {1}, but they're willing to pay you {3} "
+                           "because of your shining reputation! Well done!",
+                           "{0} is a planet name, {1} is an item name, e.g. tin, and {2} and {3} are prices")
+        elif actual < normal:
+            text = self.tr("{0} would normally pay {2} for this much {1}, but they'll only pay you {3}, "
+                           "because they don't trust you.",
+                           "{0} is a planet name, {1} is an item name, e.g. tin, and {2} and {3} are prices")
+        else:
+            self.reputationLabel.setVisible(False)
+            return
+
+        self.showReputationMessage(text.format(self.parent.state.current_planet.full_name,
+                                               itemDisplayName(self.itemName),
+                                               formatNumber(normal), formatNumber(actual)),
+                                   good=actual > normal)
 
     def maximumQuantity(self):
         return self.quantity

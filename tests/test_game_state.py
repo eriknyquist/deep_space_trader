@@ -378,3 +378,132 @@ def test_journey(state):
 
     state.initialize()
     assert state.journey == [state.home_planet]
+
+
+# ----- Reputation -----
+
+def test_reputation_starts_friendly(state):
+    for planet in state.planets:
+        assert state.reputation_of(planet) == const.STARTING_REPUTATION
+        assert state.trades_with_you(planet)
+
+
+def test_prices_follow_reputation(state, monkeypatch):
+    planet = state.planets[1]
+    give(planet.items, "gold", 100)
+    planet.items.items["gold"].value = 100
+    assert state.buy_total(planet, "gold", 3) == 300
+    assert state.sell_total(planet, "gold", 3) == 300
+
+    monkeypatch.setattr(state, "reputation_of", lambda p: 0)
+    assert state.buy_total(planet, "gold", 3) == round(300 * (1 + const.WORST_PRICE_FACTOR))
+    assert state.sell_total(planet, "gold", 3) == round(300 * (1 - const.WORST_PRICE_FACTOR))
+    assert not state.trades_with_you(planet)
+
+    monkeypatch.setattr(state, "reputation_of", lambda p: 100)
+    assert state.buy_total(planet, "gold", 3) == round(300 * (1 - const.BEST_PRICE_FACTOR))
+    assert state.sell_total(planet, "gold", 3) == round(300 * (1 + const.BEST_PRICE_FACTOR))
+
+
+def test_reputation_applies_to_the_total_price(state, monkeypatch):
+    # 10% more than 4 rounds back to 4, so the factor must be applied to the
+    # total, or it would never change the price of cheap items
+    planet = state.planets[1]
+    give(planet.items, "tin", 100)
+    planet.items.items["tin"].value = 4
+    monkeypatch.setattr(state, "reputation_of", lambda p: 56)    # prices 10% worse
+    assert state.buy_total(planet, "tin", 1) == 4
+    assert state.buy_total(planet, "tin", 10000) == 44000
+    assert state.sell_total(planet, "tin", 10000) == 36000
+
+
+def test_totals_are_rounded_half_up(state, monkeypatch):
+    planet = state.planets[1]
+    give(planet.items, "tin", 100)
+    planet.items.items["tin"].value = 5
+    monkeypatch.setattr(state, "reputation_of", lambda p: 56)
+    assert state.buy_total(planet, "tin", 1) == 6        # 5.5
+    assert state.sell_total(planet, "tin", 1) == 5       # 4.5
+
+
+def test_totals_are_at_least_1(state, monkeypatch):
+    planet = state.planets[1]
+    give(planet.items, "tin", 100)
+    planet.items.items["tin"].value = 1
+    monkeypatch.setattr(state, "reputation_of", lambda p: 0)
+    assert state.sell_total(planet, "tin", 1) == 1
+    assert state.sell_total(planet, "tin", 0) == 0
+
+
+@pytest.mark.parametrize("value", [0, 56, 70, 100])
+def test_max_affordable(state, monkeypatch, value):
+    planet = state.planets[1]
+    give(planet.items, "tin", 100)
+    planet.items.items["tin"].value = 7
+    monkeypatch.setattr(state, "reputation_of", lambda p: value)
+    for money in (0, 1, 7, 50, 999, 12345):
+        state.money = money
+        most = state.max_affordable(planet, "tin", 10 ** 6)
+        assert state.buy_total(planet, "tin", most) <= money
+        assert state.buy_total(planet, "tin", most + 1) > money
+
+    state.money = 12345
+    assert state.max_affordable(planet, "tin", 3) == 3
+
+
+def test_transaction_log_shows_average_prices(state):
+    state.record_purchase("tin", 10, 4.4)
+    state.record_sale("tin", 3, 4.0)
+    log = state.read_transaction_log()
+    assert "bought 10 tin for 4.40 each" in log
+    assert "sold 3 tin for 4 each" in log
+
+
+def test_destroying_planets_lowers_reputation_nearby(state):
+    victim, near, far = state.planets[1:4]
+    victim.x, victim.y = 100.0, 0.0
+    near.x, near.y = 105.0, 0.0
+    far.x, far.y = -200.0, 0.0
+    state.planets_destroyed([victim])
+    assert state.reputation_of(near) < const.STARTING_REPUTATION - 10
+    assert state.reputation_of(far) == pytest.approx(const.STARTING_REPUTATION, abs=0.01)
+
+
+def test_fighting_lowers_reputation(state):
+    planet = state.planets[1]
+    state.fought_resisting_planet(planet)
+    assert state.reputation_of(planet) < const.STARTING_REPUTATION - 8
+
+
+def test_selling_raises_reputation_once_a_day(state):
+    planet = state.planets[1]
+    state.sold_to(planet)
+    once = state.reputation_of(planet)
+    assert once > const.STARTING_REPUTATION + 1
+    state.sold_to(planet)
+    assert state.reputation_of(planet) == once
+
+    state.next_day()
+    faded = state.reputation_of(planet)
+    state.sold_to(planet)
+    assert state.reputation_of(planet) > faded
+
+
+def test_accepted_sample_raises_reputation(state):
+    planet = state.planets[1]
+    state.sample_accepted(planet)
+    assert state.reputation_of(planet) > const.STARTING_REPUTATION + 2
+
+
+def test_reputation_recovers_each_day(state):
+    planet = state.planets[1]
+    state.planets_destroyed([planet])
+    low = state.reputation_of(planet)
+    state.next_day()
+    assert low < state.reputation_of(planet) < const.STARTING_REPUTATION
+
+
+def test_new_game_resets_reputation(state):
+    state.planets_destroyed(state.planets[1:4])
+    state.initialize()
+    assert all(r == const.STARTING_REPUTATION for r in state.reputations(state.planets))

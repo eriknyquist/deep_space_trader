@@ -47,6 +47,10 @@ Only items in the inventory can be bought or sold. The player also has a warehou
 capacity. Items can be transferred between the item inventory and the warehouse, but only
 a certain number of transfers between item inventory and warehouse can be made per day.
 
+Planets remember what the player does near them. Destroying planets makes the planets around
+them distrust the player, so they charge more and pay less, or even refuse to trade at all,
+while trading with planets slowly wins them over (see `Reputation`_).
+
 Travelling between planets always incurs a risk of encountering pirates, who may
 kill the player or rob them of their money / raw materials. The greater the value that the
 player is travelling with (combined value of player's money and items in the player's inventory,
@@ -101,6 +105,11 @@ shows useful information about the current state of the game.
 * **"Warehouse trips"**: Shows the number of trips to the warehouse made by the player so far on the current day,
   against the total number of warehouse trips allowed on the current day (see `"Store" window`_ for
   more information).
+* **"Reputation"**: A bar showing what the current planet thinks of the player, from 0 to 100. Its
+  colour shows the reputation level, like a traffic light: green (Allied), light green (Friendly),
+  yellow (Wary), orange (Hostile) or red (Refuses to trade). The dashed line near the bottom marks where
+  planets start refusing to trade. When tooltips are enabled, hovering over this section shows the
+  reputation, and how much better or worse than normal the prices are (see `Reputation`_).
 * **"Engine power"**: A blue bar, next to the health bar, that fills up as the player increases their
   engine power, up to the maximum of 10 (see `"Store" window`_). When tooltips are enabled, hovering over
   this section shows the engine power and the current travel cost per light-year.
@@ -180,10 +189,11 @@ left area of the main game window.
 
 * **"Star map..." button**: Opens the `"Star map" window`_, which shows where all the planets are.
 
-* **Planet display table**: shows a list of all planets available to the player. Consists of three
+* **Planet display table**: shows a list of all planets available to the player. Consists of four
   columns: "Planet" shows the name of the planet, "visited?" shows "yes" or "no" indicating whether
-  the player has travelled to the planet, and "Distance" shows how far the planet is from the current
-  planet, in light-years. Clicking a column's header sorts the table by that column (e.g. click
+  the player has travelled to the planet, "Distance" shows how far the planet is from the current
+  planet, in light-years, and "Reputation" shows what the planet thinks of the player, e.g.
+  "Wary (58)" (see `Reputation`_). Clicking a column's header sorts the table by that column (e.g. click
   "Distance" to see the nearest planets first). The home planet is shown in bold. The player can travel
   to a planet by double-clicking on the planet name within the planet display table. The last 3 planets visited will be colored different shades of
   green- the current planet will be a bright green, the previous planet a darker green, and the
@@ -210,7 +220,9 @@ in the bottom left area of the main game window.
 
   * **"Base price delta"** shows the difference between the cost of the item on the current
     planet and the base price of the item (shown in the `"Prices" window`_), as a percentage.
-  * **"Cost"** shows the cost of 1 item on the current planet.
+  * **"Cost"** shows the cost of 1 item on the current planet. This is the planet's normal price:
+    what the player actually pays can be higher or lower, depending on the planet's opinion of the
+    player (see `Reputation`_).
   * **"Quantity available"** shows the quantity of an item available for purchase on the
     current planet.
   * **"Item type"** shows the name of the item.
@@ -240,7 +252,8 @@ right area of the main game window.
   If the player does not provide a free sample, then the item cannot be sold to the current
   planet. If the player does provide a free sample, then the planet may or may not decide to
   begin trading in the selected item. Only one free sample of a given item may be given to
-  the same planet in the same day.
+  the same planet in the same day. A planet that accepts a free sample thinks better of the player.
+  A planet that refuses to trade (see `Reputation`_) won't buy anything, or accept free samples.
 
 * **"Sell all" button**: Allows the player to attempt to sell all items on the ship to
   the current planet. Only items that the current planet already holds will be sold
@@ -333,6 +346,8 @@ purchases can be made per day, but this number is increased when the player reac
   the planet alone. If the player fights and loses, the player will die and the game will be over.
   If the player fights and wins, then planet destruction will continue normally. The chance of
   the player winning this fight depends on the player's battle fleet level.
+  Destroying planets, and fighting planets that resist (whether the player wins or loses), makes
+  nearby planets think less of the player (see `Reputation`_).
 
 * **Buy/upgrade scout fleet**: Buying this item for the first time gives the player a
   scout fleet that allows the player to discover new planets to trade with. Subsequent
@@ -396,6 +411,9 @@ when the player clicks the "Buy item" button in the `"Items on current planet" s
 * **"Max" button**: Automatically sets the quantity to the maximum number of items available,
   or the maximum number of items that the player can afford (whichever is smaller).
 
+The cost includes the effect of the planet's opinion of the player (see `Reputation`_). When this makes
+the price different from the planet's normal price, the window says so, and shows both prices.
+
 **"Sell items" window**
 #######################
 
@@ -411,6 +429,9 @@ when the player clicks the "Sell items" button in the `"Items on your ship" sect
 
 * **"Max" button**: Automatically sets the quantity to the maximum number of items available
   to sell.
+
+What the planet pays includes the effect of its opinion of the player (see `Reputation`_). When this makes
+the price different from the planet's normal price, the window says so, and shows both prices.
 
 **"Dump player items" window**
 ##############################
@@ -528,9 +549,13 @@ It can also be opened via the keyboard shortcut Ctrl-G.
   showing the player's whole journey.
 * Faint dashed circles show the area of the starting planets, and the range of the player's scout fleet.
 * While the planets search box has text in it, planets that don't match are dimmed.
+* When the "Colour by reputation" box (in the "Key" section) is ticked, the ordinary dots are coloured
+  by what each planet thinks of the player, using the same colours as the reputation bar in the
+  `"Information" section`_ (filled dots are still visited planets). This shows at a glance where the
+  player is welcome, and where they aren't. The box is unticked each time the game is started.
 
 Moving the mouse over (or near) a planet shows its name straight away, and holding the mouse still
-shows its distance and the cost of travelling there. Clicking a planet
+shows its distance, the cost of travelling there, and its reputation. Clicking a planet
 selects it in the `"Planets" section`_, and double-clicking it travels there. Pressing the Enter key opens the
 trading console for the selected planet, as in the `"Planets" section`_ (only if the "Trading console" item has been
 purchased from the `"Store" window`_). The mouse wheel zooms in and
@@ -609,3 +634,45 @@ and the number of store purchases allowed per day is increased from 4 to 5.
 
 When the player reaches 100,000,000,000 money, the total number of days is increased from 35 to 40,
 and the number of store purchases allowed per day is increased from 5 to 6.
+
+Reputation
+++++++++++
+
+Every planet has an opinion of the player, from 0 to 100, which starts at 70. Each planet's
+opinion depends on what the player has done near it: news travels, but fades with distance.
+
+==========  ====================  ===============================================
+Reputation  Level                 Effect
+==========  ====================  ===============================================
+85-100      Allied                Up to 10% better prices
+70-84       Friendly              Normal prices (slightly better above 70)
+45-69       Wary                  Prices up to about 18% worse
+15-44       Hostile               Prices up to about 39% worse
+0-14        Refuses to trade      No buying, selling or free samples
+==========  ====================  ===============================================
+
+"Better prices" means the player pays less when buying, and is paid more when selling;
+"worse prices" means the opposite. Reputation only changes the price when actually buying or selling
+(in the `"Buy items" window`_, the `"Sell items" window`_ and with the "Sell all" button), and these
+show both the planet's normal price and the player's price. Everywhere else (e.g. the "Cost" column,
+the trading console and the price history), prices are the planet's normal prices.
+
+**What changes it:**
+
+* **Destroying a planet** makes the planets around it think much less of the player. Its
+  neighbours (often in the same cluster) are affected almost as much as if it had happened to them,
+  planets 40 ly away about half as much, and planets more than about 100 ly away hardly at all.
+  Destroying many planets close together adds up quickly, and destroying all planets at once
+  usually leaves most of the galaxy Hostile, or refusing to trade, for a long time. Planets
+  near the player's home planet can turn against the player too.
+* **Fighting a planet that resists destruction** (whether the player wins or loses) makes the
+  planets around it think less of the player.
+* **Selling** to a planet (with "Sell items" or "Sell all") makes it, and the planets close to it,
+  think a little better of the player. This only counts once per planet per day, however many
+  sales are made.
+* **A planet accepting a free sample** makes it, and the planets close to it, think better of the player.
+* **Time**: every change fades by 7% each day (halving in about 10 days), so a bad reputation is
+  eventually forgotten, and goodwill from trading fades unless the player keeps trading.
+
+A planet that refuses to trade can still be visited, and its prices can still be seen with the
+trading console.

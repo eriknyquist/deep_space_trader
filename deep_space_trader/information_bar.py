@@ -1,7 +1,8 @@
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 
 from deep_space_trader.planet_image import PlanetImage
 from deep_space_trader import constants as const
+from deep_space_trader import reputation
 from deep_space_trader.i18n import translate, formatNumber, formatPercent
 
 # Engine power bar colour: solid blue, so it isn't confused with the health bar
@@ -9,6 +10,28 @@ ENGINE_BAR_COLOR = "#3399ff"
 
 GROUPBOX_STYLE= "QGroupBox{ font-size: 12px; }"
 LABEL_STYLE = "QLabel{ font-size: 14px; }"
+
+class ReputationBar(QtWidgets.QProgressBar):
+    """
+    Vertical bar from 0 to 100, with a dashed mark where planets start refusing to trade
+    """
+    def __init__(self, parent):
+        super(ReputationBar, self).__init__(parent)
+        self.setOrientation(QtCore.Qt.Vertical)
+        self.setRange(0, 100)
+        self.setFixedWidth(20)
+        self.setFormat(None)
+
+    def paintEvent(self, event):
+        super(ReputationBar, self).paintEvent(event)
+
+        rect = self.rect().adjusted(1, 1, -1, -1)
+        y = rect.bottom() - int(round(rect.height() * const.REFUSE_TRADE_REPUTATION / 100.0))
+        painter = QtGui.QPainter(self)
+        painter.setPen(QtGui.QPen(QtGui.QColor("black"), 1, QtCore.Qt.DashLine))
+        painter.drawLine(rect.left(), y, rect.right(), y)
+        painter.end()
+
 
 class InfoBar(QtWidgets.QWidget):
     def __init__(self, parent):
@@ -157,9 +180,20 @@ class InfoBar(QtWidgets.QWidget):
         self.engineGroup.setLayout(engineLayout)
         engineLayout.setContentsMargins(5, 5, 5, 5)
 
-        # Wide enough for the title, which is longer than "Health" (especially when translated)
-        titleWidth = self.engineGroup.fontMetrics().horizontalAdvance(self.engineGroup.title())
-        self.engineGroup.setFixedWidth(max(60, titleWidth + 20))
+        # Reputation: what the current planet thinks of you, coloured by level
+        reputationLayout = QtWidgets.QHBoxLayout()
+        self.reputationBar = ReputationBar(self)
+        reputationLayout.addWidget(self.reputationBar)
+        self.reputationGroup = QtWidgets.QGroupBox(self.tr("Reputation"))
+        self.reputationGroup.setStyleSheet(GROUPBOX_STYLE)
+        self.reputationGroup.setAlignment(QtCore.Qt.AlignCenter)
+        self.reputationGroup.setLayout(reputationLayout)
+        reputationLayout.setContentsMargins(5, 5, 5, 5)
+
+        # Wide enough for the titles, which are longer than "Health" (especially when translated)
+        for group in (self.engineGroup, self.reputationGroup):
+            titleWidth = group.fontMetrics().horizontalAdvance(group.title())
+            group.setFixedWidth(max(60, titleWidth + 20))
 
         self.mainLayout = QtWidgets.QHBoxLayout(self)
         self.mainLayout.addWidget(self.planetGroup)
@@ -167,6 +201,7 @@ class InfoBar(QtWidgets.QWidget):
         self.mainLayout.addLayout(purchasesWarehouseLayout)
         self.mainLayout.addLayout(scoutBattleLayout)
         self.mainLayout.addLayout(planetDayLayout)
+        self.mainLayout.addWidget(self.reputationGroup)
         self.mainLayout.addWidget(self.engineGroup)
         self.mainLayout.addWidget(self.healthGroup)
 
@@ -231,6 +266,7 @@ class InfoBar(QtWidgets.QWidget):
             self.engineGroup.setToolTip(self.tr("Engine power {0}/{1}. Travel costs {2} per light-year.").format(
                                         formatNumber(self.parent.state.engine_level),
                                         formatNumber(const.MAX_ENGINE_LEVEL), cost_per_ly))
+            self.reputationGroup.setToolTip(self.reputationTooltip())
             self.healthGroup.setToolTip(formatPercent(self.parent.state.health))
             self.dailyCostGroup.setToolTip(self.tr("{0} per day is required to feed yourself and "
                                                    "maintain all purchased services").format(
@@ -245,8 +281,33 @@ class InfoBar(QtWidgets.QWidget):
             self.scoutFleetGroup.setToolTip(None)
             self.battleFleetGroup.setToolTip(None)
             self.engineGroup.setToolTip(None)
+            self.reputationGroup.setToolTip(None)
             self.healthGroup.setToolTip(None)
             self.dailyCostGroup.setToolTip(None)
+
+    def reputationTooltip(self):
+        planet = self.parent.state.current_planet
+        value = self.parent.state.reputation_of(planet)
+        description = reputation.describe(value)
+
+        if not self.parent.state.trades_with_you(planet):
+            return self.tr("Reputation here: {0}. {1} refuses to trade with you.",
+                           "{0} is a reputation, e.g. Hostile (12), and {1} is a planet name").format(
+                           description, planet.full_name)
+
+        # How much more (or less) buying costs than normal; selling is the same amount the other way
+        percent = int(round((reputation.buyPriceFactor(value) - 1.0) * 100))
+        if percent > 0:
+            return self.tr("Reputation here: {0}. Prices are {1} worse.",
+                           "{0} is a reputation, e.g. Wary (58), and {1} is a percentage").format(
+                           description, formatPercent(percent))
+        if percent < 0:
+            return self.tr("Reputation here: {0}. Prices are {1} better.",
+                           "{0} is a reputation, e.g. Allied (90), and {1} is a percentage").format(
+                           description, formatPercent(-percent))
+
+        return self.tr("Reputation here: {0}. Prices are normal.",
+                       "{0} is a reputation, e.g. Friendly (70)").format(description)
 
     def update(self):
         self.planetLabel.setText(self.parent.state.current_planet.full_name)
@@ -275,6 +336,11 @@ class InfoBar(QtWidgets.QWidget):
 
         self.scoutFleetLabel.setText(scout_label_txt)
         self.engineBar.setValue(self.parent.state.engine_level)
+
+        value = self.parent.state.reputation_of(self.parent.state.current_planet)
+        self.reputationBar.setValue(reputation.shownNumber(value))
+        self.reputationBar.setStyleSheet("QProgressBar::chunk { background-color: %s; }" %
+                                         reputation.levelColor(value))
 
         self.dailyCostLabel.setText(formatNumber(self.parent.state.daily_cost))
 

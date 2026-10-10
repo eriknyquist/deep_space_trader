@@ -110,6 +110,42 @@ PIRATE_REFERENCE_DISTANCE = 30.0
 PIRATE_DISTANCE_FACTOR_RANGE = (0.5, 3.0)
 MAX_PIRATE_CHANCE_PERCENTAGE = 95.0
 
+# ----- Reputation -----
+
+# Every planet's opinion of the player starts here (reputation goes from 0 to 100)
+STARTING_REPUTATION = 70
+
+# Below this reputation, a planet won't trade with the player
+REFUSE_TRADE_REPUTATION = 15
+
+# Reputation at the start of each level: Allied, Friendly, Wary, Hostile (below
+# REFUSE_TRADE_REPUTATION, a planet refuses to trade)
+ALLIED_REPUTATION = 85
+FRIENDLY_REPUTATION = 70
+WARY_REPUTATION = 45
+
+# Reputation changes at the place where something happens
+DESTRUCTION_REPUTATION = -15         # per destroyed planet
+RESISTANCE_FIGHT_REPUTATION = -10    # fighting a planet that resists destruction, win or lose
+SALE_REPUTATION = 2                  # selling to a planet (counts once per planet per day)
+SAMPLE_REPUTATION = 3                # a planet accepts a free sample
+
+# How far news spreads: a change is half as strong this many light-years away
+DESTRUCTION_SPREAD_LY = 40.0
+TRADE_SPREAD_LY = 15.0
+
+# Every reputation change is multiplied by this each day, so it fades away
+DAILY_REPUTATION_RECOVERY = 0.93
+
+# At reputation 0, buy prices are (1 + WORST_PRICE_FACTOR) times normal and sell
+# prices (1 - WORST_PRICE_FACTOR); at reputation 100, buy prices are
+# (1 - BEST_PRICE_FACTOR) times normal and sell prices (1 + BEST_PRICE_FACTOR)
+WORST_PRICE_FACTOR = 0.5
+BEST_PRICE_FACTOR = 0.1
+
+# Size of the cells reputation is stored in, in light-years
+REPUTATION_GRID_LY = 5.0
+
 # ----- Misc. values -----
 
 # Percentage chance of getting a random trading tip about a price anomaly, each day

@@ -1,9 +1,11 @@
+import math
 import time
 
 import pytest
 from PyQt5 import QtCore, QtGui, QtTest, QtWidgets
 
 from deep_space_trader import star_map
+from deep_space_trader import reputation
 from deep_space_trader.star_map import StarMap, scenePos
 
 from helpers import row_of
@@ -14,8 +16,26 @@ def no_pirates(game, monkeypatch):
     monkeypatch.setattr(game.state, "pirate_chance", lambda planet: 0)
 
 
+def spread_out(game):
+    """
+    Put the planets on a ring around the home planet, far enough apart that
+    the mouse never picks a neighbouring planet by mistake (with clustering,
+    planets can be close enough that their dots overlap)
+    """
+    state = game.state
+    home = state.home_planet
+    others = [p for p in state.planets if p is not home]
+    for i, planet in enumerate(others):
+        angle = 2 * math.pi * i / len(others)
+        planet.x = home.x + 100.0 * math.cos(angle)
+        planet.y = home.y + 100.0 * math.sin(angle)
+
+    game.locationBrowser.refreshDistances()
+
+
 @pytest.fixture
 def starmap(game):
+    spread_out(game)
     dialog = StarMap(game)
     dialog.resize(800, 650)
     dialog.show()
@@ -88,9 +108,9 @@ def test_current_planet_stands_out(game, starmap):
 def test_tooltips(game, starmap):
     state = game.state
     other = state.planets[2]
-    assert starmap.tooltipText(state.home_planet) == "%s<br>You are here<br>Home planet. Your warehouse is here." % (
-        state.home_planet.full_name)
-    assert starmap.tooltipText(other) == "%s<br>%.1f ly away, travel cost %s" % (
+    assert starmap.tooltipText(state.home_planet) == ("%s<br>You are here<br>Home planet. Your warehouse is here."
+                                                      "<br>Reputation: Friendly (70)" % state.home_planet.full_name)
+    assert starmap.tooltipText(other) == "%s<br>%.1f ly away, travel cost %s<br>Reputation: Friendly (70)" % (
         other.full_name, state.home_planet.distance_to(other), "{:,}".format(state.travel_cost_to(other)))
 
 
@@ -255,7 +275,8 @@ def test_legend(starmap):
 
     assert [label.text() for label in starmap.keyLabels] == [
         "You are here", "Previous planets", "Home planet", "Visited", "Not visited", "Selected"]
-    icons = [w for w in groups["Key"].findChildren(QtWidgets.QLabel) if w.pixmap() is not None and not w.pixmap().isNull()]
+    icons = [w for w in groups["Key"].findChildren(QtWidgets.QLabel)
+             if w.pixmap() is not None and not w.pixmap().isNull() and w not in starmap.reputationKeyWidgets]
     assert len(icons) == 6
 
     assert [(a.text(), d.text()) for a, d in starmap.controlLabels] == [
@@ -321,3 +342,113 @@ def test_enter_with_no_planet_selected(game, dialogs):
     QtTest.QTest.keyClick(dialog.view, QtCore.Qt.Key_Return)
     assert dialogs.executed == []
     assert dialogs.shown == []
+
+
+# ----- Reputation -----
+
+def ordinary_planet(game, starmap):
+    """
+    A planet drawn as an ordinary dot (not current, home, previous or selected)
+    """
+    return next(p for p in game.state.planets if p not in starmap.specialPlanets())
+
+
+def dot_color(starmap, planet):
+    starmap.layer.update()
+    image = starmap.view.viewport().grab().toImage()
+    pos = dot_pos(starmap, planet) * starmap.view.devicePixelRatioF()
+    return image.pixelColor(pos.x(), pos.y()).name()
+
+
+def open_map(game):
+    spread_out(game)
+    dialog = StarMap(game)
+    dialog.resize(800, 650)
+    dialog.show()
+    QtWidgets.QApplication.processEvents()
+    return dialog
+
+
+def test_tooltip_shows_reputation(game, starmap):
+    planet = game.state.planets[2]
+    game.state.planets_destroyed([planet])
+    value = game.state.reputation_of(planet)
+    assert starmap.tooltipText(planet).endswith("<br>Reputation: %s (%d)" % (reputation.levelName(value), round(value)))
+
+
+def test_colour_by_reputation(game):
+    state = game.state
+    starmap = open_map(game)
+    planet = ordinary_planet(game, starmap)
+    planet.visited = True
+    state.planets_destroyed([planet])
+    state.planets_destroyed([planet])
+    level = reputation.level(state.reputation_of(planet))
+    assert level >= reputation.HOSTILE
+
+    starmap = open_map(game)
+    assert not starmap.reputationCheckBox.isChecked()
+    assert dot_color(starmap, planet) == star_map.VISITED_COLOR.name()
+    assert not any(w.isVisible() for w in starmap.reputationKeyWidgets)
+
+    starmap.reputationCheckBox.setChecked(True)
+    assert dot_color(starmap, planet) == reputation.LEVEL_COLORS[level]
+    assert all(w.isVisible() for w in starmap.reputationKeyWidgets)
+    labels = [w.text() for w in starmap.reputationKeyWidgets if not w.text() == ""]
+    assert labels == ["Allied", "Friendly", "Wary", "Hostile", "Refuses to trade"]
+
+
+def test_colour_by_reputation_is_kept_while_the_game_is_open(game):
+    open_map(game).reputationCheckBox.setChecked(True)
+    assert open_map(game).reputationCheckBox.isChecked()
+
+    # A new game in the same window keeps it too; only restarting the game resets it
+    game.reset()
+    assert open_map(game).reputationCheckBox.isChecked()
+
+
+def test_colour_by_reputation_is_not_saved(game, monkeypatch):
+    from deep_space_trader import config
+    open_map(game).reputationCheckBox.setChecked(True)
+    assert all(not isinstance(v, bool) or k == config.SHOWINTRO_KEY for k, v in config.config.items())
+
+
+def test_colours_follow_travel(game, no_pirates):
+    state = game.state
+    starmap = open_map(game)
+    starmap.reputationCheckBox.setChecked(True)
+    victim = ordinary_planet(game, starmap)
+    state.planets_destroyed([victim, victim, victim])
+    starmap.planetDoubleClicked(victim)
+    assert state.current_planet is victim
+    levels = {key[1] for key in starmap.layer.groups}
+    assert levels == {reputation.level(v) for v in state.reputations(state.planets)}
+
+
+@pytest.mark.parametrize("fast", [True, False])
+def test_colouring_by_reputation_is_fast_with_many_planets(big_galaxy, monkeypatch, fast):
+    if not fast:
+        monkeypatch.setattr(star_map, "PrimitiveArray", None)
+
+    state = big_galaxy.state
+    state.planets_destroyed(state.planets[1::3])
+
+    start = time.time()
+    dialog = StarMap(big_galaxy)
+    assert time.time() - start < 5
+    assert drawn_planet_count(dialog.layer) == 20000
+
+    dialog.resize(1000, 800)
+    dialog.show()
+    dialog.reputationCheckBox.setChecked(True)
+    view = dialog.view
+    view.viewport().repaint()
+
+    times = []
+    for _ in range(3):
+        view.scale(star_map.ZOOM_STEP, star_map.ZOOM_STEP)
+        start = time.time()
+        view.viewport().repaint()
+        times.append(time.time() - start)
+
+    assert min(times) < (0.1 if fast else 0.5)

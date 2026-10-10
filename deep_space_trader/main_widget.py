@@ -31,6 +31,9 @@ class MainWidget(QtWidgets.QDialog):
         self.main = mainWindow
         self.primary_screen = primaryScreen
         self.state = State(self)
+
+        # Star map "Colour by reputation" checkbox. Kept while the game is open, but not saved
+        self.starMapColourByReputation = False
         self.audio = AudioPlayer()
         load_store_items(self)
         self.pending_price_anomaly = None

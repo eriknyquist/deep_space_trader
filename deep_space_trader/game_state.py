@@ -1,5 +1,7 @@
 import math
 import random
+
+from PyQt5.QtCore import QLocale
 from collections import deque
 
 from deep_space_trader.planet import Planet
@@ -8,6 +10,8 @@ from deep_space_trader import constants as const
 from deep_space_trader.utils import percentChance
 from deep_space_trader.items import itemDisplayName
 from deep_space_trader.i18n import translate, formatNumber
+from deep_space_trader import reputation
+from deep_space_trader.reputation import Reputation, buyPriceFactor, sellPriceFactor
 
 # Ranges of possible health loss during battle, by battle level number
 health_loss_ranges_by_battle_level = [
@@ -59,6 +63,11 @@ class State(object):
 
         # Centres (x, y) of the clusters planets are grouped in (see expand_planets)
         self.cluster_centres = []
+
+        # How much planets like the player, and the planets sold to today (selling
+        # only improves a planet's opinion once per day)
+        self.reputation = Reputation()
+        self.reputation_sold_today = set()
 
         self.warehouse_trips = 0
         self.expand_planets(const.INITIAL_PLANET_COUNT)
@@ -176,6 +185,87 @@ class State(object):
         progress = min(1.0, max(0.0, (distance - inner) / (outer - inner)))
         return 1.0 - progress * (1.0 - const.REMOTE_PRICE_FACTOR)
 
+    # ----- Reputation -----
+
+    def reputation_of(self, planet):
+        """
+        How much a planet likes the player, from 0 to 100
+        """
+        return self.reputation.ofPlanet(planet)
+
+    def reputations(self, planets):
+        """
+        Reputation of many planets at once (much faster than one at a time)
+        """
+        return self.reputation.ofPlanets(planets)
+
+    def trades_with_you(self, planet):
+        return reputation.level(self.reputation_of(planet)) != reputation.REFUSES
+
+    @staticmethod
+    def reputation_total(value, quantity, factor):
+        """
+        Total price of 'quantity' items worth 'value' each, multiplied by a
+        reputation price factor. The factor is applied to the total, not to
+        each item, so it isn't lost to rounding with cheap items (10% more
+        than 4 is still 4, but 10% more than 40,000 is 44,000)
+        """
+        if quantity <= 0:
+            return 0
+
+        # Rounded half up, and at least 1
+        return max(1, int(math.floor(value * quantity * factor + 0.5)))
+
+    def buy_total(self, planet, itemname, quantity):
+        """
+        What the player pays for 'quantity' items on a planet, which depends on the planet's opinion of them
+        """
+        return self.reputation_total(planet.items.items[itemname].value, quantity,
+                                     buyPriceFactor(self.reputation_of(planet)))
+
+    def sell_total(self, planet, itemname, quantity):
+        """
+        What a planet pays the player for 'quantity' items, which depends on the planet's opinion of them
+        """
+        return self.reputation_total(planet.items.items[itemname].value, quantity,
+                                     sellPriceFactor(self.reputation_of(planet)))
+
+    def max_affordable(self, planet, itemname, limit):
+        """
+        The most of an item the player can afford to buy on a planet, up to 'limit'
+        """
+        if self.money <= 0 or limit <= 0:
+            return 0
+
+        # An estimate from the price of one item, then corrected for rounding of the total
+        each = planet.items.items[itemname].value * buyPriceFactor(self.reputation_of(planet))
+        quantity = min(limit, int(self.money / each))
+        while (quantity < limit) and (self.buy_total(planet, itemname, quantity + 1) <= self.money):
+            quantity += 1
+        while (quantity > 0) and (self.buy_total(planet, itemname, quantity) > self.money):
+            quantity -= 1
+
+        return quantity
+
+    def planets_destroyed(self, planets):
+        self.reputation.addEvents([(p.x, p.y) for p in planets], const.DESTRUCTION_REPUTATION,
+                                  const.DESTRUCTION_SPREAD_LY)
+
+    def fought_resisting_planet(self, planet):
+        self.reputation.addEvent(planet.x, planet.y, const.RESISTANCE_FIGHT_REPUTATION,
+                                 const.DESTRUCTION_SPREAD_LY)
+
+    def sold_to(self, planet):
+        # Only once per planet per day, so selling one item at a time doesn't help
+        if id(planet) in self.reputation_sold_today:
+            return
+
+        self.reputation_sold_today.add(id(planet))
+        self.reputation.addEvent(planet.x, planet.y, const.SALE_REPUTATION, const.TRADE_SPREAD_LY)
+
+    def sample_accepted(self, planet):
+        self.reputation.addEvent(planet.x, planet.y, const.SAMPLE_REPUTATION, const.TRADE_SPREAD_LY)
+
     def battle_victory_chance_percentage(self):
         return self.battle_level_chance_map[self.battle_level]
 
@@ -213,7 +303,13 @@ class State(object):
                 line = translate("State", "Day {0}: {1}, sold %Ln {2} for {3} each",
                                  "{1} is a planet name, and {2} is an item name, e.g. tin", quantity)
 
-            lines.append(line.format(formatNumber(daynum), planetname, itemDisplayName(itemname), formatNumber(price)))
+            # The price each is an average when reputation changed the total, so it may not be whole
+            if float(price).is_integer():
+                price_text = formatNumber(price)
+            else:
+                price_text = QLocale().toString(float(price), 'f', 2)
+
+            lines.append(line.format(formatNumber(daynum), planetname, itemDisplayName(itemname), price_text))
 
         return '\n'.join(lines)
 
@@ -239,6 +335,8 @@ class State(object):
         self.warehouse_trips = 0
         self.store_purchases = 0
         self.current_planet.clear_samples_today()
+        self.reputation.nextDay()
+        self.reputation_sold_today = set()
         return True
 
     def disable_health_recovery_today(self):

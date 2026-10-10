@@ -188,6 +188,9 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             # Remove resisting planet from list of planets to destroy
             return [p for p in planets_to_destroy if id(p) != id(resisting_planet)], resisting_planet
 
+        # Fighting makes the neighbours nervous, whoever wins
+        self.state.fought_resisting_planet(resisting_planet)
+
         battle_won = self.state.battle_won()
         if battle_won:
             self.parent.audio.play(self.parent.audio.VictorySound)
@@ -236,6 +239,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             self.close()
             return
 
+        self.state.planets_destroyed(planets_to_destroy)
         for planet in planets_to_destroy:
             self.state.warehouse.add_all_items(planet.items)
 
@@ -305,6 +309,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         # what is actually being destroyed, not what was selected
         on_planet = any(planet is self.parent.state.current_planet for planet in planets_to_destroy)
 
+        self.parent.state.planets_destroyed(planets_to_destroy)
         for planet in planets_to_destroy:
             self.parent.state.warehouse.add_all_items(planet.items)
             self.parent.state.planets.remove(planet)
