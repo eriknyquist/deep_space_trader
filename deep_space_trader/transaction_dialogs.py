@@ -60,6 +60,12 @@ class TransactionDialog(QtWidgets.QDialog):
         mainLayout.addLayout(spinboxLayout)
         mainLayout.addLayout(buttonLayout)
 
+        # Size the window to fit its contents. The price message wraps over several
+        # lines and comes and goes as the quantity changes, and by default the window
+        # only grows to its minimum size, which ignores wrapping (so the message got
+        # squashed, and Windows printed "Unable to set geometry" warnings)
+        mainLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
+
         self.setLayout(mainLayout)
         self.setWindowIcon(QtGui.QIcon(ICON_PATH))
 

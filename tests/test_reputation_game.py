@@ -4,7 +4,7 @@ Reputation in the game: what changes it, and what it changes
 import time
 
 import pytest
-from PyQt5 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from deep_space_trader import constants as const
 from deep_space_trader import reputation
@@ -281,6 +281,27 @@ def test_dialog_message_follows_quantity(game, monkeypatch, cls, value, text):
 
     dialog.spinbox.setValue(0)
     assert dialog.reputationLabel.isHidden()
+
+
+@pytest.mark.parametrize("cls, value", [(Buy, 100), (Sell, 0)])
+def test_dialog_fits_message(game, monkeypatch, cls, value):
+    # The window grows to fit the whole wrapped message, and shrinks again without it
+    dialog, name = price_dialog(game, monkeypatch, cls, value, 0)
+    dialog.show()
+    QtWidgets.QApplication.processEvents()
+    height = dialog.height()
+
+    dialog.spinbox.setValue(3)
+    QtWidgets.QApplication.processEvents()
+    assert dialog.height() > height
+    assert dialog.height() >= dialog.layout().totalHeightForWidth(dialog.width())
+    label = dialog.reputationLabel
+    assert label.height() >= label.heightForWidth(label.width())
+
+    dialog.spinbox.setValue(0)
+    QtWidgets.QApplication.processEvents()
+    assert dialog.height() == height
+    dialog.close()
 
 
 @pytest.mark.parametrize("cls", [Buy, Sell])
