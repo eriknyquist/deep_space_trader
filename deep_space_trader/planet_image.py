@@ -1,5 +1,7 @@
 import os
 
+import numpy
+
 from deep_space_trader.utils import IMAGE_DIR
 
 from PyQt5 import QtWidgets, QtCore, QtGui
@@ -15,6 +17,15 @@ planet_shine_1 = os.path.join(IMAGE_DIR, 'planet_shine_1.png')
 planet_shine_2 = os.path.join(IMAGE_DIR, 'planet_shine_2.png')
 planet_shine_3 = os.path.join(IMAGE_DIR, 'planet_shine_3.png')
 planet_shine_4 = os.path.join(IMAGE_DIR, 'planet_shine_4.png')
+
+# Template images, loaded once (on first use, since that needs a QApplication)
+_templates = {}
+
+def templateImage(filename):
+    if filename not in _templates:
+        _templates[filename] = QtGui.QPixmap(filename).scaled(WIDTH, HEIGHT)
+
+    return _templates[filename]
 
 def shineImageIndex(planetname):
     return (ord(planetname[-2]) * len(planetname)) % 4
@@ -62,16 +73,16 @@ class PlanetImage(QtWidgets.QWidget):
 
         self.pixmap = QtGui.QPixmap(WIDTH, HEIGHT)
 
-        self.bg_image = QtGui.QPixmap(planet_background).scaled(WIDTH, HEIGHT)
-        self.fill_image = QtGui.QPixmap(planet_fill).scaled(WIDTH, HEIGHT)
-        self.outline_image = QtGui.QPixmap(planet_outline).scaled(WIDTH, HEIGHT)
-        self.ring_image = QtGui.QPixmap(planet_ring).scaled(WIDTH, HEIGHT)
+        self.bg_image = templateImage(planet_background)
+        self.fill_image = templateImage(planet_fill)
+        self.outline_image = templateImage(planet_outline)
+        self.ring_image = templateImage(planet_ring)
 
         self.shine_images = [
-            QtGui.QPixmap(planet_shine_1).scaled(WIDTH, HEIGHT),
-            QtGui.QPixmap(planet_shine_2).scaled(WIDTH, HEIGHT),
-            QtGui.QPixmap(planet_shine_3).scaled(WIDTH, HEIGHT),
-            QtGui.QPixmap(planet_shine_4).scaled(WIDTH, HEIGHT),
+            templateImage(planet_shine_1),
+            templateImage(planet_shine_2),
+            templateImage(planet_shine_3),
+            templateImage(planet_shine_4),
         ]
 
         self.update()
@@ -90,14 +101,17 @@ class PlanetImage(QtWidgets.QWidget):
         if color is None:
             return ret
 
-        for i in range(WIDTH):
-            for j in range(HEIGHT):
-                c = ret.pixelColor(i, j)
-                if c.alpha() > 0:
-                    ret.setPixelColor(i, j, color)
-                else:
-                    if alpha_white:
-                        ret.setPixelColor(i, j, QtGui.QColor(255, 255, 255))
+        # Every pixel that isn't fully transparent becomes 'color' (and with
+        # alpha_white, every one that is becomes white). Done with numpy on the
+        # image's pixels (0xAARRGGBB each), since a Python loop over them is slow
+        ret = ret.convertToFormat(QtGui.QImage.Format_ARGB32)
+        bits = ret.bits()
+        bits.setsize(ret.sizeInBytes())
+        pixels = numpy.frombuffer(bits, numpy.uint32).reshape(ret.height(), -1)[:, :ret.width()]
+        visible = (pixels >> 24) > 0
+        pixels[visible] = color.rgba()
+        if alpha_white:
+            pixels[~visible] = 0xFFFFFFFF
 
         return ret
 

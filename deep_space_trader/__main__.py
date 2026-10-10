@@ -7,10 +7,10 @@ from deep_space_trader import config
 from deep_space_trader import constants as const
 from deep_space_trader.main_widget import MainWidget
 from deep_space_trader.sounds import waitForSounds
-from deep_space_trader.utils import gameStoryDialog, showAboutDialog, ICON_PATH
+from deep_space_trader.utils import gameStoryDialog, showAboutDialog, ICON_PATH, windowIcon
 from deep_space_trader.i18n import installTranslators
 
-from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtWidgets
 
 from deep_space_trader import __version__ as package_version
 
@@ -25,7 +25,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def initUi(self):
         self.iconPath = ICON_PATH
-        self.setWindowIcon(QtGui.QIcon(self.iconPath))
+        self.setWindowIcon(windowIcon())
 
         random.seed(time.time())
         self.widget = MainWidget(self.primary_screen, self)

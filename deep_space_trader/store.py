@@ -1,5 +1,5 @@
 import random
-from deep_space_trader.utils import errorDialog, infoDialog, yesNoDialog, ICON_PATH
+from deep_space_trader.utils import errorDialog, infoDialog, yesNoDialog, windowIcon
 from deep_space_trader.location_picker import PlanetDestructionPicker
 from deep_space_trader import constants as const
 from deep_space_trader.i18n import translate, formatNumber, formatPercent
@@ -372,7 +372,7 @@ class Store(QtWidgets.QDialog):
         self.mainLayout.addWidget(self.table)
         self.setLayout(self.mainLayout)
         self.setWindowTitle(self.tr("Store"))
-        self.setWindowIcon(QtGui.QIcon(ICON_PATH))
+        self.setWindowIcon(windowIcon())
 
         self.update()
 

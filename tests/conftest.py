@@ -30,6 +30,8 @@ except ImportError:
         AudioPlayer=FakeAudio, waitForSounds=lambda parent, audio: None)
 
 from deep_space_trader import config  # noqa: E402
+from deep_space_trader import game_state  # noqa: E402
+from deep_space_trader.items import ItemCollection  # noqa: E402
 from deep_space_trader import constants as const  # noqa: E402
 from deep_space_trader import (  # noqa: E402
     main_widget, store, item_browsers, transaction_dialogs, location_browser,
@@ -44,6 +46,12 @@ DIALOG_MODULES = [main_widget, store, item_browsers, transaction_dialogs, locati
 @pytest.fixture(scope="session")
 def qapp():
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+
+    # Everything loaded so far (modules, pytest itself) stays for the whole run,
+    # so leave it out of garbage collection. The gc.collect() after each game
+    # (see the 'game' fixture) then only has the test's own objects to look
+    # through, which makes the test run much faster
+    gc.freeze()
     yield app
 
 
@@ -177,3 +185,18 @@ def game(qapp, dialogs, monkeypatch):
     window.deleteLater()
     QtCore.QCoreApplication.sendPostedEvents(None, QtCore.QEvent.DeferredDelete)
     gc.collect()
+
+
+@pytest.fixture
+def big_galaxy(game, monkeypatch):
+    """
+    The game, with 20,000 planets spread over the whole galaxy, for speed tests.
+    The new planets have no items, since making 20,000 random markets takes
+    seconds and the speed tests don't use them
+    """
+    with monkeypatch.context() as m:
+        m.setattr(game_state.ItemCollection, "random", classmethod(lambda cls, *a, **kw: ItemCollection([])))
+        game.state.scout_level = 10
+        game.state.expand_planets(20000 - len(game.state.planets))
+
+    return game

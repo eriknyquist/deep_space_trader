@@ -499,8 +499,8 @@ def test_planets_table_reputation_follows_travel_and_selling(game, dialogs, monk
     assert after_sale > after_travel
 
 
-def test_planets_table_refresh_is_fast_with_many_planets(game):
-    game.state.expand_planets(20000 - len(game.state.planets))
+def test_planets_table_refresh_is_fast_with_many_planets(big_galaxy):
+    game = big_galaxy
     game.locationBrowser.update()
 
     start = time.time()

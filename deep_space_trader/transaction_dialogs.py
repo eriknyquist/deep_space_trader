@@ -1,9 +1,9 @@
-from deep_space_trader.utils import yesNoDialog, checkForMoneyBonus, ICON_PATH
+from deep_space_trader.utils import yesNoDialog, checkForMoneyBonus, windowIcon
 from deep_space_trader.items import itemDisplayName
 from deep_space_trader.i18n import translate, formatNumber
 from deep_space_trader import reputation
 
-from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtWidgets
 
 
 class TransactionDialog(QtWidgets.QDialog):
@@ -67,7 +67,7 @@ class TransactionDialog(QtWidgets.QDialog):
         mainLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
 
         self.setLayout(mainLayout)
-        self.setWindowIcon(QtGui.QIcon(ICON_PATH))
+        self.setWindowIcon(windowIcon())
 
         self.valueChanged()
 

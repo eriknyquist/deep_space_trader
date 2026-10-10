@@ -2,7 +2,7 @@ import math
 
 from deep_space_trader import constants as const
 from deep_space_trader import reputation
-from deep_space_trader.utils import selectRowByKey, ICON_PATH
+from deep_space_trader.utils import selectRowByKey, windowIcon
 from deep_space_trader.i18n import translate, formatNumber, formatDistance
 
 from PyQt5 import QtWidgets, QtCore, QtGui
@@ -396,7 +396,7 @@ class StarMap(QtWidgets.QDialog):
         self.setLayout(self.mainLayout)
 
         self.setWindowTitle(self.tr("Star map"))
-        self.setWindowIcon(QtGui.QIcon(ICON_PATH))
+        self.setWindowIcon(windowIcon())
 
         self.build()
         self.fitToPlanets()

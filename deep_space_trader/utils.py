@@ -24,6 +24,20 @@ AUDIO_DIR = os.path.join(SOURCE_DIR, 'audio')
 IMAGE_DIR = os.path.join(SOURCE_DIR, 'images')
 ICON_PATH = os.path.join(IMAGE_DIR, 'icon.png')
 
+_window_icon = None
+
+
+def windowIcon():
+    """
+    The game's icon, for window title bars. Loaded once, on first use (that
+    needs a QApplication), since loading it takes a while and every dialog uses it
+    """
+    global _window_icon
+    if _window_icon is None:
+        _window_icon = QtGui.QIcon(ICON_PATH)
+
+    return _window_icon
+
 
 class ScrollableTextDisplay(QtWidgets.QDialog):
     def __init__(self, title, text):
@@ -38,7 +52,7 @@ class ScrollableTextDisplay(QtWidgets.QDialog):
 
         self.setLayout(mainLayout)
         self.setWindowTitle(title)
-        self.setWindowIcon(QtGui.QIcon(ICON_PATH))
+        self.setWindowIcon(windowIcon())
         self.setMinimumSize(480, 200)
 
 class InfoDialog(QtWidgets.QDialog):
@@ -69,7 +83,7 @@ class InfoDialog(QtWidgets.QDialog):
 
         self.setLayout(mainLayout)
         self.setWindowTitle(title)
-        self.setWindowIcon(QtGui.QIcon(ICON_PATH))
+        self.setWindowIcon(windowIcon())
 
     def checkboxClicked(self):
         self.dont_show_again = self.checkbox.isChecked()
@@ -125,7 +139,7 @@ def errorDialog(parent, heading=None, message=None):
 
     msg.setText(heading + "<br><br>" + message)
     msg.setWindowTitle(translate("Dialogs", "Error"))
-    msg.setWindowIcon(QtGui.QIcon(ICON_PATH))
+    msg.setWindowIcon(windowIcon())
     msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
     msg.exec_()
 
@@ -141,7 +155,7 @@ def infoDialog(parent, heading="", message=""):
 
     msg.setText(heading + "<br><br>" + message)
     msg.setWindowTitle(translate("Dialogs", "Information"))
-    msg.setWindowIcon(QtGui.QIcon(ICON_PATH))
+    msg.setWindowIcon(windowIcon())
     msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
     msg.exec_()
 

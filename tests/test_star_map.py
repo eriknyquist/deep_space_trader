@@ -231,13 +231,6 @@ def test_draws_without_the_fast_path(game, monkeypatch):
     assert drawn_planet_count(dialog.layer) == len(game.state.planets)
 
 
-@pytest.fixture
-def big_galaxy(game):
-    game.state.scout_level = 10
-    game.state.expand_planets(20000 - len(game.state.planets))
-    return game
-
-
 def test_builds_quickly_with_many_planets(big_galaxy):
     start = time.time()
     dialog = StarMap(big_galaxy)
