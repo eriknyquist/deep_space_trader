@@ -1,4 +1,4 @@
 pyqt5==5.15.10
-pyqtgraph
-pyqtdarktheme
-numpy
+pyqtgraph==0.14.0
+pyqtdarktheme==2.1.0
+numpy==2.4.6
