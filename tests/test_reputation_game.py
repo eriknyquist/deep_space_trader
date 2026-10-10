@@ -264,13 +264,23 @@ def test_dialogs_explain_reputation_prices(game, monkeypatch, cls, value, text):
     assert dialog.reputationLabel.styleSheet() == "QLabel { color: %s; }" % color
 
 
-def test_dialog_message_follows_quantity(game, monkeypatch):
-    dialog, name = price_dialog(game, monkeypatch, Sell, 0, 0)
-    # One item's price, before a quantity is chosen
-    assert "normally pay 1,000 " in dialog.reputationLabel.text()
+@pytest.mark.parametrize("cls, value, text", [
+    (Buy, 100, "for 2,700 because"),
+    (Sell, 0, "only pay you 1,500,"),
+])
+def test_dialog_message_follows_quantity(game, monkeypatch, cls, value, text):
+    dialog, name = price_dialog(game, monkeypatch, cls, value, 0)
+    # No message before a quantity is chosen
+    assert dialog.spinbox.value() == 0
+    assert dialog.reputationLabel.isHidden()
+
     dialog.spinbox.setValue(3)
-    assert "normally pay 3,000 " in dialog.reputationLabel.text()
-    assert "only pay you 1,500," in dialog.reputationLabel.text()
+    assert not dialog.reputationLabel.isHidden()
+    assert " 3,000 for this much" in dialog.reputationLabel.text()
+    assert text in dialog.reputationLabel.text()
+
+    dialog.spinbox.setValue(0)
+    assert dialog.reputationLabel.isHidden()
 
 
 @pytest.mark.parametrize("cls", [Buy, Sell])

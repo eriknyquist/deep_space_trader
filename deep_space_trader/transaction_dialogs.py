@@ -139,8 +139,8 @@ class Buy(TransactionDialog):
         self.spinboxLabel.setText(self.tr("Buy quantity (cost: {0})").format(
                                   formatNumber(self.total(int(self.spinbox.value())))))
 
-        # Totals for the chosen quantity (or for one item, before a quantity is chosen)
-        quantity = max(1, int(self.spinbox.value()))
+        # Totals for the chosen quantity (no message until a quantity is chosen)
+        quantity = int(self.spinbox.value())
         normal, actual = self.normalValue * quantity, self.total(quantity)
         if actual < normal:
             text = self.tr("{0} would normally charge {2} for this much {1}, but they're willing to sell "
@@ -199,8 +199,8 @@ class Sell(TransactionDialog):
         self.spinboxLabel.setText(self.tr("Sell quantity (gain: {0})").format(
                                   formatNumber(self.total(int(self.spinbox.value())))))
 
-        # Totals for the chosen quantity (or for one item, before a quantity is chosen)
-        quantity = max(1, int(self.spinbox.value()))
+        # Totals for the chosen quantity (no message until a quantity is chosen)
+        quantity = int(self.spinbox.value())
         normal, actual = self.normalValue * quantity, self.total(quantity)
         if actual > normal:
             text = self.tr("{0} would normally pay {2} for this much {1}, but they're willing to pay you {3} "
