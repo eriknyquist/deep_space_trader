@@ -37,6 +37,13 @@ PRICE_PLUTONIUM = 90
 PRICE_JADESTONE = 180
 PRICE_ANTIMATTER = 200
 
+# Contraband (only traded on black markets)
+PRICE_TOBACCO = 250
+PRICE_LIQUOR = 300
+PRICE_STIMULANTS = 400
+PRICE_CREDIT_CHIPS = 600
+PRICE_AMMUNITION = 800
+
 
 # ----- Quantity ranges for trade items in each rarity class -----
 
@@ -146,6 +153,52 @@ BEST_PRICE_FACTOR = 0.1
 # Size of the cells reputation is stored in, in light-years
 REPUTATION_GRID_LY = 5.0
 
+# ----- Contraband -----
+
+# Percentage of planets that are black markets (the same everywhere; never the home planet)
+BLACK_MARKET_CHANCE_PERCENTAGE = 12.5
+
+# How many of the contraband types each black market stocks, and how many of each
+BLACK_MARKET_TYPES_RANGE = (2, 4)
+BLACK_MARKET_QUANTITY_RANGE = (50, 2000)
+
+# Each black market's price for each contraband type, as a multiple of its base price
+BLACK_MARKET_PRICE_FACTOR_RANGE = (0.3, 3.0)
+
+# Chance of a customs inspection on a trip with contraband on the ship:
+# INSPECTION_CHANCE_PERCENTAGE, plus INSPECTION_CHANCE_PER_100_UNITS for every 100
+# units carried, multiplied by 1 (reputation Friendly or better) up to 2
+# (reputation 0) at the destination, and capped at MAX_INSPECTION_CHANCE_PERCENTAGE
+INSPECTION_CHANCE_PERCENTAGE = 10.0
+INSPECTION_CHANCE_PER_100_UNITS = 2.0
+MAX_INSPECTION_CHANCE_PERCENTAGE = 60.0
+
+# A search that finds contraband seizes it, with a fine of this times its value
+CONTRABAND_FINE_FRACTION = 1.0
+
+# A bribe costs this times the contraband's value. It works BRIBE_SUCCESS_PERCENTAGE
+# of the time at STARTING_REPUTATION, plus or minus BRIBE_SUCCESS_PER_REPUTATION
+# for each point of reputation above or below that (so from 35% to 85%)
+BRIBE_COST_FRACTION = 0.3
+BRIBE_SUCCESS_PERCENTAGE = 70.0
+BRIBE_SUCCESS_PER_REPUTATION = 0.5
+
+# Chance of escaping a customs patrol by fleeing, plus this for each engine power level
+FLEE_ESCAPE_PERCENTAGE = 30.0
+FLEE_ESCAPE_PER_ENGINE_LEVEL = 6.0
+MAX_FLEE_ESCAPE_PERCENTAGE = 90.0
+
+# Hidden cargo hold store upgrade: price of each level, and the chance at each
+# level that a search finds nothing
+HIDDEN_HOLD_COSTS = (100000, 500000, 2000000)
+HIDDEN_HOLD_NOTHING_FOUND_PERCENTAGES = (25.0, 45.0, 60.0)
+
+# Reputation changes at the destination of the trip
+FAILED_BRIBE_REPUTATION = -10        # the officers took the bribe, then searched anyway
+ESCAPED_PATROL_REPUTATION = -10      # fled, and got away ("wanted")
+CAUGHT_FLEEING_REPUTATION = -15      # fled, and got caught (spreads like destruction news)
+CONTRABAND_FOUND_REPUTATION = -5     # let them search, and they found contraband
+
 # ----- Misc. values -----
 
 # Percentage chance of getting a random trading tip about a price anomaly, each day
@@ -230,5 +283,8 @@ GAME_ABOUT_STRATEGY_TEXT = QT_TRANSLATE_NOOP("About",
     "other planets. Rinse and repeat.</li><br>"
     "<li>Watch out for pirates and planets that resist destruction; buy the "
     "Battle Fleet from the store and upgrade it as often as you can to increase "
-    "your chances of winning battles against pirate fleets and planet defense fleets.</li></ul>"
+    "your chances of winning battles against pirate fleets and planet defense fleets.</li><br>"
+    "<li>Contraband sells for far more than legal goods, but only black markets trade it, "
+    "and you only find black markets by visiting them. Carry small loads: the more "
+    "contraband on your ship, the more likely a customs patrol is to stop you.</li></ul>"
 )

@@ -241,8 +241,13 @@ class MainWidget(QtWidgets.QDialog):
         # Pick a random planet
         planet = random.choice(self.state.planets)
 
-        # Pick a random item on that planet
-        itemname = random.choice(list(planet.items.items.keys()))
+        # Pick a random item on that planet (not contraband on a black market the
+        # player hasn't found, which would give it away)
+        itemnames = self.state.shown_item_names(planet)
+        if not itemnames:
+            return
+
+        itemname = random.choice(itemnames)
         item = planet.items.items[itemname]
 
         # Will the price increase or decrease?

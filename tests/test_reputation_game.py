@@ -590,4 +590,4 @@ def test_reputation_refresh_after_sorting_and_filtering(game, search):
     # The current planet is still coloured, wherever it has moved to
     row = browser.rowOf(state.current_planet)
     if row is not None:
-        assert table.item(row, 0).background().color() == QtGui.QColor(0, 0xAA, 0)
+        assert table.item(row, 1).background().color() == QtGui.QColor(0, 0xAA, 0)

@@ -90,7 +90,10 @@ class Dialogs(object):
     Records message boxes and dialogs instead of showing them.
 
     Yes/no questions are answered True unless 'answers' has an entry whose key
-    appears in the dialog's title (e.g. answers["pirate"] = False). Names
+    appears in the dialog's title (e.g. answers["pirate"] = False). Questions
+    with several choices (choiceDialog) are answered with the first enabled
+    choice, unless 'choices' has an entry whose key appears in the title, giving the
+    index of the choice (e.g. choices["customs"] = 1). Names
     entered in QInputDialog.getText are taken from 'names'. A dialog opened
     with exec_() returns straight away, after calling 'on_exec' with it if set
     (e.g. to pick planets in the planet destruction dialog)
@@ -99,6 +102,9 @@ class Dialogs(object):
         self.shown = []        # (kind, title, message)
         self.executed = []     # dialogs whose exec_() was called
         self.answers = {}
+        self.choices = {}
+        self.choices_offered = []   # button texts of the last choiceDialog, and which were enabled
+        self.choices_enabled = []
         self.names = []
         self.on_exec = None
 
@@ -109,6 +115,15 @@ class Dialogs(object):
                 return answer
 
         return True
+
+    def choice(self, parent, header, message, choices, enabled=None):
+        self.shown.append(("choice", header, message))
+        self.choices_offered = list(choices)
+        self.choices_enabled = [True] * len(choices) if enabled is None else list(enabled)
+        index = next((i for key, i in self.choices.items() if key in header),
+                     self.choices_enabled.index(True))
+        assert self.choices_enabled[index], "%r is disabled" % choices[index]
+        return index
 
     def info(self, parent, heading="", message=""):
         self.shown.append(("info", heading, message))
@@ -131,7 +146,8 @@ class Dialogs(object):
 def dialogs(monkeypatch):
     d = Dialogs()
     for module in DIALOG_MODULES:
-        for name, func in (("yesNoDialog", d.yesNo), ("infoDialog", d.info), ("errorDialog", d.error)):
+        for name, func in (("yesNoDialog", d.yesNo), ("choiceDialog", d.choice), ("infoDialog", d.info),
+                           ("errorDialog", d.error)):
             if hasattr(module, name):
                 monkeypatch.setattr(module, name, func)
 

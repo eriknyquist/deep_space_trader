@@ -3,11 +3,12 @@ import random
 import numpy
 
 from deep_space_trader.utils import (
-    errorDialog, yesNoDialog, infoDialog, selectedRowKey, selectRowByKey, percentChance
+    errorDialog, yesNoDialog, choiceDialog, infoDialog, selectedRowKey, selectRowByKey, percentChance
 )
 from deep_space_trader.item_browsers import TradingConsolePlanetDisplay
-from deep_space_trader.i18n import translate, formatNumber, formatDistance
+from deep_space_trader.i18n import translate, formatNumber, formatDistance, formatPercent
 from deep_space_trader import reputation
+from deep_space_trader import contraband
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import QT_TRANSLATE_NOOP
@@ -58,6 +59,10 @@ NAME_COLUMN = 0
 VISITED_COLUMN = 1
 DISTANCE_COLUMN = 2
 REPUTATION_COLUMN = 3
+
+# Background of the name cell of black markets the player has found. See-through,
+# so the name can be read with light and dark themes
+BLACK_MARKET_BACKGROUND = QtGui.QColor(0xE5, 0x39, 0x35, 110)
 
 
 class LocationBrowser(QtWidgets.QWidget):
@@ -202,14 +207,12 @@ class LocationBrowser(QtWidgets.QWidget):
             QtGui.QColor(0, 0xAA, 0, 125),
         ]
 
-        columns = self.table.columnCount()
-
         # Rows are found by planet, since the table may be sorted, or filtered by
         # the search box. Planets hidden by the filter have no row, and are skipped
-        tail_row = self.rowOf(self.parent.state.previous_planets_tail)
+        tail = self.parent.state.previous_planets_tail
+        tail_row = self.rowOf(tail)
         if tail_row is not None:
-            for col in range(columns):
-                self.table.item(tail_row, col).setBackground(QtGui.QBrush())
+            self.setRowBackground(tail_row, tail, QtGui.QBrush())
 
         self.table.setAlternatingRowColors(False)
         self.table.setAlternatingRowColors(True)
@@ -222,10 +225,10 @@ class LocationBrowser(QtWidgets.QWidget):
             color = colors.pop()
             row = self.rowOf(planet)
             if row is not None:
-                for col in range(columns):
-                    self.table.item(row, col).setBackground(color)
+                self.setRowBackground(row, planet, color)
 
-        row = self.rowOf(self.parent.state.current_planet)
+        current = self.parent.state.current_planet
+        row = self.rowOf(current)
         if row is None:
             return
 
@@ -234,16 +237,32 @@ class LocationBrowser(QtWidgets.QWidget):
         item2.setTextAlignment(QtCore.Qt.AlignHCenter)
         self.table.setItem(row, 1, item2)
 
-        # Set current planet row color
-        for col in range(columns):
-            self.table.item(row, col).setBackground(QtGui.QColor(0, 0xAA, 0))
+        # Set current planet row color (the cell may be new, so the black market mark too)
+        self.setRowBackground(row, current, QtGui.QColor(0, 0xAA, 0))
+
+    def setRowBackground(self, row, planet, brush):
+        """
+        Colour a row, except the name cell of a black market the player has
+        found, which keeps its own colour
+        """
+        for col in range(self.table.columnCount()):
+            item = self.table.item(row, col)
+            if (col == NAME_COLUMN) and planet.black_market_found:
+                self.markBlackMarket(item, self.tr("Black market"))
+            else:
+                item.setBackground(brush)
+
+    @staticmethod
+    def markBlackMarket(item, tooltip):
+        item.setBackground(BLACK_MARKET_BACKGROUND)
+        item.setToolTip(tooltip)
 
     def rowTexts(self):
         """
         Text used in every row, looked up once per refresh rather than once per
         row (there can be 20,000 rows)
         """
-        return {"yes": self.tr("yes"), "no": self.tr("no")}
+        return {"yes": self.tr("yes"), "no": self.tr("no"), "black market": self.tr("Black market")}
 
     def reputationKey(self):
         """
@@ -296,6 +315,8 @@ class LocationBrowser(QtWidgets.QWidget):
             font.setBold(True)
             item1.setFont(font)
             item1.setToolTip(self.tr("Your home planet. Your warehouse is here."))
+        elif planet.black_market_found:
+            self.markBlackMarket(item1, texts["black market"])
 
         self.table.setItem(row, 0, item1)
         self.table.setItem(row, 1, item2)
@@ -425,18 +446,32 @@ class LocationBrowser(QtWidgets.QWidget):
                                       formatNumber(cost)))
             return
 
-        distance = self.parent.state.current_planet.distance_to(planet)
-        accepted = yesNoDialog(self, self.tr("Travel"),
-                               self.tr("Travel to {0}?<br><br>(distance {1}, cost {2}, you have {3})",
-                                       "{0} is a planet name, and {1} is a distance, e.g. 27.4 ly").format(
-                               planetname, formatDistance(distance), formatNumber(cost),
-                               formatNumber(self.parent.state.money)))
+        state = self.parent.state
+        distance = state.current_planet.distance_to(planet)
+        message = self.tr("Travel to {0}?<br><br>(distance {1}, cost {2}, you have {3})",
+                          "{0} is a planet name, and {1} is a distance, e.g. 27.4 ly").format(
+                          planetname, formatDistance(distance), formatNumber(cost), formatNumber(state.money))
+
+        if state.contraband_units_on_ship() > 0:
+            warning = self.tr("You're carrying contraband worth {0}. Chance of a customs inspection: {1}.",
+                              "{1} is a percentage, e.g. 12%").format(
+                              formatNumber(state.contraband_value(planet)),
+                              formatPercent(state.inspection_chance(planet)))
+            message += '<br><br><span style="color: %s;">%s</span>' % (reputation.BAD_PRICE_COLOR, warning)
+
+        accepted = yesNoDialog(self, self.tr("Travel"), message)
         if not accepted:
             return
 
         self.parent.state.money -= cost
 
-        if percentChance(self.parent.state.pirate_chance(planet)):
+        # At most one encounter per trip: pirates, or else maybe customs
+        if not percentChance(self.parent.state.pirate_chance(planet)):
+            if percentChance(self.parent.state.inspection_chance(planet)):
+                if not self.customsInspection(planet):
+                    # Dead
+                    return
+        else:
             self.parent.audio.play(self.parent.audio.BattleSound)
             accepted = yesNoDialog(self, self.tr("Attacked by pirates!"),
                                    self.tr("You have encountered a pirate fleet while travelling "
@@ -485,11 +520,124 @@ class LocationBrowser(QtWidgets.QWidget):
                                                                "rob you of everything you've got!"))
 
         self.parent.audio.play(self.parent.audio.TravelSound)
-        self.parent.state.change_current_planet(planet)
+        found_black_market = self.parent.state.change_current_planet(planet)
         self.parent.advanceDay()
+
+        # (Unless the game ended when the day passed)
+        if found_black_market and (self.parent.state.current_planet is planet):
+            self.parent.audio.play(self.parent.audio.PlanetDiscoverySound)
+            infoDialog(self, self.tr("Black market found!"),
+                       self.tr("You've found a black market on {0}! Contraband can be bought "
+                               "and sold here.", "{0} is a planet name").format(planet.full_name))
 
         # Every distance in the table has changed
         self.refreshDistances()
+
+    def customsInspection(self, planet):
+        """
+        A customs patrol stops the ship on the way to 'planet', and the player
+        chooses what to do. Returns False if the player died
+        """
+        state = self.parent.state
+        value = state.contraband_value(planet)
+        bribe_cost = state.bribe_cost(planet)
+        fine = state.contraband_fine(planet)
+
+        lines = [self.tr("A customs patrol orders you to stop for inspection! You're carrying "
+                         "contraband worth {0}.").format(formatNumber(value))]
+
+        if state.money >= bribe_cost:
+            lines.append(self.tr("<b>Bribe:</b> pay the officers {0} to look the other way. This works "
+                                 "{1} of the time. If it doesn't, they keep the money and search your "
+                                 "ship anyway.", "{1} is a percentage, e.g. 70%").format(
+                                 formatNumber(bribe_cost), formatPercent(state.bribe_success_chance(planet))))
+        else:
+            lines.append(self.tr("<b>Bribe:</b> the officers want {0}, which is more than you have.").format(
+                                 formatNumber(bribe_cost)))
+
+        lines.append(self.tr("<b>Flee:</b> try to outrun the patrol. Your chance of escaping is {0}. If "
+                             "they catch you, your ship is damaged in the chase, and searched.",
+                             "{0} is a percentage, e.g. 30%").format(formatPercent(state.flee_escape_chance())))
+
+        if state.hidden_hold_level > 0:
+            lines.append(self.tr("<b>Let them search:</b> there's a {0} chance they won't find your hidden "
+                                 "cargo hold. If they find your contraband, it's seized, and you're fined {1}.",
+                                 "{0} is a percentage, e.g. 25%").format(
+                                 formatPercent(state.hidden_hold_chance()), formatNumber(fine)))
+        else:
+            lines.append(self.tr("<b>Let them search:</b> your contraband is seized, and you're "
+                                 "fined {0}.").format(formatNumber(fine)))
+
+        self.parent.audio.play(self.parent.audio.BattleSound)
+        choices = [self.tr("Bribe"), self.tr("Flee"), self.tr("Let them search")]
+        choice = choiceDialog(self, self.tr("Customs inspection!"), "<br><br>".join(lines), choices,
+                              enabled=[state.money >= bribe_cost, True, True])
+
+        if choice == contraband.BRIBE:
+            outcome = contraband.bribe(state, planet)
+        elif choice == contraband.FLEE:
+            outcome = contraband.flee(state, planet)
+        else:
+            outcome = contraband.let_them_search(state, planet)
+
+        self.parent.playerItemBrowser.update()
+        self.parent.updatePlayerItemsLabel()
+        self.parent.infoBar.update()
+
+        if outcome.caught and (state.health == 0):
+            self.parent.audio.play(self.parent.audio.DeathSound)
+            infoDialog(self, self.tr("Caught!"), self.tr("The customs patrol catches you, and your ship is "
+                                                         "destroyed in the chase.<br><br>You are dead."))
+            self.parent.checkHighScore()
+            self.parent.reset()
+            return False
+
+        seized = formatNumber(outcome.seized_value)
+        fined = formatNumber(outcome.fine)
+        if outcome.bribed:
+            title = self.tr("Bribe accepted")
+            message = self.tr("The officers pocket your {0} and wave you through. Your contraband "
+                              "is safe.").format(formatNumber(outcome.bribe_paid))
+        elif outcome.escaped:
+            title = self.tr("Escaped!")
+            message = self.tr("You outrun the customs patrol! Your contraband is safe, but word "
+                              "of your escape will get around.")
+        elif outcome.bribe_failed:
+            title = self.tr("Bribe refused")
+            if outcome.found:
+                message = self.tr("The officers take your {0}, and search your ship anyway! They seize "
+                                  "your contraband (worth {1}), and fine you {2}.").format(
+                                  formatNumber(outcome.bribe_paid), seized, fined)
+            else:
+                message = self.tr("The officers take your {0}, and search your ship anyway, but they "
+                                  "don't find your hidden cargo hold. Your contraband is safe.").format(
+                                  formatNumber(outcome.bribe_paid))
+        elif outcome.caught:
+            title = self.tr("Caught!")
+            if outcome.found:
+                message = self.tr("The customs patrol catches you, and your ship is damaged in the "
+                                  "chase. They search your ship, seize your contraband (worth {0}), "
+                                  "and fine you {1}.").format(seized, fined)
+            else:
+                message = self.tr("The customs patrol catches you, and your ship is damaged in the "
+                                  "chase. They search your ship, but don't find your hidden cargo "
+                                  "hold. Your contraband is safe.")
+        else:
+            title = self.tr("Searched")
+            if outcome.found:
+                message = self.tr("The officers search your ship, seize your contraband (worth {0}), "
+                                  "and fine you {1}.").format(seized, fined)
+            else:
+                message = self.tr("The officers search your ship, but don't find your hidden cargo "
+                                  "hold. Your contraband is safe.")
+
+        if outcome.found:
+            self.parent.audio.play(self.parent.audio.FailureSound)
+        else:
+            self.parent.audio.play(self.parent.audio.VictorySound)
+
+        infoDialog(self, title, message)
+        return True
 
     def openTradingConsole(self, planet):
         trading_console = TradingConsole(self.parent, planet)

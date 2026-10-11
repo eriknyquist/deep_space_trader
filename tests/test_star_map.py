@@ -267,10 +267,10 @@ def test_legend(starmap):
     assert set(groups) == {"Key", "Controls"}
 
     assert [label.text() for label in starmap.keyLabels] == [
-        "You are here", "Previous planets", "Home planet", "Visited", "Not visited", "Selected"]
+        "You are here", "Previous planets", "Home planet", "Visited", "Not visited", "Selected", "Black market"]
     icons = [w for w in groups["Key"].findChildren(QtWidgets.QLabel)
              if w.pixmap() is not None and not w.pixmap().isNull() and w not in starmap.reputationKeyWidgets]
-    assert len(icons) == 6
+    assert len(icons) == 7
 
     assert [(a.text(), d.text()) for a, d in starmap.controlLabels] == [
         ("Click", "Select a planet"), ("Double-click", "Travel to a planet"),
@@ -414,7 +414,7 @@ def test_colours_follow_travel(game, no_pirates):
     state.planets_destroyed([victim, victim, victim])
     starmap.planetDoubleClicked(victim)
     assert state.current_planet is victim
-    levels = {key[1] for key in starmap.layer.groups}
+    levels = {key[2] for key in starmap.layer.groups}
     assert levels == {reputation.level(v) for v in state.reputations(state.planets)}
 
 

@@ -132,7 +132,8 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             self.table.setItem(row, DISTANCE_COLUMN, LocationBrowser.numberCell(distance))
 
             # Total value of the planet's items, which go to the warehouse if it's destroyed
-            item3 = TableWidgetNumber(int(planet.items.total_value))
+            # (leaving out contraband on black markets the player hasn't found)
+            item3 = TableWidgetNumber(int(self.state.shown_market_value(planet)))
             item3.setTextAlignment(QtCore.Qt.AlignHCenter)
             self.table.setItem(row, VALUE_COLUMN, item3)
 

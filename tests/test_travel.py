@@ -13,7 +13,8 @@ BEFORE_PREVIOUS = "#00aa00/50"
 
 
 def colour(table, row):
-    brush = table.item(row, 0).background()
+    # (Not the name cell: black markets the player has found keep their own colour there)
+    brush = table.item(row, 1).background()
     if brush.style() == QtCore.Qt.NoBrush:
         return None
 

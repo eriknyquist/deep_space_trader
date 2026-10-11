@@ -3,11 +3,14 @@ Helpers shared by the tests (fixtures are in conftest.py)
 """
 from deep_space_trader import utils
 from deep_space_trader.items import (
-    ItemCollection, Items, common_item_types, medium_rare_item_types, rare_item_types
+    ItemCollection, Items, common_item_types, medium_rare_item_types, rare_item_types,
+    contraband_item_types
 )
 
+# Legal item types only (contraband is in CONTRABAND_NAMES)
 ALL_ITEM_TYPES = common_item_types + medium_rare_item_types + rare_item_types
 ALL_ITEM_NAMES = [t.name for t in ALL_ITEM_TYPES]
+CONTRABAND_NAMES = [t.name for t in contraband_item_types]
 
 
 class FakeAudio(object):
@@ -38,7 +41,7 @@ def stock():
     """
     A collection with a large quantity of every item type, to take items from
     """
-    return ItemCollection([Items(t, 10 ** 7, 10) for t in ALL_ITEM_TYPES])
+    return ItemCollection([Items(t, 10 ** 7, 10) for t in ALL_ITEM_TYPES + contraband_item_types])
 
 
 def give(collection, itemname, quantity):

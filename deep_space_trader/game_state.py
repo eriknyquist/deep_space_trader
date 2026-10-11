@@ -5,7 +5,7 @@ from PyQt5.QtCore import QLocale
 from collections import deque
 
 from deep_space_trader.planet import Planet
-from deep_space_trader.items import ItemCollection
+from deep_space_trader.items import ItemCollection, Items, contraband_item_types, isContraband
 from deep_space_trader import constants as const
 from deep_space_trader.utils import percentChance
 from deep_space_trader.items import itemDisplayName
@@ -94,6 +94,9 @@ class State(object):
         self.have_trading_console = False
         self.no_health_recovery = False
 
+        # Hidden cargo hold store upgrade level (0: none). See hidden_hold_chance()
+        self.hidden_hold_level = 0
+
         self.travel_log = []
         self.transaction_log = []
 
@@ -152,6 +155,109 @@ class State(object):
         distance = self.current_planet.distance_to(planet)
         factor = min(high, max(low, distance / const.PIRATE_REFERENCE_DISTANCE))
         return min(const.MAX_PIRATE_CHANCE_PERCENTAGE, self.chance_of_being_robbed_in_transit() * factor)
+
+    # ----- Contraband -----
+
+    def hides_contraband(self, planet):
+        """
+        True if 'planet' is a black market the player hasn't found yet. Its
+        contraband is kept out of sight (trading console, rumours, destruction
+        picker) until they visit
+        """
+        return planet.black_market and not planet.black_market_found
+
+    def shown_item_names(self, planet):
+        """
+        Names of the item types on a planet's market that the player can know about
+        """
+        if self.hides_contraband(planet):
+            return [name for name in planet.items.items if not isContraband(name)]
+
+        return list(planet.items.items)
+
+    def shown_market_value(self, planet):
+        """
+        Total value of a planet's market, leaving out contraband the player can't know about
+        """
+        value = planet.items.total_value
+        if self.hides_contraband(planet):
+            value -= sum(item.total_value for item in planet.items.iter_items() if isContraband(item.type.name))
+
+        return value
+
+    def contraband_on_ship(self):
+        return [item for item in self.items.iter_items() if isContraband(item.type.name)]
+
+    def contraband_units_on_ship(self):
+        return sum(item.quantity for item in self.contraband_on_ship())
+
+    def contraband_value(self, planet):
+        """
+        Value of the contraband on the ship: at 'planet's prices for the types
+        it trades (if it's a black market), and at base prices otherwise
+        """
+        value = 0
+        for item in self.contraband_on_ship():
+            market = planet.items.items.get(item.type.name)
+            each = market.value if market is not None else item.type.base_value
+            value += each * item.quantity
+
+        return value
+
+    def inspection_chance(self, planet):
+        """
+        Percentage chance of a customs inspection on the way to 'planet'. Grows
+        with the amount of contraband on the ship, and with a bad reputation at 'planet'
+        """
+        units = self.contraband_units_on_ship()
+        if units == 0:
+            return 0.0
+
+        chance = const.INSPECTION_CHANCE_PERCENTAGE + const.INSPECTION_CHANCE_PER_100_UNITS * units / 100.0
+
+        # 1 at FRIENDLY_REPUTATION or better, up to 2 at reputation 0
+        reputation_factor = 1.0 + max(0.0, const.FRIENDLY_REPUTATION - self.reputation_of(planet)) / \
+            const.FRIENDLY_REPUTATION
+        return min(const.MAX_INSPECTION_CHANCE_PERCENTAGE, chance * reputation_factor)
+
+    def contraband_fine(self, planet):
+        """
+        Fine for the contraband on the ship, if a search finds it (up to all the player's money)
+        """
+        return min(self.money, int(round(self.contraband_value(planet) * const.CONTRABAND_FINE_FRACTION)))
+
+    def bribe_cost(self, planet):
+        return max(1, int(round(self.contraband_value(planet) * const.BRIBE_COST_FRACTION)))
+
+    def bribe_success_chance(self, planet):
+        return const.BRIBE_SUCCESS_PERCENTAGE + const.BRIBE_SUCCESS_PER_REPUTATION * \
+            (self.reputation_of(planet) - const.STARTING_REPUTATION)
+
+    def flee_escape_chance(self):
+        return min(const.MAX_FLEE_ESCAPE_PERCENTAGE,
+                   const.FLEE_ESCAPE_PERCENTAGE + const.FLEE_ESCAPE_PER_ENGINE_LEVEL * self.engine_level)
+
+    def hidden_hold_chance(self):
+        """
+        Percentage chance that a customs search finds nothing, thanks to the hidden cargo hold
+        """
+        if self.hidden_hold_level == 0:
+            return 0.0
+
+        return const.HIDDEN_HOLD_NOTHING_FOUND_PERCENTAGES[self.hidden_hold_level - 1]
+
+    def add_black_market(self, planet):
+        """
+        Make 'planet' a black market, with some of the contraband types on its market
+        """
+        planet.black_market = True
+        num_types = random.randint(*const.BLACK_MARKET_TYPES_RANGE)
+        for itemtype in random.sample(contraband_item_types, num_types):
+            items = Items(itemtype, random.randint(*const.BLACK_MARKET_QUANTITY_RANGE))
+            factor = random.uniform(*const.BLACK_MARKET_PRICE_FACTOR_RANGE)
+            items.value = max(1, int(round(itemtype.base_value * factor * self.level)))
+            items.value_history = [items.value]
+            planet.items.items[itemtype.name] = items
 
     def travel_cost_per_ly(self):
         return const.TRAVEL_COST_PER_LY * (const.ENGINE_TRAVEL_COST_FACTOR ** self.engine_level)
@@ -266,6 +372,12 @@ class State(object):
     def sample_accepted(self, planet):
         self.reputation.addEvent(planet.x, planet.y, const.SAMPLE_REPUTATION, const.TRADE_SPREAD_LY)
 
+    def customs_event(self, planet, change, spread=const.TRADE_SPREAD_LY):
+        """
+        Reputation change at 'planet' after a customs inspection on the way there
+        """
+        self.reputation.addEvent(planet.x, planet.y, change, spread)
+
     def battle_victory_chance_percentage(self):
         return self.battle_level_chance_map[self.battle_level]
 
@@ -274,6 +386,9 @@ class State(object):
         return percentChance(win_chance_percent)
 
     def change_current_planet(self, new_planet):
+        """
+        Arrive at 'new_planet'. Returns True if it's a black market the player has just found
+        """
         self.travel_log.append((new_planet.full_name, self.day))
 
         if len(self.previous_planets) == self.previous_planets.maxlen:
@@ -285,6 +400,10 @@ class State(object):
         self.current_planet.visited = True
         self.current_planet.clear_samples_today()
         self.journey.append(new_planet)
+
+        found = new_planet.black_market and not new_planet.black_market_found
+        new_planet.black_market_found = new_planet.black_market
+        return found
 
     def record_sale(self, item_name, quantity, price):
         self.transaction_log.append((False, self.day, self.current_planet.full_name, item_name, quantity, price))
@@ -403,6 +522,12 @@ class State(object):
             distance = math.hypot(new.x, new.y)
             new.items = ItemCollection.random(value_multiplier=self.level * self.remote_price_factor(distance),
                                               quantity_multiplier=self.level)
+
+            # The first planet of a new game is home, which is never a black market
+            is_home = (not self.planets) and (new is new_planets[0])
+            if (not is_home) and percentChance(const.BLACK_MARKET_CHANCE_PERCENTAGE):
+                self.add_black_market(new)
+
             previous = new
 
         self.planets += new_planets

@@ -47,6 +47,22 @@ rare_item_types = [
     ItemType(QT_TRANSLATE_NOOP("Items", "antimatter"), const.PRICE_ANTIMATTER)
 ]
 
+# Illegal goods. Only black markets trade them (see State.expand_planets), and
+# they can be seized by customs patrols when carried on the ship
+contraband_item_types = [
+    ItemType(QT_TRANSLATE_NOOP("Items", "untaxed tobacco"), const.PRICE_TOBACCO),
+    ItemType(QT_TRANSLATE_NOOP("Items", "bootleg liquor"), const.PRICE_LIQUOR),
+    ItemType(QT_TRANSLATE_NOOP("Items", "combat stimulants"), const.PRICE_STIMULANTS),
+    ItemType(QT_TRANSLATE_NOOP("Items", "counterfeit credit chips"), const.PRICE_CREDIT_CHIPS),
+    ItemType(QT_TRANSLATE_NOOP("Items", "military ammunition"), const.PRICE_AMMUNITION)
+]
+
+contraband_item_names = frozenset(t.name for t in contraband_item_types)
+
+
+def isContraband(itemname):
+    return itemname in contraband_item_names
+
 
 class Scarcity:
     EXTREMELY_SCARCE = 0

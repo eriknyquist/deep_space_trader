@@ -112,3 +112,22 @@ def test_select_row_by_key():
 
     utils.selectRowByKey(table, "missing")
     assert table.currentRow() == 2
+
+
+def test_choice_dialog(qapp):
+    """
+    The real dialog (not the 'dialogs' fixture): one button per choice, and the
+    index of the clicked one is returned
+    """
+    seen = []
+
+    def click():
+        box = QtWidgets.QApplication.activeModalWidget()
+        buttons = sorted(box.buttons(), key=lambda b: b.x())
+        seen.append(([b.text() for b in buttons], [b.isEnabled() for b in buttons], box.windowTitle()))
+        buttons[2].click()
+
+    QtCore.QTimer.singleShot(0, click)
+    assert utils.choiceDialog(None, "Customs inspection!", "What now?", ["Bribe", "Flee", "Let them search"],
+                              enabled=[False, True, True]) == 2
+    assert seen == [(["Bribe", "Flee", "Let them search"], [False, True, True], "Customs inspection!")]

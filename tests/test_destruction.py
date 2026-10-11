@@ -61,7 +61,7 @@ def test_picker_columns(game):
         distance = game.state.current_planet.distance_to(planet)
         assert table.item(row, 2).data(QtCore.Qt.DisplayRole) == pytest.approx(distance)
         assert shown_text(table, row, 2) == formatDistance(distance)
-        assert table.item(row, 3).text() == "{:,}".format(int(planet.items.total_value))
+        assert table.item(row, 3).text() == "{:,}".format(int(game.state.shown_market_value(planet)))
 
 
 def test_picker_sorts_by_value(game):

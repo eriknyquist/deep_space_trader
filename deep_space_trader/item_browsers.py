@@ -11,7 +11,7 @@ from deep_space_trader import reputation
 from deep_space_trader.utils import (
     errorDialog, yesNoDialog, infoDialog, checkForMoneyBonus, selectedRowKey, selectRowByKey
 )
-from deep_space_trader.items import itemDisplayName
+from deep_space_trader.items import itemDisplayName, isContraband
 from deep_space_trader.i18n import translate, formatNumber, formatPercent
 
 from PyQt5 import QtWidgets, QtCore, QtGui
@@ -52,13 +52,21 @@ class TableWidgetNumber(SortableTableWidgetItem):
         return self.value
 
 
+# Colour of the names of contraband item types
+CONTRABAND_COLOR = QtGui.QColor(reputation.BAD_PRICE_COLOR)
+
+
 def itemNameCell(itemname):
     """
     Table cell showing the translated name of an item type, with the item type
-    name stored as the row's key (see utils.rowKey)
+    name stored as the row's key (see utils.rowKey). Contraband is shown in red
     """
     cell = QtWidgets.QTableWidgetItem(itemDisplayName(itemname))
     cell.setData(QtCore.Qt.UserRole, itemname)
+    if isContraband(itemname):
+        cell.setForeground(CONTRABAND_COLOR)
+        cell.setToolTip(translate("ItemBrowser", "Contraband: it can be seized if a customs patrol "
+                                                 "inspects your ship. Only black markets trade it."))
     return cell
 
 
@@ -96,6 +104,22 @@ def refusesToTrade(browser):
                 message=translate("ItemBrowser", "{0} refuses to trade with you, because of what "
                                   "you've done nearby.", "{0} is a planet name").format(
                                   state.current_planet.full_name))
+    return True
+
+
+def refusesContraband(browser, itemname):
+    """
+    If 'itemname' is contraband and the current planet isn't a black market,
+    say so and return True
+    """
+    planet = browser.parent.state.current_planet
+    if (not isContraband(itemname)) or planet.black_market:
+        return False
+
+    errorDialog(browser, translate("ItemBrowser", "Contraband"),
+                message=translate("ItemBrowser", "Nobody on {0} will touch {1}.",
+                                  "{0} is a planet name, and {1} is an item name, e.g. bootleg liquor").format(
+                                  planet.full_name, itemDisplayName(itemname)))
     return True
 
 
@@ -303,6 +327,8 @@ class PlayerItemBrowser(ItemBrowser):
             return
         if refusesToTrade(self):
             return
+        if refusesContraband(self, itemname):
+            return
         if itemname not in self.parent.state.current_planet.items.items:
             self.introduceNewItem(itemname)
             return
@@ -364,6 +390,7 @@ class PlayerItemBrowser(ItemBrowser):
         if not proceed:
             return
 
+        sold_legal_items = False
         for name in list(self.parent.state.items.items.keys()):
             if name not in planet.items.items:
                 continue
@@ -372,11 +399,15 @@ class PlayerItemBrowser(ItemBrowser):
             item_gain = self.parent.state.sell_total(planet, name, quantity)
             planet.items.add_items(name, self.parent.state.items, quantity)
             self.parent.state.record_sale(name, quantity, float(item_gain) / quantity)
+            sold_legal_items = sold_legal_items or not isContraband(name)
 
         self.parent.audio.play(self.parent.audio.SellSound)
         self.parent.state.money += gain
-        self.parent.state.sold_to(planet)
-        self.parent.locationBrowser.refreshReputations()
+
+        # Selling contraband doesn't make anyone like you more
+        if sold_legal_items:
+            self.parent.state.sold_to(planet)
+            self.parent.locationBrowser.refreshReputations()
         checkForMoneyBonus(self.parent)
         self.parent.infoBar.update()
         self.parent.planetItemBrowser.update()
@@ -459,7 +490,8 @@ def planet_item_browser_add_row(browser, planet, itemname):
 
 def planet_item_browser_populate_table(browser, planet):
     browser.table.setRowCount(0)
-    for name in planet.items.items:
+    # (Leaving out contraband on black markets the player hasn't found, for the trading console)
+    for name in browser.parent.state.shown_item_names(planet):
         browser.addRow(name)
 
 

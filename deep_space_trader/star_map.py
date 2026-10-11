@@ -37,6 +37,9 @@ HOME_COLOR = QtGui.QColor("#3399ff")
 VISITED_COLOR = QtGui.QColor("#bbbbbb")
 UNVISITED_COLOR = QtGui.QColor("#888888")
 SELECTED_COLOR = QtGui.QColor("#ffffff")
+# Ring around black markets the player has found
+BLACK_MARKET_COLOR = QtGui.QColor(reputation.BAD_PRICE_COLOR)
+BLACK_MARKET_RING_WIDTH = 2.5
 RANGE_COLOR = QtGui.QColor(255, 255, 255, 40)
 # Line through every planet the player has travelled to, in order
 JOURNEY_COLOR = QtGui.QColor(51, 153, 255, 160)
@@ -72,20 +75,20 @@ def scenePos(planet):
     return QtCore.QPointF(planet.x * PIXELS_PER_LY, -planet.y * PIXELS_PER_LY)
 
 
-def dotSprite(fill, ring, dpr):
+def dotSprite(fill, ring, dpr, dot_size=DOT_SIZE, ring_width=UNVISITED_RING_WIDTH):
     """
     Small picture of a planet's dot, drawn once and then copied for each planet:
     copying it thousands of times is much faster than drawing thousands of dots.
     'dpr' is the screen's device pixel ratio, so the dot is sharp on high-DPI screens
     """
-    size = DOT_SIZE + 2
+    size = dot_size + 2
     sprite = QtGui.QPixmap(int(math.ceil(size * dpr)), int(math.ceil(size * dpr)))
     sprite.setDevicePixelRatio(dpr)
     sprite.fill(QtCore.Qt.transparent)
     painter = QtGui.QPainter(sprite)
     painter.setRenderHint(QtGui.QPainter.Antialiasing)
     centre = QtCore.QPointF(size / 2.0, size / 2.0)
-    r = DOT_SIZE / 2.0
+    r = dot_size / 2.0
 
     if fill is not None:
         painter.setPen(QtCore.Qt.NoPen)
@@ -93,9 +96,9 @@ def dotSprite(fill, ring, dpr):
         painter.drawEllipse(centre, r, r)
 
     if ring is not None:
-        painter.setPen(QtGui.QPen(ring, UNVISITED_RING_WIDTH))
+        painter.setPen(QtGui.QPen(ring, ring_width))
         painter.setBrush(QtCore.Qt.NoBrush)
-        ring_r = r - UNVISITED_RING_WIDTH / 2.0
+        ring_r = r - ring_width / 2.0
         painter.drawEllipse(centre, ring_r, ring_r)
 
     painter.end()
@@ -166,21 +169,23 @@ class PlanetsLayer(QtWidgets.QGraphicsItem):
     Draws every planet. Thousands of separate graphics items, or thousands of
     separately drawn dots, made zooming slow. Instead, every planet is drawn as
     a copy of a small pre-drawn dot (one drawPixmapFragments() call for all
-    visited planets, and one for the rest, or one per reputation level of
-    each when colouring by reputation), and the few special planets (current,
-    home, previous, selected) are drawn on top, one by one
+    visited planets, one for black markets the player has found, and one for
+    the rest, or one per reputation level of each when colouring by
+    reputation), and the few special planets (current, home, previous,
+    selected) are drawn on top, one by one
     """
     def __init__(self, starMap):
         super(PlanetsLayer, self).__init__()
         self.starMap = starMap
         state = starMap.parent.state
 
-        # (visited, reputation level) -> (x positions, y positions, opacities) of
-        # those planets, in scene coordinates
+        # (black market found, visited, reputation level) -> (x positions, y
+        # positions, opacities) of those planets, in scene coordinates
         groups = {}
         levels = [reputation.level(value) for value in state.reputations(state.planets)]
         for planet, level in zip(state.planets, levels):
-            xs, ys, opacities = groups.setdefault((planet.visited, level), ([], [], []))
+            key = (planet.black_market_found, planet.visited, level)
+            xs, ys, opacities = groups.setdefault(key, ([], [], []))
             pos = scenePos(planet)
             xs.append(pos.x())
             ys.append(pos.y())
@@ -194,7 +199,8 @@ class PlanetsLayer(QtWidgets.QGraphicsItem):
             self.groups = {key: (QtGui.QPolygonF([QtCore.QPointF(x, y) for x, y in zip(xs, ys)]), opacities)
                            for key, (xs, ys, opacities) in groups.items()}
 
-        # Planets not visited are drawn first, so the filled dots of visited planets are on top
+        # Planets not visited are drawn first, so the filled dots of visited
+        # planets are on top, and black markets last, so their rings are on top
         self.drawOrder = sorted(self.groups)
 
         self.sprites = {}
@@ -210,19 +216,26 @@ class PlanetsLayer(QtWidgets.QGraphicsItem):
 
     def spritesFor(self, dpr):
         """
-        (visited, reputation level) -> dot picture
+        (black market found, visited, reputation level) -> dot picture
         """
         colour = self.starMap.colourByReputation()
         if (dpr, colour) != self.spritesKey:
             levels = range(len(reputation.LEVEL_COLORS))
             if colour:
-                colors = [QtGui.QColor(c) for c in reputation.LEVEL_COLORS]
-                self.sprites = {(visited, level): (dotSprite(colors[level], None, dpr) if visited else
-                                                   dotSprite(None, colors[level], dpr))
-                                for visited in (False, True) for level in levels}
+                fills = [QtGui.QColor(c) for c in reputation.LEVEL_COLORS]
             else:
-                visited, unvisited = dotSprite(VISITED_COLOR, None, dpr), dotSprite(None, UNVISITED_COLOR, dpr)
-                self.sprites = {(v, level): (visited if v else unvisited) for v in (False, True) for level in levels}
+                fills = [VISITED_COLOR] * len(levels)
+
+            self.sprites = {}
+            for level in levels:
+                unvisited_ring = fills[level] if colour else UNVISITED_COLOR
+                self.sprites[(False, False, level)] = dotSprite(None, unvisited_ring, dpr)
+                self.sprites[(False, True, level)] = dotSprite(fills[level], None, dpr)
+
+                # Black markets are found by visiting them, so they're drawn filled
+                black_market = dotSprite(fills[level], BLACK_MARKET_COLOR, dpr, LARGE_DOT_SIZE,
+                                         BLACK_MARKET_RING_WIDTH)
+                self.sprites[(True, False, level)] = self.sprites[(True, True, level)] = black_market
 
             self.spritesKey = (dpr, colour)
 
@@ -416,6 +429,8 @@ class StarMap(QtWidgets.QDialog):
             (self.tr("Visited"), DotStyle(fill=VISITED_COLOR)),
             (self.tr("Not visited"), DotStyle(ring=UNVISITED_COLOR)),
             (self.tr("Selected"), DotStyle(ring=SELECTED_COLOR, ring_width=2.5)),
+            (self.tr("Black market"), DotStyle(fill=VISITED_COLOR, ring=BLACK_MARKET_COLOR,
+                                               ring_width=BLACK_MARKET_RING_WIDTH, size=LARGE_DOT_SIZE)),
         ]
 
         dpr = self.devicePixelRatioF()
@@ -614,6 +629,11 @@ class StarMap(QtWidgets.QDialog):
         else:
             style.ring = UNVISITED_COLOR
 
+        if planet.black_market_found:
+            style.ring = BLACK_MARKET_COLOR
+            style.ring_width = BLACK_MARKET_RING_WIDTH
+            style.size = max(style.size, LARGE_DOT_SIZE)
+
         if planet is state.home_planet:
             style.ring = HOME_COLOR
             style.ring_width = 2.5
@@ -653,6 +673,8 @@ class StarMap(QtWidgets.QDialog):
 
         if planet is state.home_planet:
             lines.append(self.tr("Home planet. Your warehouse is here."))
+        elif planet.black_market_found:
+            lines.append(self.tr("Black market"))
 
         lines.append(self.tr("Reputation: {0}", "{0} is a reputation, e.g. Wary (58)").format(
                      reputation.describe(state.reputation_of(planet))))

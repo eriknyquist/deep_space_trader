@@ -20,7 +20,7 @@ def test_store_lists_every_item(shop):
     names = [shop.table.item(row, 0).text() for row in range(shop.table.rowCount())]
     assert names == ["Increase ship capacity", "Scout expedition", "Planet destruction kit",
                      "Buy scout fleet", "Buy battle fleet", "Increase engine power",
-                     "Trading console"]
+                     "Trading console", "Hidden cargo hold"]
 
 
 def test_capacity_increase_doubles_each_time(game, shop):

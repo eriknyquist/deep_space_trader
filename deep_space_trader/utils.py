@@ -121,6 +121,34 @@ def yesNoDialog(parent, header="", message=None, cancelable=True):
 
     return reply == QtWidgets.QMessageBox.Yes
 
+def choiceDialog(parent, header, message, choices, enabled=None):
+    """
+    Ask a question with one button per choice (a list of button texts), and
+    return the index of the chosen one. There's no way out without choosing.
+    'enabled' is a list of True/False, one per choice (all enabled if None)
+    """
+    msg = QtWidgets.QMessageBox(parent)
+
+    # Set icon pixmap directly, for the same reason as in errorDialog
+    style = msg.style()
+    iconSize = style.pixelMetric(QtWidgets.QStyle.PM_MessageBoxIconSize)
+    icon = style.standardIcon(QtWidgets.QStyle.SP_MessageBoxQuestion)
+    msg.setIconPixmap(icon.pixmap(iconSize, iconSize))
+
+    # Like yesNoDialog: the header is the window title
+    msg.setText(message)
+    msg.setWindowTitle(header)
+    msg.setWindowIcon(windowIcon())
+    buttons = [msg.addButton(text, QtWidgets.QMessageBox.AcceptRole) for text in choices]
+    if enabled is not None:
+        for button, on in zip(buttons, enabled):
+            button.setEnabled(on)
+
+    while True:
+        msg.exec_()
+        if msg.clickedButton() in buttons:
+            return buttons.index(msg.clickedButton())
+
 def errorDialog(parent, heading=None, message=None):
     if heading is None:
         heading = translate("Dialogs", "Error")

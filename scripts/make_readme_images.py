@@ -62,7 +62,9 @@ except ImportError:
         AudioPlayer=SilentAudio, waitForSounds=lambda parent, audio: None)
 
 from deep_space_trader import config, main_widget  # noqa: E402
-from deep_space_trader.items import ItemCollection, Items, common_item_types, medium_rare_item_types  # noqa: E402
+from deep_space_trader.items import (  # noqa: E402
+    ItemCollection, Items, common_item_types, medium_rare_item_types, contraband_item_types
+)
 
 DEFAULT_OUTPUT = os.path.join(os.path.dirname(HERE), "images")
 
@@ -70,7 +72,7 @@ DEFAULT_OUTPUT = os.path.join(os.path.dirname(HERE), "images")
 DIALOG_SIZES = {
     "store": (1040, 560),
     "price_graph_window": (664, 600),
-    "material_prices_window": (600, 437),
+    "material_prices_window": (600, 640),
     "travel_log_window": (480, 245),
     "transaction_log_window": (520, 245),
     "high_score_sharing_window": (1000, 569),
@@ -142,6 +144,13 @@ class Screenshots(object):
             dialog.show()
             self.save(name, self.grabWithFrame(dialog))
 
+        # A question with several choices (utils.choiceDialog) asks again until
+        # a button is clicked: pick the first one that can be clicked
+        if isinstance(dialog, QtWidgets.QMessageBox) and (dialog.clickedButton() is None):
+            enabled = [button for button in dialog.buttons() if button.isEnabled()]
+            if enabled:
+                enabled[0].click()
+
         dialog.close()
         dialog.deleteLater()
         return 0
@@ -171,7 +180,8 @@ def give(collection, itemname, quantity, value):
     """
     Add some items of one type to a collection, at a given value
     """
-    item_type = next(t for t in common_item_types + medium_rare_item_types if t.name == itemname)
+    item_type = next(t for t in common_item_types + medium_rare_item_types + contraband_item_types
+                     if t.name == itemname)
     collection.add_items(itemname, ItemCollection([Items(item_type, quantity, value)]), quantity)
 
 
@@ -207,6 +217,10 @@ def setUpGame(game):
     nearby = sorted(state.planets[1:], key=lambda p: p.distance_to(home))
     stops = [nearby[i] for i in (2, 9, 5, 14, 7, 20, 11)]
 
+    # One of them a black market, found on the way (marked in the planets table and on the star map)
+    if not stops[3].black_market:
+        state.add_black_market(stops[3])
+
     # A few planets destroyed early on, so that reputation (the info bar, the
     # planets table and the star map tooltip) has something to show
     target = nearby[25]
@@ -238,6 +252,7 @@ def setUpGame(game):
     for name in sorted(home.items.items)[:2]:
         give(state.items, name, 400, home.items.items[name].value)
     give(state.items, "tin", 320, 10)
+    give(state.items, "combat stimulants", 60, 380)
 
     for name, quantity in (("tin", 52000), ("copper", 31000), ("gold", 8400), ("silver", 22000),
                            ("uranium", 3100), ("plutonium", 940), ("steel", 47000)):
@@ -352,6 +367,11 @@ def makeImages(shots):
     rolls[:] = [True]
     shots.dialog("rumour_result", game.runRandomNotifications)
     main_widget.random.choice = original_choice
+
+    # A customs patrol, on the way to a nearby planet (the contraband on the ship
+    # is seized afterwards, so this is the last image)
+    destination = sorted(state.planets[1:], key=lambda p: p.distance_to(state.current_planet))[0]
+    shots.dialog("customs_inspection", lambda: game.locationBrowser.customsInspection(destination))
 
     # Not close(): that asks "Are you sure you want to quit?"
     window.hide()

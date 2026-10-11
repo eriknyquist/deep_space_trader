@@ -171,6 +171,8 @@ left area of the main game window.
   ship. If the players ship had no items on it, the pirates will also steal (almost) all of the players
   money; otherwise, there is a 20% chance that they will also steal (almost) all of the players money.
   Items stored in the warehouse cannot be touched by pirates.
+  When the player has contraband on their ship, a trip without pirates may instead be stopped by a
+  customs patrol, and the travel prompt warns of this (see `Contraband`_).
 
 * **"Travel to previous" button**: Causes the player to travel to the planet that they were on
   directly before the current planet. The cost depends on the distance, as for the "Travel..." button,
@@ -197,7 +199,8 @@ left area of the main game window.
   "Distance" to see the nearest planets first). The home planet is shown in bold. The player can travel
   to a planet by double-clicking on the planet name within the planet display table. The last 3 planets visited will be colored different shades of
   green- the current planet will be a bright green, the previous planet a darker green, and the
-  planet before that the darkest green.
+  planet before that the darkest green. Black markets the player has found have a red planet name
+  cell (see `Contraband`_).
 
 
 **"Items on current planet" section**
@@ -254,10 +257,13 @@ right area of the main game window.
   begin trading in the selected item. Only one free sample of a given item may be given to
   the same planet in the same day. A planet that accepts a free sample thinks better of the player.
   A planet that refuses to trade (see `Reputation`_) won't buy anything, or accept free samples.
+  Contraband (shown in red) can only be sold, or offered as a free sample, on black markets
+  (see `Contraband`_).
 
 * **"Sell all" button**: Allows the player to attempt to sell all items on the ship to
   the current planet. Only items that the current planet already holds will be sold
-  (free samples can only be provided via the "Sell items" button).
+  (free samples can only be provided via the "Sell items" button). Contraband stays on the ship,
+  unless the current planet is a black market that trades it.
 
 * **"To warehouse" button**: Allows the player to move 1 or more of the selected item
   from their ship to the warehouse. The warehouse is on the player's home planet, so this only works
@@ -393,7 +399,16 @@ purchases can be made per day, but this number is increased when the player reac
 
 * **Trading console**: Buying this item will enable the "Trading console" button
   in the `"Planets" section`_, allowing you to see current item prices on any planet without
-  travelling.
+  travelling. It doesn't show contraband on black markets the player hasn't found yet.
+
+* **Hidden cargo hold**: Buying this item builds a secret compartment into the player's ship. It
+  doesn't make customs inspections any less likely, but when a customs patrol searches the ship,
+  there's a chance they don't find the player's contraband (see `Contraband`_). It can be bought
+  3 times:
+
+  * *Level 1* (100,000): 25% chance that a search finds nothing
+  * *Level 2* (500,000): 45% chance that a search finds nothing
+  * *Level 3* (2,000,000): 60% chance that a search finds nothing
 
 **"Buy items" window**
 ######################
@@ -545,6 +560,7 @@ It can also be opened via the keyboard shortcut Ctrl-G.
 * The home planet has a blue ring.
 * Visited planets are filled grey dots, and planets not visited yet are hollow grey rings.
 * The selected planet has a white ring.
+* Black markets the player has found are larger dots with a red ring (see `Contraband`_).
 * A blue line joins every planet the player has travelled to, in order, starting from the home planet,
   showing the player's whole journey.
 * Faint dashed circles show the area of the starting planets, and the range of the player's scout fleet.
@@ -555,7 +571,8 @@ It can also be opened via the keyboard shortcut Ctrl-G.
   player is welcome, and where they aren't. The box is unticked each time the game is started.
 
 Moving the mouse over (or near) a planet shows its name straight away, and holding the mouse still
-shows its distance, the cost of travelling there, and its reputation. Clicking a planet
+shows its distance, the cost of travelling there, its reputation, and whether it's a black market
+the player has found. Clicking a planet
 selects it in the `"Planets" section`_, and double-clicking it travels there. Pressing the Enter key opens the
 trading console for the selected planet, as in the `"Planets" section`_ (only if the "Trading console" item has been
 purchased from the `"Store" window`_). The mouse wheel zooms in and
@@ -571,6 +588,7 @@ when the "Material prices" option is selected from the "Tools" menu in the main 
 (e.g. **Tools->Material prices**). The "Prices" window can also be opened via the keyboard shortcut Ctrl-A.
 
 The "Prices" window shows the usual price for all materials, and can be used as a trading reference.
+Contraband is listed separately, at the bottom (see `Contraband`_).
 The "Prices" window does *not* show the exact item prices for any particular planet. Planets will set their
 own item prices, and the prices in the "Prices" window are merely suggestions for them.
 
@@ -671,8 +689,58 @@ the trading console and the price history), prices are the planet's normal price
   think a little better of the player. This only counts once per planet per day, however many
   sales are made.
 * **A planet accepting a free sample** makes it, and the planets close to it, think better of the player.
+  Selling contraband doesn't make anyone think better of the player.
+* **Customs inspections** (see `Contraband`_) can make planets think less of the player.
 * **Time**: every change fades by 7% each day (halving in about 10 days), so a bad reputation is
   eventually forgotten, and goodwill from trading fades unless the player keeps trading.
 
 A planet that refuses to trade can still be visited, and its prices can still be seen with the
 trading console.
+
+Contraband
+++++++++++
+
+Contraband is illegal goods, worth more than anything legal, shown in red in every item table:
+
+========================  ==========
+Item                      Base price
+========================  ==========
+untaxed tobacco           250
+bootleg liquor            300
+combat stimulants         400
+counterfeit credit chips  600
+military ammunition       800
+========================  ==========
+
+**Black markets.** About 1 planet in 8 is a black market, anywhere in the galaxy (never the home
+planet). Only black markets buy and sell contraband: anywhere else, nobody will touch it. Each
+black market trades 2 to 4 of the 5 types, in small quantities, and prices vary a lot between black
+markets (from 0.3 to 3 times the base price), so the profit is in buying cheap on one black market
+and selling dear on another. Black markets are found by visiting them: on the first visit, a message
+says so, and from then on the black market has a red name cell in the `"Planets" section`_ and a red
+ring on the `"Star map" window`_. Until then, nothing gives it away: the trading console, rumours and
+the planet destruction window leave out its contraband.
+
+**Customs inspections.** On a trip with contraband on the ship (and no pirates), a customs patrol
+may stop the player. The chance is 10%, plus 2% for every 100 contraband items on the ship, and up
+to twice that where the destination doesn't like the player (below Friendly), with a maximum of 60%.
+The travel prompt shows the chance. When stopped, the player chooses:
+
+.. image:: images/customs_inspection.png
+
+
+* **Bribe**: pay the officers 30% of the contraband's value. This works 70% of the time (more where
+  the destination likes the player, less where it doesn't). If it doesn't, the officers keep the
+  money, search the ship, and the destination thinks less of the player.
+* **Flee**: escape 30% of the time, plus 6% for each engine power level (up to 90%). If the player
+  gets away, they keep everything, but the destination thinks less of them. If they're caught, the
+  ship is damaged as in a lost battle (the player can die), it's searched, and the news spreads
+  as far as news of destroyed planets.
+* **Let them search**.
+
+When the ship is searched, all contraband on it is seized, and the player is fined its value (or
+all their money, if that's less). With a hidden cargo hold (see `"Store" window`_), there's a
+chance the search finds nothing. If the player lets them search and they find contraband, the
+destination thinks a little less of the player. Contraband is valued at the destination's prices
+if it's a black market that trades it, and at base prices otherwise. The player always arrives at
+their destination afterwards. Contraband in the warehouse is always safe.

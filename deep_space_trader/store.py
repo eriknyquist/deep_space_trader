@@ -308,6 +308,55 @@ class TradingConsole(StoreItem):
         self.price = None
 
 
+class HiddenCargoHold(StoreItem):
+    def __init__(self, parent):
+        name = translate("HiddenCargoHold", "Hidden cargo hold")
+        super(HiddenCargoHold, self).__init__(parent, name, "", const.HIDDEN_HOLD_COSTS[0])
+
+        # (Not the state's level: when a new game starts, the store items are
+        # made before the state is reset)
+        self._update_desc(0)
+
+    def _update_desc(self, level):
+        chances = const.HIDDEN_HOLD_NOTHING_FOUND_PERCENTAGES
+
+        if level >= len(const.HIDDEN_HOLD_COSTS):
+            self.description = translate("HiddenCargoHold", "You cannot buy this item anymore.")
+            self.price = None
+        elif level == 0:
+            self.description = translate("HiddenCargoHold",
+                "Build a secret compartment into your ship. When a customs patrol searches "
+                "your ship, there's a {0} chance they don't find your contraband."
+            ).format(formatPercent(chances[0]))
+            self.price = const.HIDDEN_HOLD_COSTS[0]
+        else:
+            self.name = translate("HiddenCargoHold", "Improve hidden cargo hold")
+            self.description = translate("HiddenCargoHold",
+                "Hide your secret compartment better. The chance that a customs search "
+                "doesn't find your contraband goes from {0} to {1}."
+            ).format(formatPercent(chances[level - 1]), formatPercent(chances[level]))
+            self.price = const.HIDDEN_HOLD_COSTS[level]
+
+    def use(self):
+        if self.parent.state.hidden_hold_level == 0:
+            check_msg = translate("HiddenCargoHold", "Are you sure you want to build a hidden cargo hold?")
+            bought_msg = translate("HiddenCargoHold", "Hidden cargo hold successfully built.")
+        else:
+            check_msg = translate("HiddenCargoHold", "Are you sure you want to improve your hidden cargo hold?")
+            bought_msg = translate("HiddenCargoHold", "Hidden cargo hold successfully improved.")
+
+        if not yesNoDialog(self.parent, translate("HiddenCargoHold", "Are you sure?"), message=check_msg):
+            return False
+
+        self.parent.state.hidden_hold_level += 1
+        self.parent.audio.play(self.parent.audio.ShipUpgradeSound)
+        infoDialog(self.parent, translate("HiddenCargoHold", "Success"), message=bought_msg)
+        return True
+
+    def after_use(self):
+        self._update_desc(self.parent.state.hidden_hold_level)
+
+
 def load_store_items(parent):
     store_items.clear()
     store_items.extend([
@@ -317,7 +366,8 @@ def load_store_items(parent):
         ScoutFleetUpgrade(parent),
         BattleFleetUpgrade(parent),
         EngineUpgrade(parent),
-        TradingConsole(parent)
+        TradingConsole(parent),
+        HiddenCargoHold(parent)
     ])
 
 

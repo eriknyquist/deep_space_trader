@@ -170,8 +170,9 @@ def test_menu_windows(game, dialogs):
     assert [type(d).__name__ for d in dialogs.executed] == [
         "PricesTable", "ScrollableTextDisplay", "ScrollableTextDisplay", "HighScoreSharing"]
 
+    # 13 item types, then a "Contraband" heading and the 5 contraband types
     prices = dialogs.executed[0].table
-    assert prices.rowCount() == 13
+    assert prices.rowCount() == 19
 
 
 def test_sounds_can_be_turned_off(game):

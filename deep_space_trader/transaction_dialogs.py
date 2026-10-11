@@ -1,5 +1,5 @@
 from deep_space_trader.utils import yesNoDialog, checkForMoneyBonus, windowIcon
-from deep_space_trader.items import itemDisplayName
+from deep_space_trader.items import itemDisplayName, isContraband
 from deep_space_trader.i18n import translate, formatNumber
 from deep_space_trader import reputation
 
@@ -193,8 +193,11 @@ class Sell(TransactionDialog):
         gain = self.total(quantity)
         self.parent.state.money += gain
         self.parent.state.record_sale(self.itemName, quantity, float(gain) / quantity)
-        self.parent.state.sold_to(self.parent.state.current_planet)
-        self.parent.locationBrowser.refreshReputations()
+
+        # Selling contraband doesn't make anyone like you more
+        if not isContraband(self.itemName):
+            self.parent.state.sold_to(self.parent.state.current_planet)
+            self.parent.locationBrowser.refreshReputations()
         self.parent.audio.play(self.parent.audio.SellSound)
         checkForMoneyBonus(self.parent)
 

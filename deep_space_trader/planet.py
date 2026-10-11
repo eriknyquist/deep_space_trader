@@ -174,6 +174,11 @@ class Planet(object):
         self.x = 0.0
         self.y = 0.0
 
+        # Black markets trade contraband. The player only knows a planet is one
+        # once they've been there (black_market_found)
+        self.black_market = False
+        self.black_market_found = False
+
     def distance_to(self, other):
         """
         Distance from this planet to another planet, in light-years
