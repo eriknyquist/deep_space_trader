@@ -97,7 +97,7 @@ def test_ordinary_markets_never_stock_contraband():
         assert not any(isContraband(name) for name in ItemCollection.random().items)
 
 
-def test_black_markets_are_spread_evenly(big_galaxy):
+def test_black_markets_are_spread_evenly(black_markets, big_galaxy):
     state = big_galaxy.state
     planets = state.planets[1:]
     black_markets = [p for p in planets if p.black_market]
@@ -115,7 +115,7 @@ def test_black_markets_are_spread_evenly(big_galaxy):
     assert not any(p.black_market_found for p in planets)
 
 
-def test_black_market_stock(big_galaxy):
+def test_black_market_stock(black_markets, big_galaxy):
     for planet in big_galaxy.state.planets:
         names = [name for name in planet.items.items if isContraband(name)]
         if not planet.black_market:

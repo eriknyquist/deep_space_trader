@@ -114,20 +114,24 @@ def test_select_row_by_key():
     assert table.currentRow() == 2
 
 
-def test_choice_dialog(qapp):
+def test_choice_dialog(qapp, monkeypatch):
     """
     The real dialog (not the 'dialogs' fixture): one button per choice, and the
-    index of the clicked one is returned
+    index of the clicked one is returned. Asks again if it's closed without a
+    choice. exec_() is replaced, since running a real modal dialog in the tests
+    crashes Python on Windows
     """
     seen = []
 
-    def click():
-        box = QtWidgets.QApplication.activeModalWidget()
-        buttons = sorted(box.buttons(), key=lambda b: b.x())
+    def exec_(box):
+        buttons = box.buttons()
         seen.append(([b.text() for b in buttons], [b.isEnabled() for b in buttons], box.windowTitle()))
-        buttons[2].click()
+        if len(seen) == 2:
+            # (The first time, closed without choosing)
+            buttons[2].click()
+        return 0
 
-    QtCore.QTimer.singleShot(0, click)
+    monkeypatch.setattr(QtWidgets.QMessageBox, "exec_", exec_)
     assert utils.choiceDialog(None, "Customs inspection!", "What now?", ["Bribe", "Flee", "Let them search"],
                               enabled=[False, True, True]) == 2
-    assert seen == [(["Bribe", "Flee", "Let them search"], [False, True, True], "Customs inspection!")]
+    assert seen == [(["Bribe", "Flee", "Let them search"], [False, True, True], "Customs inspection!")] * 2

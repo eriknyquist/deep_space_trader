@@ -170,17 +170,26 @@ def dialogs(monkeypatch):
     return d
 
 
+# The real share of planets that are black markets (the 'game' fixture turns them off)
+BLACK_MARKET_CHANCE_PERCENTAGE = const.BLACK_MARKET_CHANCE_PERCENTAGE
+
+
 @pytest.fixture
 def game(qapp, dialogs, monkeypatch):
     """
-    A new game in a shown main window, with plenty of money and no random
-    rumours. Returns the MainWidget;
+    A new game in a shown main window, with plenty of money, no random
+    rumours and no black markets. Returns the MainWidget;
     the game state is game.state, and played sounds are in game.audio.played
     """
     monkeypatch.setattr(main_widget, "AudioPlayer", FakeAudio)
 
     # No random rumours when a day passes (the rumour tests turn them back on)
     monkeypatch.setattr(const, "CHANCE_TRADING_TIP_PERCENTAGE", 0.0)
+
+    # No black markets, so that travelling to a random planet never finds one
+    # (which shows a message), and markets have no contraband. The contraband
+    # tests make their own, or use the 'black_markets' fixture
+    monkeypatch.setattr(const, "BLACK_MARKET_CHANCE_PERCENTAGE", 0.0)
 
     from deep_space_trader.__main__ import MainWindow
 
@@ -201,6 +210,15 @@ def game(qapp, dialogs, monkeypatch):
     window.deleteLater()
     QtCore.QCoreApplication.sendPostedEvents(None, QtCore.QEvent.DeferredDelete)
     gc.collect()
+
+
+@pytest.fixture
+def black_markets(game, monkeypatch):
+    """
+    The game, with black markets in newly discovered planets, as in the real game
+    """
+    monkeypatch.setattr(const, "BLACK_MARKET_CHANCE_PERCENTAGE", BLACK_MARKET_CHANCE_PERCENTAGE)
+    return game
 
 
 @pytest.fixture
