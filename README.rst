@@ -1,15 +1,37 @@
 .. sectnum::
 
-Deep Space Trader 1.4.0
+Deep Space Trader 1.5.0
 -----------------------
 
 .. image:: images/readme_image.png
 
-Deep Space Trader is a turn-based strategy game inspired by, and similar in gameplay to,
-the old DOS game "Drugwars".
+Deep Space Trader is a turn-based space trading game, inspired by the old DOS game "Drugwars".
+Buy low, sell high, and do whatever it takes to get rich before your time runs out: trade across
+a galaxy of thousands of planets, smuggle contraband past customs patrols, fight off pirates, and
+blow up whole planets for their resources (if you can live with what the neighbours think of you).
 
-..
-  .. contents:: Table Of Contents
+.. contents:: Table of contents
+   :depth: 2
+
+Features at a glance
+====================
+
+* **Trade across a living galaxy**: 13 raw materials, with prices that differ from planet to
+  planet and change every day. Planets far from home sell cheaper.
+* **Real distances**: planets have positions, grouped in clusters and star systems. Longer trips cost
+  more, and are riskier.
+* **Star map**: see every planet you've discovered, your whole journey, and where you're welcome.
+* **Reputation**: planets remember what you do near them. Destroy their neighbours and they'll charge
+  you more, or refuse to trade with you at all; trade with them and they'll warm to you.
+* **Contraband**: five illegal goods worth far more than anything legal, traded only on hidden black
+  markets. Bribe, flee or bluff your way past customs patrols.
+* **Upgrades**: a bigger ship, a battle fleet, a scout fleet to discover thousands of new planets,
+  faster engines, a trading console, a hidden cargo hold, and the planet destruction kit.
+* **Danger**: pirates, planets that fight back when you try to destroy them, and daily costs that
+  can starve you if you run out of money.
+* **Rumours** of price spikes and crashes (not always true).
+* **High scores**, which can be shared with other players.
+* **English and Brazilian Portuguese**, a dark theme, and sound effects.
 
 Install
 =======
@@ -22,7 +44,7 @@ Download the `Windows x64 installer <https://github.com/eriknyquist/deep_space_t
 Python package
 ##############
 
-Install as a python package:
+Install as a python package (Python 3.11 or newer):
 
 ::
 
@@ -37,42 +59,187 @@ And run like so:
 Introduction
 ============
 
-The player starts off on a planet within a system of 8 randomly-generated planets.
-Each planet has various raw materials available for trading (13 types of raw material in total),
-all with prices that differ from planet to planet, and fluctuate over time. The goal of the game
-is to make as much money as possible by buying and selling raw materials between planets.
+You start on your home planet, with 2,000 money, a ship that holds 100 items, and 30 days to make
+as much money as you can. Your score is the money you have at the end.
 
-The player has an item inventory for raw materials, with a fixed (but upgradeable) capacity.
-Only items in the inventory can be bought or sold. The player also has a warehouse with unlimited
-capacity. Items can be transferred between the item inventory and the warehouse, but only
-a certain number of transfers between item inventory and warehouse can be made per day.
+Around your home planet are 7 more planets, all within 30 light-years. Each planet trades some
+of the 13 raw materials, at its own prices, which change every day. Buy materials where they're
+cheap, and sell them where they're expensive. Travelling to another planet costs money (more for
+longer trips) and always takes a day, however far you go.
+
+Your ship can only carry so much, but you also have a warehouse on your home planet, which holds
+any amount. Moving items between the ship and the warehouse is limited to a few trips per day.
+
+Every day, living costs are taken from your money, and they grow as you buy upgrades that need
+upkeep. If you run out of money, you'll start to starve.
 
 Planets remember what the player does near them. Destroying planets makes the planets around
 them distrust the player, so they charge more and pay less, or even refuse to trade at all,
 while trading with planets slowly wins them over (see `Reputation`_).
 
-Travelling between planets always incurs a risk of encountering pirates, who may
-kill the player or rob them of their money / raw materials. The greater the value that the
-player is travelling with (combined value of player's money and items in the player's inventory,
-but not the warehouse), the greater the chance of encountering pirates.
+Travelling also brings danger. Once you're worth over a million, pirates may attack on the way:
+the more you're worth, and the longer the trip, the more likely they are. Fight them and you
+may lose health, or die; surrender and they'll take your cargo, and maybe your money. And if you
+carry contraband, customs patrols may stop you (see `Contraband`_).
 
-The player can use any earned money to buy "upgrades" from a store. Only a certain number of
-store purchases can be made per day. Some of the upgrades
-allow the player to:
+The store sells upgrades and services, a few purchases per day. They let the player:
 
-* Destroy planets altogether and acquire all their raw materials
-  (Destroying a planet incurs a risk that the planet may fight to resist, which may kill the player)
+* Increase the ship's capacity, so more can be bought and sold at once
 
-* Buy and upgrade a battle fleet, which increases chances of winning fights against pirates,
+* Destroy planets altogether, and take all their raw materials
+  (a planet may fight back, which may kill the player)
+
+* Buy and upgrade a battle fleet, which increases the chances of winning fights against pirates,
   and against planets that resist destruction
 
 * Buy and upgrade a scout fleet, which allows the player to discover thousands of
-  new planets
+  new planets, further and further from home
 
-* Upgrade the player's inventory capacity, which increases the number of items that can
-  be bought or sold at once.
+* Increase engine power, for cheaper travel and more warehouse trips per day
 
-* Increase the number of warehouse trips allowed per day
+* Buy a trading console, to see any planet's prices without travelling there
+
+* Build a hidden cargo hold, to hide contraband from customs searches
+
+Quick start: your first days
+============================
+
+A typical opening, to get a feel for the game:
+
+1. **Look around.** The "Items on current planet" table shows what your home planet sells, and
+   the "Base price delta" column shows how each price compares to the usual price (negative is
+   cheap). **Tools->Material prices** (Ctrl-A) lists the usual price of everything.
+
+2. **Make your first trade.** Buy something that's cheap here, travel to a nearby planet (the
+   planets table's "Distance" column, or the star map, shows what's close), and sell it if the
+   price there is higher. Short hops are cheap: travel costs 5 per light-year, so a 10 ly trip
+   costs 50. Remember that every trip takes a day.
+
+3. **Grow your ship early.** "Increase ship capacity" in the store costs only 250 the first time,
+   and doubles your capacity. Its price doubles each time, but in the first days it's the best
+   value in the game.
+
+4. **Watch your daily costs.** They're shown at the top of the window (200 per day at the start).
+   Upgrades with upkeep, like fleets and the trading console, add to them.
+
+5. **Keep an eye out for black markets.** About 1 planet in 8 is one, and you only find out by
+   visiting. Once you've found two that trade the same contraband at different prices, you have
+   a very profitable (and risky) route (see `Contraband`_).
+
+6. **Before your first million, buy a battle fleet.** Pirates don't bother with players worth
+   less than a million, but after that they will.
+
+7. **Mind the clock.** Only money counts at the end, so sell everything before your last day ends.
+
+Strategy guide
+==============
+
+The numbers here are the game's defaults.
+
+Early game
+##########
+
+* **Capacity first.** "Increase ship capacity" costs 250, 500, 1,000, 2,000... and doubles your
+  capacity each time (100, 200, 400, 800...). Buy it as often as you can afford it.
+* **Trade short hops.** With little money, most of your profit comes from small price differences,
+  so keep travel costs low. Planets in the same star system or cluster are usually only a few
+  light-years apart.
+* **Travel is safe while you're poor.** Pirates only attack players worth over 1,000,000 (money
+  plus the value of your cargo; the warehouse doesn't count).
+* **The trading console** (3,000, plus 500 per day) shows any planet's prices from anywhere, so
+  you can plan routes instead of guessing. It quickly pays for itself.
+* **Contraband** is worth 250 to 800 per unit at base price, more than any legal material, and black
+  market prices range from 0.3 to 3 times that. Even a small load can bring in more than a
+  day of legal trading.
+
+Mid game
+########
+
+* **Planet destruction** is the fastest way to get rich. The kit costs 2,000,000 per planet, and
+  all of the planet's materials go to your warehouse; a planet near home typically holds tens of
+  millions worth. Each planet you destroy at once adds a 5% chance that one of them fights back,
+  so don't destroy too many at once without a battle fleet.
+* **But destruction has a price.** Planets around a destroyed planet think much less of you
+  (see `Reputation`_): they charge more, pay less, and may refuse to trade at all. Sell the
+  materials you get far from where you destroyed them, or on newly discovered planets.
+* **Engine upgrades** (50,000 each) make travel 25% cheaper per light-year, and give two more
+  warehouse trips per day, which you'll need to move the goods from destroyed planets.
+* **Battle fleet.** The chance of pirates grows with your wealth: 5% per trip when you're worth
+  over 1,000,000, 15% over 10,000,000, 30% over 50,000,000, and up to 90%, multiplied by up to 3
+  for long trips (and down to half for short hops). Without a battle fleet you'll almost always
+  lose a fight. Each level costs twice the last (from 250,000) and adds 100,000 per day.
+* **Scout fleet.** A scout fleet (750,000, plus 50,000 per day per level) lets you buy scout
+  expeditions (50,000,000 each), which discover new planets further from home. Remote planets
+  sell their materials cheaper, and haven't heard of what you did near home.
+
+Late game
+#########
+
+* **Score bonuses.** Reaching 1,000,000,000 adds 5 days (35 in total) and one store purchase per day;
+  reaching 100,000,000,000 adds 5 more days (40) and another purchase (see `Score bonuses`_).
+* **Daily costs add up.** A fully upgraded battle fleet costs 1,000,000 per day, and a fully
+  upgraded scout fleet 500,000 per day.
+* **Sell before the end.** Your score is your money only: items on your ship and in your
+  warehouse are worth nothing when the game ends. Travelling on the last day ends the game before
+  you can sell anything at the other end.
+
+Staying alive
+#############
+
+* **Health** recovers by 15 each day, except the day after a battle. If you have no money left,
+  you lose 15 health per day instead, and starve at 0.
+* **Fight only when you can win.** Losing a fight against pirates or a resisting planet kills you.
+  Surrendering to pirates costs you your cargo (and often your money), but not your life.
+* **Customs patrols** won't kill you unless you flee and get caught with little health left.
+
+Keyboard shortcuts
+==================
+
+==================  ===========================================================
+Shortcut            Action
+==================  ===========================================================
+Ctrl-A              Material prices window
+Ctrl-G              Star map
+Ctrl-S              Travel log
+Ctrl-T              Transaction log
+Ctrl-E              High scores
+Ctrl-R              High score sharing
+Ctrl-V              Turn the dark theme on or off
+Ctrl-P              Turn tooltips on or off
+Ctrl-M              Turn sounds on or off
+Ctrl-H              About
+Ctrl-Q, Escape      Quit the game (asks first)
+Enter               In the planets table or the star map: trading console for the
+                    selected planet. In the "Items on current planet" table: price
+                    history of the selected item
+Double-click        Planets table or star map: travel. Items on current planet: buy.
+                    Items on your ship: sell. Items in warehouse: retrieve
+==================  ===========================================================
+
+Menus and settings
+==================
+
+* **File**: High scores, High score sharing, and Quit game.
+* **Tools**: Material prices, Star map, Show travel log, and Show transaction log.
+* **Preferences**:
+
+  * **Dark theme**: on by default.
+  * **Show tooltips**: shows a short explanation when the mouse is over buttons and parts of the
+    information section. On by default.
+  * **Sounds**: on by default.
+
+  These settings last until the game is closed.
+* **Help**: About, which shows the game's story and some strategy tips.
+
+**Language.** The game uses your system's language if it has a translation (currently Brazilian
+Portuguese), and English otherwise. Numbers are formatted for your language too (e.g. 1.000.000
+in Portuguese).
+
+**Intro story.** The story shown when the game starts can be turned off with its "Don't show this
+message again" box. It's still shown in **Help->About**.
+
+**Config file.** High scores, and whether to show the intro story, are saved in
+``.deep_space_trader_config.json``, in your home folder (on Windows, ``C:\Users\<your name>``).
 
 Complete Game Reference
 =======================
@@ -744,3 +911,134 @@ chance the search finds nothing. If the player lets them search and they find co
 destination thinks a little less of the player. Contraband is valued at the destination's prices
 if it's a black market that trades it, and at base prices otherwise. The player always arrives at
 their destination afterwards. Contraband in the warehouse is always safe.
+
+FAQ
+===
+
+**How does the game end?**
+  When the last day ends: by travelling, or with the "Go to next day" button, on the last day
+  (day 30, or 35 or 40 with `Score bonuses`_). It also ends if you die, or if you press "Reset".
+
+**What's my score?**
+  The money you have when the game ends. Items on your ship and in your warehouse don't count.
+  If it's one of your 10 best, you can enter your name in the high score table.
+
+**What happens when I die?**
+  The game ends, and a new one starts. Your money at the time of death still counts as a score.
+  You can die by losing a fight (against pirates or a planet resisting destruction), by being
+  caught fleeing a customs patrol with too little health, or by starving when you have no money.
+
+**Why won't a planet trade with me?**
+  Its reputation of you is below 15, usually because you destroyed planets near it (see
+  `Reputation`_). Reputation recovers over time, by 7% of the damage each day.
+
+**Why can't I sell my contraband here?**
+  Only black markets trade contraband (see `Contraband`_).
+
+**Why can't I use the warehouse?**
+  The warehouse is on your home planet, so you have to be there, and you only get a few warehouse
+  trips per day (more with engine upgrades).
+
+**Is my progress saved when I close the game?**
+  No, only high scores are saved. Each game is played in one sitting.
+
+**Where are my high scores?**
+  In the config file (see `Menus and settings`_). To move them to another computer, or to compare
+  with friends, use **File->High score sharing**.
+
+Development
+===========
+
+Running from source
+###################
+
+You'll need Python 3.11 or newer. From the project folder:
+
+::
+
+    python -m venv venv
+    venv\Scripts\activate            (on Windows; elsewhere: source venv/bin/activate)
+    pip install -r requirements-dev.txt
+    python -m deep_space_trader
+
+``requirements.txt`` has what the game needs to run, and ``requirements-dev.txt`` adds the tools
+for testing and building (pytest, rst2pdf and pyinstaller).
+
+Most of the game's numbers (starting money, prices, chances, costs) are in
+``deep_space_trader/constants.py``, which is the place to experiment with the game's balance.
+``FORCE_LANGUAGE`` in the same file plays the game in a given language, whatever the system
+language.
+
+Running the tests
+#################
+
+::
+
+    python -m pytest
+
+The tests run without showing any windows, and take under a minute. They use the default
+values in ``constants.py``, so changing those (e.g. for more starting money) can make some fail.
+
+Translations
+############
+
+All text shown to the player is marked for translation (with ``tr()`` or ``translate()``), and
+the translations are in ``deep_space_trader/translations``:
+
+* ``deep_space_trader_pt_BR.ts``: Brazilian Portuguese.
+* ``deep_space_trader_en.ts``: only English plural forms (e.g. "1 planet", "2 planets"); the
+  English text itself comes from the code.
+
+After changing any text in the code, update both ``.ts`` files (``pylupdate5`` comes with PyQt5):
+
+::
+
+    python -m PyQt5.pylupdate_main -noobsolete deep_space_trader/*.py -ts deep_space_trader/translations/deep_space_trader_en.ts
+    python -m PyQt5.pylupdate_main -noobsolete deep_space_trader/*.py -ts deep_space_trader/translations/deep_space_trader_pt_BR.ts
+
+Then translate the new text (with Qt Linguist, or by editing the ``.ts`` file), and build the
+``.qm`` files the game loads, with ``lrelease`` from Qt's Linguist tools (it isn't included with
+PyQt5):
+
+::
+
+    lrelease deep_space_trader/translations/*.ts
+
+To add a language, run ``pylupdate5`` as above with a new file name, e.g.
+``deep_space_trader_de.ts`` for German, and set its ``language`` attribute (e.g.
+``<TS version="2.1" language="de">``). The game loads it automatically on systems in that
+language. The tests check that every ``.ts`` file is up to date, and that translations keep
+placeholders like ``{0}`` and formatting tags.
+
+README images and PDF manual
+############################
+
+The screenshots in this README are made by a script, which sets up a game part-way through and
+captures every window. Run it on a desktop (it captures windows with their title bars):
+
+::
+
+    python scripts/make_readme_images.py                  # all images, saved in images/
+    python scripts/make_readme_images.py --only store star_map
+
+The PDF version of this README is built with rst2pdf:
+
+::
+
+    ./generate_pdf_manual.sh
+
+Windows installer
+#################
+
+1. Build the game with PyInstaller, which puts it in ``dist/Deep Space Trader``:
+
+   ::
+
+       pyinstaller deep_space_trader.spec
+
+2. Compile ``setup.iss`` with `Inno Setup <https://jrsoftware.org/isinfo.php>`_, which makes the
+   installer. The paths in ``setup.iss`` point to the project folder on the maintainer's computer,
+   so check them first.
+
+For a new version, update the version number in ``deep_space_trader/__init__.py``, in
+``setup.iss`` (``AppVersion`` and ``OutputBaseFilename``), and in the title of this README.
