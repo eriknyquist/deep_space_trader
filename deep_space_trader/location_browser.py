@@ -60,9 +60,9 @@ VISITED_COLUMN = 1
 DISTANCE_COLUMN = 2
 REPUTATION_COLUMN = 3
 
-# Background of the name cell of black markets the player has found. See-through,
-# so the name can be read with light and dark themes
-BLACK_MARKET_BACKGROUND = QtGui.QColor(0xE5, 0x39, 0x35, 110)
+# Text colour of black markets the player has found (the background is left
+# free for the green of the current and previous planets)
+BLACK_MARKET_COLOR = QtGui.QColor(reputation.BAD_PRICE_COLOR)
 
 
 class LocationBrowser(QtWidgets.QWidget):
@@ -237,25 +237,30 @@ class LocationBrowser(QtWidgets.QWidget):
         item2.setTextAlignment(QtCore.Qt.AlignHCenter)
         self.table.setItem(row, 1, item2)
 
-        # Set current planet row color (the cell may be new, so the black market mark too)
+        # Set current planet row color
         self.setRowBackground(row, current, QtGui.QColor(0, 0xAA, 0))
 
     def setRowBackground(self, row, planet, brush):
         """
-        Colour a row, except the name cell of a black market the player has
-        found, which keeps its own colour
+        Colour a row. Also marks it as a black market, if the player has
+        found it (some of its cells may be new, or it may have just been found)
         """
-        for col in range(self.table.columnCount()):
-            item = self.table.item(row, col)
-            if (col == NAME_COLUMN) and planet.black_market_found:
-                self.markBlackMarket(item, self.tr("Black market"))
-            else:
-                item.setBackground(brush)
+        items = [self.table.item(row, col) for col in range(self.table.columnCount())]
+        for item in items:
+            item.setBackground(brush)
+
+        if planet.black_market_found:
+            self.markBlackMarket(items, self.tr("Black market"))
 
     @staticmethod
-    def markBlackMarket(item, tooltip):
-        item.setBackground(BLACK_MARKET_BACKGROUND)
-        item.setToolTip(tooltip)
+    def markBlackMarket(items, tooltip):
+        """
+        Show a row's cells ('items', name cell first) as a black market: red text
+        """
+        for item in items:
+            item.setForeground(BLACK_MARKET_COLOR)
+
+        items[0].setToolTip(tooltip)
 
     def rowTexts(self):
         """
@@ -316,7 +321,7 @@ class LocationBrowser(QtWidgets.QWidget):
             item1.setFont(font)
             item1.setToolTip(self.tr("Your home planet. Your warehouse is here."))
         elif planet.black_market_found:
-            self.markBlackMarket(item1, texts["black market"])
+            self.markBlackMarket([item1, item2, item3, item4], texts["black market"])
 
         self.table.setItem(row, 0, item1)
         self.table.setItem(row, 1, item2)
@@ -402,6 +407,9 @@ class LocationBrowser(QtWidgets.QWidget):
         if values is not None:
             changes[column] = list(enumerate(values([self.tablePlanets[i] for i in indexes])))
 
+        # Rows of black markets the player has found, whose new cells need red text too
+        found = {row for row, i in enumerate(indexes) if self.tablePlanets[i].black_market_found}
+
         model = table.model()
         table.setUpdatesEnabled(False)
         table.setSortingEnabled(False)
@@ -412,7 +420,10 @@ class LocationBrowser(QtWidgets.QWidget):
             for row, value in column_changes:
                 # A new cell, rather than changing the old one: after sorting, Qt
                 # searches the whole table to find a changed cell's position
-                table.setItem(row, column, self.numberCell(value))
+                cell = self.numberCell(value)
+                if row in found:
+                    cell.setForeground(BLACK_MARKET_COLOR)
+                table.setItem(row, column, cell)
         model.blockSignals(False)
 
         # Sorts once, by the current sort column, if there is one

@@ -11,9 +11,9 @@ from deep_space_trader.item_browsers import CONTRABAND_COLOR, itemNameCell
 from deep_space_trader.items import (
     Items, ItemCollection, contraband_item_types, isContraband, rare_item_types
 )
-from deep_space_trader.location_browser import BLACK_MARKET_BACKGROUND, TradingConsole
+from deep_space_trader.location_browser import BLACK_MARKET_COLOR, TradingConsole
 from deep_space_trader.location_picker import PlanetDestructionPicker, VALUE_COLUMN
-from deep_space_trader.star_map import StarMap, BLACK_MARKET_COLOR
+from deep_space_trader.star_map import StarMap, BLACK_MARKET_COLOR as MAP_BLACK_MARKET_COLOR
 
 from helpers import ALL_ITEM_NAMES, CONTRABAND_NAMES, give, row_of, column
 
@@ -167,36 +167,57 @@ def test_ordinary_planets_are_not_found(game, dialogs, no_pirates):
     assert dialogs.titles("info") == []
 
 
-def name_cell(game, planet):
+def row_colours(game, planet):
+    """
+    (text colour, background colour) of each cell in a planet's row (None for the default)
+    """
     table = game.locationBrowser.table
-    return table.item(row_of(table, planet), 0)
+    row = row_of(table, planet)
+    ret = []
+    for col in range(table.columnCount()):
+        item = table.item(row, col)
+        fg, bg = item.foreground(), item.background()
+        ret.append((None if fg.style() == QtCore.Qt.NoBrush else fg.color().name(),
+                    None if bg.style() == QtCore.Qt.NoBrush else bg.color().name()))
+    return ret
+
+
+def name_tooltip(game, planet):
+    table = game.locationBrowser.table
+    return table.item(row_of(table, planet), 0).toolTip()
+
+
+RED = BLACK_MARKET_COLOR.name()
+GREEN = "#00aa00"
 
 
 def test_planets_table_marks_found_black_markets(game, no_pirates):
     planet = other_planet(game)
     make_black_market(planet, {TOBACCO: 100})
     game.locationBrowser.update()
-    assert name_cell(game, planet).background().style() == QtCore.Qt.NoBrush
-    assert name_cell(game, planet).toolTip() == ""
+    assert row_colours(game, planet) == [(None, None)] * 4
+    assert name_tooltip(game, planet) == ""
 
     travel(game, planet)
 
-    # The name cell is red, and the rest of the row green (the current planet)
-    table = game.locationBrowser.table
-    row = row_of(table, planet)
-    assert table.item(row, 0).background().color() == BLACK_MARKET_BACKGROUND
-    assert table.item(row, 0).toolTip() == "Black market"
-    assert table.item(row, 2).background().color().name() == "#00aa00"
+    # Red text in every cell, on the green of the current planet
+    assert row_colours(game, planet) == [(RED, GREEN)] * 4
+    assert name_tooltip(game, planet) == "Black market"
 
-    # Still marked after leaving, as a previous planet, after it's no longer a previous
-    # planet, and when the table is rebuilt
+    # Still marked after leaving: as a previous planet, after it's no longer a
+    # previous planet (the distances and reputations are new cells each trip),
+    # and when the table is rebuilt
     for n in (1, 2, 3):
         travel(game, other_planet(game, n))
-        assert name_cell(game, planet).background().color() == BLACK_MARKET_BACKGROUND
+        assert [fg for fg, bg in row_colours(game, planet)] == [RED] * 4
 
+    assert [bg for fg, bg in row_colours(game, planet)] == [None] * 4
     game.locationBrowser.update()
-    assert name_cell(game, planet).background().color() == BLACK_MARKET_BACKGROUND
-    assert name_cell(game, planet).toolTip() == "Black market"
+    assert row_colours(game, planet) == [(RED, None)] * 4
+    assert name_tooltip(game, planet) == "Black market"
+
+    # Other planets' text is left alone
+    assert row_colours(game, other_planet(game, 4)) == [(None, None)] * 4
 
 
 def test_trading_console_hides_black_markets_not_found(game):
@@ -715,7 +736,7 @@ def test_star_map_marks_found_black_markets(game):
     planet.visited = planet.black_market_found = True
     starmap = StarMap(game)
     assert "Black market" in starmap.tooltipText(planet)
-    assert starmap.planetStyle(planet).ring == BLACK_MARKET_COLOR
+    assert starmap.planetStyle(planet).ring == MAP_BLACK_MARKET_COLOR
     found = [key for key in starmap.layer.groups if key[0]]
     assert len(found) == 1
     assert len(starmap.layer.groups[found[0]][-1]) == 1

@@ -199,8 +199,8 @@ left area of the main game window.
   "Distance" to see the nearest planets first). The home planet is shown in bold. The player can travel
   to a planet by double-clicking on the planet name within the planet display table. The last 3 planets visited will be colored different shades of
   green- the current planet will be a bright green, the previous planet a darker green, and the
-  planet before that the darkest green. Black markets the player has found have a red planet name
-  cell (see `Contraband`_).
+  planet before that the darkest green. Black markets the player has found are shown in red text
+  (see `Contraband`_).
 
 
 **"Items on current planet" section**
@@ -717,8 +717,8 @@ planet). Only black markets buy and sell contraband: anywhere else, nobody will 
 black market trades 2 to 4 of the 5 types, in small quantities, and prices vary a lot between black
 markets (from 0.3 to 3 times the base price), so the profit is in buying cheap on one black market
 and selling dear on another. Black markets are found by visiting them: on the first visit, a message
-says so, and from then on the black market has a red name cell in the `"Planets" section`_ and a red
-ring on the `"Star map" window`_. Until then, nothing gives it away: the trading console, rumours and
+says so, and from then on the black market is shown in red text in the `"Planets" section`_, and with
+a red ring on the `"Star map" window`_. Until then, nothing gives it away: the trading console, rumours and
 the planet destruction window leave out its contraband.
 
 **Customs inspections.** On a trip with contraband on the ship (and no pirates), a customs patrol
