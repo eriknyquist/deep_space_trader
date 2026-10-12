@@ -1,8 +1,8 @@
 import pytest
-from PyQt5 import QtCore, QtTest
+from PyQt5 import QtCore, QtTest, QtWidgets
 
 from deep_space_trader import location_browser
-from deep_space_trader.location_browser import TradingConsole
+from deep_space_trader.location_browser import TradingConsole, SURRENDER
 
 from helpers import give, row_of, column
 
@@ -302,7 +302,7 @@ def test_lose_against_pirates(game, dialogs, pirates, monkeypatch):
 
 def test_surrender_with_items_on_board(game, dialogs, pirates, monkeypatch):
     state = game.state
-    dialogs.answers["pirates"] = False
+    dialogs.choices["pirates"] = SURRENDER
     monkeypatch.setattr(location_browser, "percentChance", lambda p: p == 100)
     give(state.items, "tin", 40)
     game.updatePlayerItemsLabel()
@@ -321,7 +321,7 @@ def test_surrender_with_items_on_board(game, dialogs, pirates, monkeypatch):
 
 def test_surrender_with_empty_ship_loses_money(game, dialogs, pirates):
     state = game.state
-    dialogs.answers["pirates"] = False
+    dialogs.choices["pirates"] = SURRENDER
     state.money = 1000000
     cost = state.travel_cost_to(state.planets[3])
     select(game, state.planets[3])
@@ -456,3 +456,36 @@ def test_declined_trip_home_keeps_selection(game, dialogs, no_pirates):
     game.locationBrowser.homeButtonClicked()
     assert state.current_planet is away
     assert game.locationBrowser.selectedPlanet() is away
+
+
+def test_planets_table_alignment(game):
+    table = game.locationBrowser.table
+    headers = [table.horizontalHeaderItem(c).text() for c in range(table.columnCount())]
+    assert headers == ["Planet", "Visited?", "Distance", "Reputation"]
+
+    # "yes"/"no" centred, and distances right-aligned (by the column's delegate,
+    # rather than by each of what may be 20,000 cells)
+    assert table.item(0, 1).textAlignment() == int(QtCore.Qt.AlignCenter)
+    option = QtWidgets.QStyleOptionViewItem()
+    delegate = table.itemDelegateForColumn(location_browser.DISTANCE_COLUMN)
+    delegate.initStyleOption(option, table.model().index(0, location_browser.DISTANCE_COLUMN))
+    assert option.displayAlignment == QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter
+
+    # Reputations centred
+    option = QtWidgets.QStyleOptionViewItem()
+    delegate = table.itemDelegateForColumn(location_browser.REPUTATION_COLUMN)
+    delegate.initStyleOption(option, table.model().index(0, location_browser.REPUTATION_COLUMN))
+    assert option.displayAlignment == QtCore.Qt.AlignCenter
+
+
+def test_pirate_attack_has_named_choices_and_icon(game, dialogs, pirates, monkeypatch):
+    monkeypatch.setattr(game.state, "battle_won", lambda: True)
+    game.state.battle_level = 10
+    select(game, game.state.planets[3])
+    game.locationBrowser.travelButtonClicked()
+
+    assert dialogs.titles("choice") == ["Attacked by pirates!"]
+    assert dialogs.choices_offered == ["Fight", "Surrender"]
+    assert "Do you want to fight?" not in dialogs.messages("choice")[0]
+    assert dialogs.titles("info") == ["Battle won!"]
+    assert dialogs.icons == ["pirates", "pirates"]

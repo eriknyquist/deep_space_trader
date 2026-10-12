@@ -5,6 +5,7 @@ from deep_space_trader import constants as const
 from deep_space_trader.price_graph import PriceHistoryGraph
 from deep_space_trader.transaction_dialogs import Buy, Sell, DumpPlayerItem
 from deep_space_trader.item_browsers import selectedItemName
+from deep_space_trader.items import ItemCollection
 
 from helpers import give, row_of, column
 
@@ -40,7 +41,7 @@ def test_buy(game):
 
     dialog = Buy(game, name)
     dialog.spinbox.setValue(30)
-    assert dialog.spinboxLabel.text() == "Buy quantity (cost: {:,})".format(30 * price)
+    assert dialog.totalLabel.text() == "You pay: {:,}".format(30 * price)
     dialog.acceptButtonClicked()
 
     assert state.items.items[name].quantity == 30
@@ -319,3 +320,60 @@ def test_tables_work_with_translated_item_names(game, dialogs, translated_item_n
 
     game.playerItemBrowser.update()
     assert selectedItemName(game.playerItemBrowser.table) == name
+
+
+RIGHT = int(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+
+
+def test_numbers_are_right_aligned(game):
+    # So that their digits line up, and level with the item names
+    give(game.state.items, "tin", 5)
+    give(game.state.warehouse, "tin", 5)
+    for browser in (game.playerItemBrowser, game.planetItemBrowser, game.warehouseItemBrowser):
+        browser.update()
+        table = browser.table
+        for row in range(table.rowCount()):
+            for col in range(1, table.columnCount()):
+                assert table.item(row, col).textAlignment() == RIGHT
+
+
+def test_planet_items_headers(game):
+    table = game.planetItemBrowser.table
+    headers = [table.horizontalHeaderItem(c).text() for c in range(table.columnCount())]
+    assert headers == ["Item type", "Quantity available", "Cost", "vs. base"]
+    assert "usual price" in table.horizontalHeaderItem(3).toolTip()
+
+
+def test_vs_base_column_is_coloured(game):
+    # (Three items, whatever the random market has)
+    planet = game.state.current_planet
+    planet.items = ItemCollection()
+    names = ["gold", "tin", "uranium"]
+    for name, factor in zip(names, (0.5, 1.0, 2.0)):
+        give(planet.items, name, 1000)
+        item = planet.items.items[name]
+        item.value = int(item.type.base_value * factor)
+    game.planetItemBrowser.update()
+
+    table = game.planetItemBrowser.table
+    colours = [table.item(row_of(table, name), 3).foreground() for name in names]
+    assert colours[0].color().name() == "#2ea043"     # cheaper than usual
+    assert colours[1].style() == QtCore.Qt.NoBrush    # the usual price
+    assert colours[2].color().name() == "#e53935"     # dearer
+
+
+def test_buy_and_sell_dialogs_show_price_and_total(game):
+    state = game.state
+    name = planet_item(game)
+    price = state.current_planet.items.items[name].value
+    give(state.items, name, 7)
+
+    dialog = Buy(game, name)
+    assert dialog.detailsLabel.text() == "Price: {:,} each, 1,000,000 available".format(price)
+    assert dialog.spinboxLabel.text() == "Quantity:"
+    assert dialog.totalLabel.text() == "You pay: 0"
+
+    dialog = Sell(game, name)
+    assert dialog.detailsLabel.text() == "Price: {:,} each, you have 7".format(price)
+    dialog.spinbox.setValue(2)
+    assert dialog.totalLabel.text() == "You get: {:,}".format(2 * price)

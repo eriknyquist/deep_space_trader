@@ -1,6 +1,8 @@
 import random
 from deep_space_trader import constants as const
-from deep_space_trader.utils import errorDialog, yesNoDialog, infoDialog
+from deep_space_trader.utils import (
+    errorDialog, yesNoDialog, choiceDialog, infoDialog, NUMBER_ALIGNMENT, CENTRE_ALIGNMENT
+)
 from deep_space_trader.item_browsers import TableWidgetNumber
 from deep_space_trader.location_browser import DistanceDelegate, LocationBrowser
 from deep_space_trader.i18n import translate, formatNumber, joinList
@@ -11,6 +13,9 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 # Columns of the planet table
 DISTANCE_COLUMN = 2
 VALUE_COLUMN = 3
+
+# Choices when a planet resists destruction, in the order of the buttons
+FIGHT, DONT_FIGHT = range(2)
 
 
 class PlanetDestructionPicker(QtWidgets.QDialog):
@@ -123,7 +128,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             # sort the table, and then row numbers no longer match state.planets
             item1.setData(QtCore.Qt.UserRole, planet)
             item2 = QtWidgets.QTableWidgetItem(self.tr("yes") if planet.visited else self.tr("no"))
-            item2.setTextAlignment(QtCore.Qt.AlignHCenter)
+            item2.setTextAlignment(CENTRE_ALIGNMENT)
             self.table.setItem(row, 0, item1)
             self.table.setItem(row, 1, item2)
 
@@ -134,7 +139,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             # Total value of the planet's items, which go to the warehouse if it's destroyed
             # (leaving out contraband on black markets the player hasn't found)
             item3 = TableWidgetNumber(int(self.state.shown_market_value(planet)))
-            item3.setTextAlignment(QtCore.Qt.AlignHCenter)
+            item3.setTextAlignment(NUMBER_ALIGNMENT)
             self.table.setItem(row, VALUE_COLUMN, item3)
 
         self.table.setSortingEnabled(True)
@@ -189,11 +194,9 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         if self.state.battle_level == 0:
             msg += "<br><br>" + self.tr("Since you have no battle fleet, your chances of victory are slim.")
 
-        msg += "<br><br>" + self.tr("Do you want to fight?")
-
         self.parent.audio.play(self.parent.audio.BattleSound)
-        proceed = yesNoDialog(self, self.tr("Planet is resisting!"), msg)
-        if not proceed:
+        choice = choiceDialog(self, self.tr("Planet is resisting!"), msg, [self.tr("Fight"), self.tr("Don't fight")])
+        if choice == DONT_FIGHT:
             self.parent.audio.play(self.parent.audio.FailureSound)
             infoDialog(self.parent, self.tr("Chickened out!"),
                        message=self.tr("You have declined to fight {0}. They win, this time.",

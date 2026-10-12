@@ -1,5 +1,5 @@
 import random
-from deep_space_trader.utils import errorDialog, infoDialog, yesNoDialog, windowIcon
+from deep_space_trader.utils import errorDialog, infoDialog, yesNoDialog, windowIcon, NUMBER_ALIGNMENT
 from deep_space_trader.location_picker import PlanetDestructionPicker
 from deep_space_trader import constants as const
 from deep_space_trader.i18n import translate, formatNumber, formatPercent
@@ -401,7 +401,7 @@ class Store(QtWidgets.QDialog):
         self.table.setPalette(palette)
 
         self.table.setColumnCount(3)
-        self.table.setHorizontalHeaderLabels([self.tr('Item'), self.tr('description'), self.tr('Price')])
+        self.table.setHorizontalHeaderLabels([self.tr('Item'), self.tr('Description'), self.tr('Price')])
         self.table.verticalHeader().setVisible(False)
         self.table.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         self.table.horizontalHeader().setSectionsClickable(False)
@@ -413,9 +413,10 @@ class Store(QtWidgets.QDialog):
         self.table.doubleClicked.connect(self.onDoubleClick)
 
         header = self.table.horizontalHeader()
+        # The description gets all the spare width, so it wraps onto as few lines as possible
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
         header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
-        header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
 
         self.table.resizeRowsToContents()
 
@@ -433,13 +434,20 @@ class Store(QtWidgets.QDialog):
         nextFreeRow = self.table.rowCount()
         self.table.insertRow(nextFreeRow)
 
-        price = self.tr("N/A") if item.price is None else formatNumber(item.price)
+        # (An en dash for items that can't be bought anymore)
+        price = "\u2013" if item.price is None else formatNumber(item.price)
 
         item1 = QtWidgets.QTableWidgetItem(item.name)
         item2 = QtWidgets.QTableWidgetItem(item.description)
         item3 = QtWidgets.QTableWidgetItem(price)
 
-        item3.setTextAlignment(QtCore.Qt.AlignHCenter)
+        item3.setTextAlignment(NUMBER_ALIGNMENT)
+
+        # Greyed out if it can't be bought anymore, or the player can't afford it
+        if (item.price is None) or (item.price > self.parent.state.money):
+            grey = self.table.palette().color(QtGui.QPalette.Disabled, QtGui.QPalette.Text)
+            for cell in (item1, item2, item3):
+                cell.setForeground(grey)
 
         self.table.setItem(nextFreeRow, 0, item1)
         self.table.setItem(nextFreeRow, 1, item2)

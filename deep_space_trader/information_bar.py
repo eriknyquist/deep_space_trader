@@ -11,6 +11,26 @@ ENGINE_BAR_COLOR = "#3399ff"
 GROUPBOX_STYLE= "QGroupBox{ font-size: 12px; }"
 LABEL_STYLE = "QLabel{ font-size: 14px; }"
 
+# The value shown under each bar (reputation, engine power and health)
+BAR_VALUE_STYLE = "QLabel{ font-size: 12px; }"
+
+
+def barLayout(bar):
+    """
+    Layout with a vertical bar, and a label under it for the bar's value.
+    Returns (layout, label)
+    """
+    layout = QtWidgets.QVBoxLayout()
+    layout.setContentsMargins(5, 5, 5, 5)
+    layout.setSpacing(3)
+    layout.addWidget(bar, 1, QtCore.Qt.AlignHCenter)
+
+    label = QtWidgets.QLabel()
+    label.setStyleSheet(BAR_VALUE_STYLE)
+    label.setAlignment(QtCore.Qt.AlignCenter)
+    layout.addWidget(label)
+    return layout, label
+
 class ReputationBar(QtWidgets.QProgressBar):
     """
     Vertical bar from 0 to 100, with a dashed mark where planets start refusing to trade
@@ -149,7 +169,6 @@ class InfoBar(QtWidgets.QWidget):
         scoutBattleLayout.addWidget(self.scoutFleetGroup)
         scoutBattleLayout.addWidget(self.battleFleetGroup)
 
-        healthLayout = QtWidgets.QHBoxLayout()
         self.healthBar = QtWidgets.QProgressBar(self)
         self.healthBar.setOrientation(QtCore.Qt.Vertical)
         self.healthBar.setRange(0, 100)
@@ -157,38 +176,33 @@ class InfoBar(QtWidgets.QWidget):
         self.healthBar.setFixedWidth(20)
         self.healthBar.setStyleSheet("QProgressBar::chunk { background-color: #00FF00; }")
         self.healthBar.setFormat(None)
-        healthLayout.addWidget(self.healthBar)
+        healthLayout, self.healthValueLabel = barLayout(self.healthBar)
         self.healthGroup = QtWidgets.QGroupBox(self.tr("Health"))
         self.healthGroup.setStyleSheet(GROUPBOX_STYLE)
         self.healthGroup.setAlignment(QtCore.Qt.AlignCenter)
         self.healthGroup.setLayout(healthLayout)
         self.healthGroup.setFixedWidth(60)
-        healthLayout.setContentsMargins(5, 5, 5, 5)
 
         # Engine power: a bar that fills up towards the max. engine power
-        engineLayout = QtWidgets.QHBoxLayout()
         self.engineBar = QtWidgets.QProgressBar(self)
         self.engineBar.setOrientation(QtCore.Qt.Vertical)
         self.engineBar.setRange(0, const.MAX_ENGINE_LEVEL)
         self.engineBar.setFixedWidth(20)
         self.engineBar.setStyleSheet("QProgressBar::chunk { background-color: %s; }" % ENGINE_BAR_COLOR)
         self.engineBar.setFormat(None)
-        engineLayout.addWidget(self.engineBar)
+        engineLayout, self.engineValueLabel = barLayout(self.engineBar)
         self.engineGroup = QtWidgets.QGroupBox(self.tr("Engine power"))
         self.engineGroup.setStyleSheet(GROUPBOX_STYLE)
         self.engineGroup.setAlignment(QtCore.Qt.AlignCenter)
         self.engineGroup.setLayout(engineLayout)
-        engineLayout.setContentsMargins(5, 5, 5, 5)
 
         # Reputation: what the current planet thinks of you, coloured by level
-        reputationLayout = QtWidgets.QHBoxLayout()
         self.reputationBar = ReputationBar(self)
-        reputationLayout.addWidget(self.reputationBar)
+        reputationLayout, self.reputationValueLabel = barLayout(self.reputationBar)
         self.reputationGroup = QtWidgets.QGroupBox(self.tr("Reputation"))
         self.reputationGroup.setStyleSheet(GROUPBOX_STYLE)
         self.reputationGroup.setAlignment(QtCore.Qt.AlignCenter)
         self.reputationGroup.setLayout(reputationLayout)
-        reputationLayout.setContentsMargins(5, 5, 5, 5)
 
         # Wide enough for the titles, which are longer than "Health" (especially when translated)
         for group in (self.engineGroup, self.reputationGroup):
@@ -336,15 +350,19 @@ class InfoBar(QtWidgets.QWidget):
 
         self.scoutFleetLabel.setText(scout_label_txt)
         self.engineBar.setValue(self.parent.state.engine_level)
+        self.engineValueLabel.setText('%s/%s' % (formatNumber(self.parent.state.engine_level),
+                                                 formatNumber(const.MAX_ENGINE_LEVEL)))
 
         value = self.parent.state.reputation_of(self.parent.state.current_planet)
         self.reputationBar.setValue(reputation.shownNumber(value))
+        self.reputationValueLabel.setText(formatNumber(reputation.shownNumber(value)))
         self.reputationBar.setStyleSheet("QProgressBar::chunk { background-color: %s; }" %
                                          reputation.levelColor(value))
 
         self.dailyCostLabel.setText(formatNumber(self.parent.state.daily_cost))
 
         self.healthBar.setValue(self.parent.state.health)
+        self.healthValueLabel.setText(formatNumber(self.parent.state.health))
         self.setHealthBarColor()
 
         self.setTooltips()

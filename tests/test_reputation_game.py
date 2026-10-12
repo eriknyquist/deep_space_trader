@@ -13,7 +13,7 @@ from deep_space_trader.location_browser import TradingConsole
 from deep_space_trader.item_browsers import TradingConsolePlanetDisplay
 
 from helpers import give, row_of
-from deep_space_trader.location_picker import PlanetDestructionPicker
+from deep_space_trader.location_picker import PlanetDestructionPicker, DONT_FIGHT
 from test_destruction import picker, choose, others, resisting
 from test_trading import planet_item, untraded_item, select
 
@@ -95,7 +95,7 @@ def test_fighting_a_resisting_planet(game, spy, monkeypatch, won):
 def test_declining_to_fight_is_not_a_fight(game, dialogs, spy, monkeypatch):
     victim = others(game, 1)[0]
     resisting(monkeypatch, victim)
-    dialogs.answers["Planet is resisting!"] = False
+    dialogs.choices["Planet is resisting!"] = DONT_FIGHT
     dialog = picker(game)
     choose(dialog, [victim])
     dialog.selectButtonClicked()
@@ -148,7 +148,7 @@ def test_buy_dialog_uses_reputation_price(game, monkeypatch, reputation):
 
     dialog = Buy(game, name)
     dialog.spinbox.setValue(10)
-    assert dialog.spinboxLabel.text() == "Buy quantity (cost: {:,})".format(cost)
+    assert dialog.totalLabel.text() == "You pay: {:,}".format(cost)
     dialog.acceptButtonClicked()
     assert state.money == money - cost
     assert state.transaction_log[-1][-1] == pytest.approx(cost / 10.0)
@@ -164,7 +164,7 @@ def test_cheap_items_cost_more_in_total(game, monkeypatch):
 
     dialog = Buy(game, name)
     dialog.spinbox.setValue(1000)
-    assert dialog.spinboxLabel.text() == "Buy quantity (cost: 4,400)"
+    assert dialog.totalLabel.text() == "You pay: 4,400"
     dialog.acceptButtonClicked()
     assert state.money == money - 4400
     assert "bought 1,000 %s for 4.40 each" % name in state.read_transaction_log()
@@ -191,7 +191,7 @@ def test_sell_dialog_uses_reputation_price(game, monkeypatch, reputation):
 
     dialog = Sell(game, name)
     dialog.spinbox.setValue(10)
-    assert dialog.spinboxLabel.text() == "Sell quantity (gain: {:,})".format(gain)
+    assert dialog.totalLabel.text() == "You get: {:,}".format(gain)
     dialog.acceptButtonClicked()
     assert state.money == money + gain
 

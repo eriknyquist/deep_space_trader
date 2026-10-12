@@ -6,8 +6,9 @@ from deep_space_trader.utils import IMAGE_DIR
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
-WIDTH = 50
-HEIGHT = 50
+# Size of the current planet's picture in the information section, in pixels
+WIDTH = 72
+HEIGHT = 72
 
 planet_outline = os.path.join(IMAGE_DIR, 'planet_outline.png')
 planet_ring = os.path.join(IMAGE_DIR, 'planet_ring.png')

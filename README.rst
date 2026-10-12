@@ -107,7 +107,7 @@ Quick start: your first days
 A typical opening, to get a feel for the game:
 
 1. **Look around.** The "Items on current planet" table shows what your home planet sells, and
-   the "Base price delta" column shows how each price compares to the usual price (negative is
+   the "vs. base" column shows how each price compares to the usual price (negative is
    cheap). **Tools->Material prices** (Ctrl-A) lists the usual price of everything.
 
 2. **Make your first trade.** Buy something that's cheap here, travel to a nearby planet (the
@@ -275,11 +275,12 @@ shows useful information about the current state of the game.
 * **"Reputation"**: A bar showing what the current planet thinks of the player, from 0 to 100. Its
   colour shows the reputation level, like a traffic light: green (Allied), light green (Friendly),
   yellow (Wary), orange (Hostile) or red (Refuses to trade). The dashed line near the bottom marks where
-  planets start refusing to trade. When tooltips are enabled, hovering over this section shows the
-  reputation, and how much better or worse than normal the prices are (see `Reputation`_).
+  planets start refusing to trade. The number under the bar is the reputation. When tooltips are
+  enabled, hovering over this section shows how much better or worse than normal the prices are (see
+  `Reputation`_).
 * **"Engine power"**: A blue bar, next to the health bar, that fills up as the player increases their
-  engine power, up to the maximum of 10 (see `"Store" window`_). When tooltips are enabled, hovering over
-  this section shows the engine power and the current travel cost per light-year.
+  engine power, up to the maximum of 10 (see `"Store" window`_), with the level (e.g. "3/10") under it.
+  When tooltips are enabled, hovering over this section shows the current travel cost per light-year.
 * **"Scout fleet level"**: Shows the current upgrade level of the players scout fleet, against the
   maximum possible upgrade level for the players scout fleet. (see `"Store" window`_ for more information
   about upgrading the scout fleet).
@@ -291,7 +292,8 @@ shows useful information about the current state of the game.
   This number includes planets that have not been visited by the player, and planets that have been
   destroyed by the player.
 * **"Current Day"**: Shows the current day number, against the total number of days before the game ends.
-* **"Health"**: Shows the players current health level.
+* **"Health"**: A bar showing the player's health, from 0 to 100, with the number under it. It turns
+  from green to yellow to red as health runs out.
 
 **Global buttons section**
 ++++++++++++++++++++++++++
@@ -301,14 +303,14 @@ shows useful information about the current state of the game.
 This section describes the functionality of the 3 large buttons at the top of the
 main game window, directly underneath the "Information" section.
 
-* **"Reset" button**: Aborts the current game and starts a new game (Warning: player will lose
-  all progress in the current game. When clicked, this button will first show a prompt,
-  asking the player to confirm that they want to reset the game).
-
 * **"Go to store" button**: Opens the Store window. See `"Store" window`_ for more details.
 
 * **"Go to next day" button**: Advances the current day by 1. Often, the next day is reached by
   travelling to another planet, but this button advances to the next day without travelling.
+
+* **"Reset" button**: Aborts the current game and starts a new game (Warning: player will lose
+  all progress in the current game. When clicked, this button will first show a prompt,
+  asking the player to confirm that they want to reset the game).
 
 **"Planets" section**
 +++++++++++++++++++++
@@ -359,7 +361,7 @@ left area of the main game window.
 * **"Star map..." button**: Opens the `"Star map" window`_, which shows where all the planets are.
 
 * **Planet display table**: shows a list of all planets available to the player. Consists of four
-  columns: "Planet" shows the name of the planet, "visited?" shows "yes" or "no" indicating whether
+  columns: "Planet" shows the name of the planet, "Visited?" shows "yes" or "no" indicating whether
   the player has travelled to the planet, "Distance" shows how far the planet is from the current
   planet, in light-years, and "Reputation" shows what the planet thinks of the player, e.g.
   "Wary (58)" (see `Reputation`_). Clicking a column's header sorts the table by that column (e.g. click
@@ -388,8 +390,9 @@ in the bottom left area of the main game window.
 * **Item display table**: Displays all items available for purchase on the current planet.
   Consists of four columns:
 
-  * **"Base price delta"** shows the difference between the cost of the item on the current
-    planet and the base price of the item (shown in the `"Prices" window`_), as a percentage.
+  * **"vs. base"** shows the difference between the cost of the item on the current
+    planet and the base price of the item (shown in the `"Prices" window`_), as a percentage:
+    green when it's cheaper than usual, and red when it's more expensive.
   * **"Cost"** shows the cost of 1 item on the current planet. This is the planet's normal price:
     what the player actually pays can be higher or lower, depending on the planet's opinion of the
     player (see `Reputation`_).
@@ -496,7 +499,8 @@ This section describes the functionality of the "Store" window. The store window
 by clicking the "Go to store" button in the `Global buttons section`_ of the main window. The
 store window allows the player to exchange money for various upgrades and services. Only 4 store
 purchases can be made per day, but this number is increased when the player reaches certain scores
-(see `Score bonuses`_ for more information).
+(see `Score bonuses`_ for more information). Items the player can't afford, or can't buy anymore,
+are greyed out.
 
 * **Increase ship capacity**: Buying this item doubles the number of items that can be
   stored on the players ship. This item can be bought an unlimited number of times.
@@ -593,6 +597,8 @@ when the player clicks the "Buy item" button in the `"Items on current planet" s
 * **"Max" button**: Automatically sets the quantity to the maximum number of items available,
   or the maximum number of items that the player can afford (whichever is smaller).
 
+The window shows the price of one item, how many the planet has, the player's money, and what the
+chosen quantity costs ("You pay").
 The cost includes the effect of the planet's opinion of the player (see `Reputation`_). When this makes
 the price different from the planet's normal price, the window says so, and shows both prices.
 
@@ -612,6 +618,8 @@ when the player clicks the "Sell items" button in the `"Items on your ship" sect
 * **"Max" button**: Automatically sets the quantity to the maximum number of items available
   to sell.
 
+The window shows the price of one item, how many the player has, and what the chosen quantity
+sells for ("You get").
 What the planet pays includes the effect of its opinion of the player (see `Reputation`_). When this makes
 the price different from the planet's normal price, the window says so, and shows both prices.
 

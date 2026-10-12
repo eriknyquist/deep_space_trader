@@ -1,6 +1,7 @@
 import random
 
 import pytest
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from deep_space_trader import constants as const
 from deep_space_trader import store
@@ -236,7 +237,7 @@ def test_trading_console(game, shop):
     assert game.state.have_trading_console
     assert game.locationBrowser.pricesButton.isEnabled()
     assert item.price is None
-    assert shop.table.item(6, 2).text() == "N/A"
+    assert shop.table.item(6, 2).text() == "\u2013"
 
 
 def test_cancelled_planet_destruction_is_not_a_purchase(game, shop, dialogs):
@@ -244,3 +245,40 @@ def test_cancelled_planet_destruction_is_not_a_purchase(game, shop, dialogs):
     assert len(dialogs.executed) == 1
     assert game.state.store_purchases == 0
     assert len(game.state.planets) == const.INITIAL_PLANET_COUNT
+
+
+def test_store_layout(game, shop):
+    # Capitalised headers, prices right-aligned (so the digits line up), and
+    # the description given the spare width
+    headers = [shop.table.horizontalHeaderItem(c).text() for c in range(3)]
+    assert headers == ["Item", "Description", "Price"]
+    for row in range(shop.table.rowCount()):
+        assert shop.table.item(row, 2).textAlignment() == int(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+
+    header = shop.table.horizontalHeader()
+    assert header.sectionResizeMode(1) == QtWidgets.QHeaderView.Stretch
+    assert header.sectionResizeMode(2) == QtWidgets.QHeaderView.ResizeToContents
+
+
+def test_store_greys_out_what_cant_be_bought(game):
+    game.state.money = 300
+    shop = store.Store(game)
+    grey = shop.table.palette().color(QtGui.QPalette.Disabled, QtGui.QPalette.Text)
+
+    def greyed(cls):
+        row = store.store_items.index(store_item(cls))
+        colours = [shop.table.item(row, col).foreground().color().name() for col in range(3)
+                   if shop.table.item(row, col).foreground().style() != QtCore.Qt.NoBrush]
+        return colours == [grey.name()] * 3
+
+    # Affordable: capacity (250). Too expensive: the battle fleet
+    assert not greyed(store.CapacityIncrease)
+    assert greyed(store.BattleFleetUpgrade)
+
+    # Can't be bought anymore
+    item = store_item(store.TradingConsole)
+    item.price = None
+    game.state.money = 10 ** 9
+    shop.update()
+    assert greyed(store.TradingConsole)
+    assert not greyed(store.BattleFleetUpgrade)

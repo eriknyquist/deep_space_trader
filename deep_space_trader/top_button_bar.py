@@ -12,17 +12,19 @@ class ButtonBar(QtWidgets.QWidget):
         self.parent = parent
         self.mainLayout = QtWidgets.QHBoxLayout(self)
 
-        self.resetButton = QtWidgets.QPushButton(self.tr("Reset"))
-        self.resetButton.clicked.connect(self.resetButtonClicked)
-        self.mainLayout.addWidget(self.resetButton)
-
         self.storeButton = QtWidgets.QPushButton(self.tr("Go to store"))
         self.storeButton.clicked.connect(self.storeButtonClicked)
-        self.mainLayout.addWidget(self.storeButton)
+        self.mainLayout.addWidget(self.storeButton, 2)
 
         self.dayButton = QtWidgets.QPushButton(self.tr("Go to next day"))
         self.dayButton.clicked.connect(self.dayButtonClicked)
-        self.mainLayout.addWidget(self.dayButton)
+        self.mainLayout.addWidget(self.dayButton, 2)
+
+        # Reset is last and narrower, so it doesn't look like the main button,
+        # and isn't the one that gets the keyboard focus when the game starts
+        self.resetButton = QtWidgets.QPushButton(self.tr("Reset"))
+        self.resetButton.clicked.connect(self.resetButtonClicked)
+        self.mainLayout.addWidget(self.resetButton, 1)
 
         self.tooltipsEnabled = True
         self.setTooltips()

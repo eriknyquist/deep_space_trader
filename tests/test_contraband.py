@@ -2,7 +2,7 @@ import math
 import random
 
 import pytest
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from deep_space_trader import constants as const
 from deep_space_trader import contraband, store
@@ -11,7 +11,7 @@ from deep_space_trader.item_browsers import CONTRABAND_COLOR, itemNameCell
 from deep_space_trader.items import (
     Items, ItemCollection, contraband_item_types, isContraband, rare_item_types
 )
-from deep_space_trader.location_browser import BLACK_MARKET_COLOR, TradingConsole
+from deep_space_trader.location_browser import BLACK_MARKET_COLOR, SURRENDER, TradingConsole
 from deep_space_trader.location_picker import PlanetDestructionPicker, VALUE_COLUMN
 from deep_space_trader.star_map import StarMap, BLACK_MARKET_COLOR as MAP_BLACK_MARKET_COLOR
 
@@ -652,9 +652,9 @@ def test_no_inspection_without_contraband(game, dialogs, inspected):
 
 def test_no_inspection_after_pirates(game, dialogs, cargo, inspected, monkeypatch):
     monkeypatch.setattr(game.state, "pirate_chance", lambda planet: 100)
-    dialogs.answers["pirate"] = False
+    dialogs.choices["pirate"] = SURRENDER
     travel(game, cargo)
-    assert dialogs.titles("choice") == []
+    assert dialogs.titles("choice") == ["Attacked by pirates!"]
 
 
 # ----- Hidden cargo hold -----
@@ -676,7 +676,7 @@ def test_hidden_cargo_hold_store_item(game, dialogs):
 
     assert game.state.money == money - sum(const.HIDDEN_HOLD_COSTS)
     assert item.price is None
-    assert shop.table.item(row, 2).text() == "N/A"
+    assert shop.table.item(row, 2).text() == "\u2013"
     assert item.name == "Improve hidden cargo hold"
 
     # A new game starts without one
@@ -740,3 +740,23 @@ def test_star_map_marks_found_black_markets(game):
     found = [key for key in starmap.layer.groups if key[0]]
     assert len(found) == 1
     assert len(starmap.layer.groups[found[0]][-1]) == 1
+
+
+def test_encounter_icons(game, dialogs, cargo, inspected, unlucky):
+    make_black_market(cargo, {TOBACCO: 100})
+    travel(game, cargo)
+    # The inspection, its outcome, and finding the black market
+    assert dialogs.titles() == ["Travel", "Customs inspection!", "Bribe refused", "Black market found!"]
+    assert dialogs.icons == ["customs", "customs", "black_market"]
+
+
+@pytest.mark.parametrize("name", ["pirates", "customs", "black_market"])
+def test_icons_are_drawn(qapp, name):
+    from deep_space_trader import icons
+    image = icons.iconPixmap(name, 64, 2.0).toImage()
+    assert (image.width(), image.height()) == (128, 128)
+
+    # Something is drawn, and the corners are see-through
+    colours = {image.pixel(x, y) for x in range(0, 128, 4) for y in range(0, 128, 4)}
+    assert len(colours) > 5
+    assert QtGui.qAlpha(image.pixel(0, 127)) == 0

@@ -5,7 +5,7 @@ from PyQt5 import QtCore, QtTest
 
 from deep_space_trader import constants as const
 from deep_space_trader import store
-from deep_space_trader.location_picker import PlanetDestructionPicker
+from deep_space_trader.location_picker import PlanetDestructionPicker, DONT_FIGHT
 from deep_space_trader.i18n import formatDistance
 
 from helpers import row_of, column
@@ -154,7 +154,7 @@ def test_declining_to_fight_the_only_selected_planet(game, dialogs, monkeypatch)
     # Bug 3: this used to crash
     victim = others(game, 1)[0]
     resisting(monkeypatch, victim)
-    dialogs.answers["Planet is resisting!"] = False
+    dialogs.choices["Planet is resisting!"] = DONT_FIGHT
     dialog = picker(game)
     choose(dialog, [victim])
     dialog.selectButtonClicked()
@@ -171,7 +171,7 @@ def test_declining_to_fight_own_planet(game, dialogs, monkeypatch):
     home = leave_home(game)
     victim = others(game, 1)[0]
     resisting(monkeypatch, home)
-    dialogs.answers["Planet is resisting!"] = False
+    dialogs.choices["Planet is resisting!"] = DONT_FIGHT
     dialog = picker(game)
     choose(dialog, [home, victim])
     dialog.selectButtonClicked()
@@ -246,7 +246,7 @@ def test_destroy_all_keeps_a_planet_that_resisted(game, dialogs, monkeypatch):
     state = game.state
     survivor = others(game, 1)[0]
     resisting(monkeypatch, survivor)
-    dialogs.answers["Planet is resisting!"] = False
+    dialogs.choices["Planet is resisting!"] = DONT_FIGHT
     dialog = picker(game)
     dialog.allButtonClicked()
     assert state.planets == [state.current_planet, survivor]
@@ -259,7 +259,7 @@ def test_destroy_all_with_nothing_destroyed(game, dialogs, monkeypatch):
     state.planets = state.planets[:2]
     survivor = state.planets[1]
     resisting(monkeypatch, survivor)
-    dialogs.answers["Planet is resisting!"] = False
+    dialogs.choices["Planet is resisting!"] = DONT_FIGHT
     dialog = picker(game)
     dialog.allButtonClicked()
     assert not dialog.accepted

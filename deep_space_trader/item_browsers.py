@@ -9,7 +9,7 @@ from deep_space_trader.price_graph import PriceHistoryGraph
 from deep_space_trader import constants as const
 from deep_space_trader import reputation
 from deep_space_trader.utils import (
-    errorDialog, yesNoDialog, infoDialog, checkForMoneyBonus, selectedRowKey, selectRowByKey
+    errorDialog, yesNoDialog, infoDialog, checkForMoneyBonus, selectedRowKey, selectRowByKey, NUMBER_ALIGNMENT
 )
 from deep_space_trader.items import itemDisplayName, isContraband
 from deep_space_trader.i18n import translate, formatNumber, formatPercent
@@ -54,6 +54,10 @@ class TableWidgetNumber(SortableTableWidgetItem):
 
 # Colour of the names of contraband item types
 CONTRABAND_COLOR = QtGui.QColor(reputation.BAD_PRICE_COLOR)
+
+# Colours of prices below and above an item's usual price, in the "vs. base" column
+CHEAP_COLOR = QtGui.QColor(reputation.GOOD_PRICE_COLOR)
+DEAR_COLOR = QtGui.QColor(reputation.BAD_PRICE_COLOR)
 
 
 def itemNameCell(itemname):
@@ -444,7 +448,7 @@ class PlayerItemBrowser(ItemBrowser):
         item1 = itemNameCell(itemname)
         item2 = TableWidgetNumber(collection.items[itemname].quantity)
 
-        item2.setTextAlignment(QtCore.Qt.AlignHCenter)
+        item2.setTextAlignment(NUMBER_ALIGNMENT)
 
         self.table.setItem(nextFreeRow, 0, item1)
         self.table.setItem(nextFreeRow, 1, item2)
@@ -460,7 +464,11 @@ def planet_item_browser_setup_header(browser):
     browser.table.setHorizontalHeaderLabels([translate("PlanetItemBrowser", 'Item type'),
                                              translate("PlanetItemBrowser", 'Quantity available'),
                                              translate("PlanetItemBrowser", 'Cost'),
-                                             translate("PlanetItemBrowser", 'Base price delta')])
+                                             translate("PlanetItemBrowser", 'vs. base')])
+    browser.table.horizontalHeaderItem(3).setToolTip(
+        translate("PlanetItemBrowser", "How the cost here compares to the item's usual price (see "
+                                       "Tools > Material prices): green is cheaper than usual, and red "
+                                       "is more expensive."))
     header = browser.table.horizontalHeader()
     header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
     header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
@@ -479,9 +487,16 @@ def planet_item_browser_add_row(browser, planet, itemname):
     item2 = TableWidgetNumber(collection.items[itemname].quantity)
     item3 = TableWidgetNumber(collection.items[itemname].value)
     item4 = TableWidgetNumber(delta, formatPercent(delta, 1))
-    item2.setTextAlignment(QtCore.Qt.AlignHCenter)
-    item3.setTextAlignment(QtCore.Qt.AlignHCenter)
-    item4.setTextAlignment(QtCore.Qt.AlignHCenter)
+
+    # Green when it's cheaper than usual (a good buy), red when it's dearer (a good sale)
+    if delta < 0:
+        item4.setForeground(CHEAP_COLOR)
+    elif delta > 0:
+        item4.setForeground(DEAR_COLOR)
+
+    item2.setTextAlignment(NUMBER_ALIGNMENT)
+    item3.setTextAlignment(NUMBER_ALIGNMENT)
+    item4.setTextAlignment(NUMBER_ALIGNMENT)
 
     browser.table.setItem(nextFreeRow, 0, item1)
     browser.table.setItem(nextFreeRow, 1, item2)
@@ -739,7 +754,7 @@ class WarehouseItemBrowser(ItemBrowser):
         item1 = itemNameCell(itemname)
         item2 = TableWidgetNumber(collection.items[itemname].quantity)
 
-        item2.setTextAlignment(QtCore.Qt.AlignHCenter)
+        item2.setTextAlignment(NUMBER_ALIGNMENT)
 
         self.table.setItem(nextFreeRow, 0, item1)
         self.table.setItem(nextFreeRow, 1, item2)

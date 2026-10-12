@@ -3,6 +3,7 @@ from deep_space_trader.items import (
 )
 from deep_space_trader.item_browsers import itemNameCell
 from deep_space_trader.i18n import formatNumber
+from deep_space_trader.utils import NUMBER_ALIGNMENT
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
@@ -65,7 +66,7 @@ class PricesTable(QtWidgets.QDialog):
         item1 = itemNameCell(name)
         item2 = QtWidgets.QTableWidgetItem(formatNumber(value))
 
-        item2.setTextAlignment(QtCore.Qt.AlignHCenter)
+        item2.setTextAlignment(NUMBER_ALIGNMENT)
 
         self.table.setItem(nextFreeRow, 0, item1)
         self.table.setItem(nextFreeRow, 1, item2)

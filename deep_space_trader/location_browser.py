@@ -3,12 +3,14 @@ import random
 import numpy
 
 from deep_space_trader.utils import (
-    errorDialog, yesNoDialog, choiceDialog, infoDialog, selectedRowKey, selectRowByKey, percentChance
+    errorDialog, yesNoDialog, choiceDialog, infoDialog, selectedRowKey, selectRowByKey, percentChance,
+    NUMBER_ALIGNMENT, CENTRE_ALIGNMENT
 )
 from deep_space_trader.item_browsers import TradingConsolePlanetDisplay
 from deep_space_trader.i18n import translate, formatNumber, formatDistance, formatPercent
 from deep_space_trader import reputation
 from deep_space_trader import contraband
+from deep_space_trader import icons
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import QT_TRANSLATE_NOOP
@@ -45,6 +47,11 @@ class DistanceDelegate(QtWidgets.QStyledItemDelegate):
     def displayText(self, value, locale):
         return formatDistance(value)
 
+    def initStyleOption(self, option, index):
+        # Aligned here rather than in each cell, since there can be 20,000 cells
+        super(DistanceDelegate, self).initStyleOption(option, index)
+        option.displayAlignment = NUMBER_ALIGNMENT
+
 
 class ReputationDelegate(QtWidgets.QStyledItemDelegate):
     """
@@ -53,6 +60,13 @@ class ReputationDelegate(QtWidgets.QStyledItemDelegate):
     def displayText(self, value, locale):
         return reputation.describe(value)
 
+    def initStyleOption(self, option, index):
+        super(ReputationDelegate, self).initStyleOption(option, index)
+        option.displayAlignment = CENTRE_ALIGNMENT
+
+
+# Choices when attacked by pirates, in the order of the buttons
+FIGHT, SURRENDER = range(2)
 
 # Columns of the planets table
 NAME_COLUMN = 0
@@ -112,7 +126,7 @@ class LocationBrowser(QtWidgets.QWidget):
         self.table.setPalette(palette)
 
         self.table.setColumnCount(4)
-        self.table.setHorizontalHeaderLabels([self.tr('Planet'), self.tr('visited?'), self.tr('Distance'),
+        self.table.setHorizontalHeaderLabels([self.tr('Planet'), self.tr('Visited?'), self.tr('Distance'),
                                               self.tr('Reputation')])
         self.table.verticalHeader().setVisible(False)
         # One line per planet: text that doesn't fit (e.g. "Refuses to trade (0)") is cut short with "..."
@@ -234,7 +248,7 @@ class LocationBrowser(QtWidgets.QWidget):
 
         # Set current planet "visited=yes"
         item2 = QtWidgets.QTableWidgetItem(self.tr("yes"))
-        item2.setTextAlignment(QtCore.Qt.AlignHCenter)
+        item2.setTextAlignment(CENTRE_ALIGNMENT)
         self.table.setItem(row, 1, item2)
 
         # Set current planet row color
@@ -301,7 +315,6 @@ class LocationBrowser(QtWidgets.QWidget):
         """
         item = QtWidgets.QTableWidgetItem()
         item.setData(QtCore.Qt.DisplayRole, float(value))
-        item.setTextAlignment(QtCore.Qt.AlignHCenter)
         return item
 
     def addRow(self, planet, row, texts, planet_reputation):
@@ -310,7 +323,7 @@ class LocationBrowser(QtWidgets.QWidget):
         # without looking it up by name or by row number
         item1.setData(QtCore.Qt.UserRole, planet)
         item2 = QtWidgets.QTableWidgetItem(texts["yes"] if planet.visited else texts["no"])
-        item2.setTextAlignment(QtCore.Qt.AlignHCenter)
+        item2.setTextAlignment(CENTRE_ALIGNMENT)
 
         item3 = self.numberCell(self.parent.state.current_planet.distance_to(planet))
         item4 = self.numberCell(planet_reputation)
@@ -484,19 +497,19 @@ class LocationBrowser(QtWidgets.QWidget):
                     return
         else:
             self.parent.audio.play(self.parent.audio.BattleSound)
-            accepted = yesNoDialog(self, self.tr("Attacked by pirates!"),
-                                   self.tr("You have encountered a pirate fleet while travelling "
-                                           "between planets!<br><br>Your battle fleet must defeat them if "
-                                           "you want to continue.<br><br>"
-                                           "If you fight and lose, you will die.<br><br>"
-                                           "If you fight and win, you will lose some health, but you will "
-                                           "be able to continue your travels and will not lose any money "
-                                           "or resources.<br><br>"
-                                           "If you do not fight, then the only other "
-                                           "option is surrender; you will not die or lose any health, but you "
-                                           "may lose some of your money and resources.<br><br>Do you want to fight?"),
-                                   cancelable=False)
-            if accepted:
+            choice = choiceDialog(self, self.tr("Attacked by pirates!"),
+                                  self.tr("You have encountered a pirate fleet while travelling "
+                                          "between planets!<br><br>Your battle fleet must defeat them if "
+                                          "you want to continue.<br><br>"
+                                          "If you fight and lose, you will die.<br><br>"
+                                          "If you fight and win, you will lose some health, but you will "
+                                          "be able to continue your travels and will not lose any money "
+                                          "or resources.<br><br>"
+                                          "If you do not fight, then the only other "
+                                          "option is surrender; you will not die or lose any health, but you "
+                                          "may lose some of your money and resources."),
+                                  [self.tr("Fight"), self.tr("Surrender")], icon=icons.PIRATES)
+            if choice == FIGHT:
                 battle_won = self.parent.state.battle_won()
                 if battle_won:
                     self.parent.state.lost_health_from_battle()
@@ -504,12 +517,13 @@ class LocationBrowser(QtWidgets.QWidget):
                     if self.parent.state.health > 0:
                         self.parent.audio.play(self.parent.audio.VictorySound)
                         infoDialog(self, self.tr("Battle won!"), self.tr("You have defeated the pirate fleet, "
-                                                                         "and can continue with your travels."))
+                                                                         "and can continue with your travels."),
+                                   icon=icons.PIRATES)
 
                 if (not battle_won) or (self.parent.state.health == 0):
                     self.parent.audio.play(self.parent.audio.DeathSound)
                     infoDialog(self, self.tr("Battle lost!"), self.tr("You have been defeated by the pirate fleet."
-                                                                      "<br><br>You are dead."))
+                                                                      "<br><br>You are dead."), icon=icons.PIRATES)
                     self.parent.checkHighScore()
                     self.parent.reset()
                     return
@@ -528,7 +542,7 @@ class LocationBrowser(QtWidgets.QWidget):
                 self.parent.audio.play(self.parent.audio.FailureSound)
                 infoDialog(self, self.tr("Surrender"), self.tr("You decide not to fight the pirate fleet. "
                                                                "<br><br>The pirates spare your life, but they "
-                                                               "rob you of everything you've got!"))
+                                                               "rob you of everything you've got!"), icon=icons.PIRATES)
 
         self.parent.audio.play(self.parent.audio.TravelSound)
         found_black_market = self.parent.state.change_current_planet(planet)
@@ -539,7 +553,8 @@ class LocationBrowser(QtWidgets.QWidget):
             self.parent.audio.play(self.parent.audio.PlanetDiscoverySound)
             infoDialog(self, self.tr("Black market found!"),
                        self.tr("You've found a black market on {0}! Contraband can be bought "
-                               "and sold here.", "{0} is a planet name").format(planet.full_name))
+                               "and sold here.", "{0} is a planet name").format(planet.full_name),
+                       icon=icons.BLACK_MARKET)
 
         # Every distance in the table has changed
         self.refreshDistances()
@@ -582,7 +597,7 @@ class LocationBrowser(QtWidgets.QWidget):
         self.parent.audio.play(self.parent.audio.BattleSound)
         choices = [self.tr("Bribe"), self.tr("Flee"), self.tr("Let them search")]
         choice = choiceDialog(self, self.tr("Customs inspection!"), "<br><br>".join(lines), choices,
-                              enabled=[state.money >= bribe_cost, True, True])
+                              enabled=[state.money >= bribe_cost, True, True], icon=icons.CUSTOMS)
 
         if choice == contraband.BRIBE:
             outcome = contraband.bribe(state, planet)
@@ -598,7 +613,8 @@ class LocationBrowser(QtWidgets.QWidget):
         if outcome.caught and (state.health == 0):
             self.parent.audio.play(self.parent.audio.DeathSound)
             infoDialog(self, self.tr("Caught!"), self.tr("The customs patrol catches you, and your ship is "
-                                                         "destroyed in the chase.<br><br>You are dead."))
+                                                         "destroyed in the chase.<br><br>You are dead."),
+                       icon=icons.CUSTOMS)
             self.parent.checkHighScore()
             self.parent.reset()
             return False
@@ -647,7 +663,7 @@ class LocationBrowser(QtWidgets.QWidget):
         else:
             self.parent.audio.play(self.parent.audio.VictorySound)
 
-        infoDialog(self, title, message)
+        infoDialog(self, title, message, icon=icons.CUSTOMS)
         return True
 
     def openTradingConsole(self, planet):

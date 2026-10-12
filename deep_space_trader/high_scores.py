@@ -4,7 +4,7 @@ import html
 from deep_space_trader import config
 from deep_space_trader import constants as const
 from deep_space_trader.utils import yesNoDialog, errorDialog, infoDialog
-from deep_space_trader.utils import scores_encode, scores_decode
+from deep_space_trader.utils import scores_encode, scores_decode, NUMBER_ALIGNMENT
 from deep_space_trader.i18n import formatNumber
 
 from PyQt5 import QtWidgets, QtCore, QtGui
@@ -88,7 +88,7 @@ class HighScoreTable(QtWidgets.QDialog):
         widgetText.setTextFormat(QtCore.Qt.RichText)
         item2 = QtWidgets.QTableWidgetItem(formatNumber(score))
 
-        item2.setTextAlignment(QtCore.Qt.AlignHCenter)
+        item2.setTextAlignment(NUMBER_ALIGNMENT)
 
         self.table.setCellWidget(nextFreeRow, 0, widgetText)
         self.table.setItem(nextFreeRow, 1, item2)

@@ -6,6 +6,7 @@ import sys
 from PyQt5 import QtWidgets, QtCore, QtGui
 
 from deep_space_trader import constants as const
+from deep_space_trader import icons
 from deep_space_trader.i18n import translate, formatNumber
 from deep_space_trader import __maintainer__ as package_author
 from deep_space_trader import __email__ as author_email
@@ -25,6 +26,15 @@ IMAGE_DIR = os.path.join(SOURCE_DIR, 'images')
 ICON_PATH = os.path.join(IMAGE_DIR, 'icon.png')
 
 _window_icon = None
+
+# Size of the game's own icons in message boxes (see setMessageBoxIcon), in pixels
+EVENT_ICON_SIZE = 64
+
+# How table cells are aligned: numbers on the right, so their digits line up
+# (e.g. 1,544,621 above 87,160), and short words like "yes" in the middle.
+# Both are centred vertically, like the text in the other cells
+NUMBER_ALIGNMENT = QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter
+CENTRE_ALIGNMENT = QtCore.Qt.AlignCenter
 
 
 def windowIcon():
@@ -121,19 +131,30 @@ def yesNoDialog(parent, header="", message=None, cancelable=True):
 
     return reply == QtWidgets.QMessageBox.Yes
 
-def choiceDialog(parent, header, message, choices, enabled=None):
+def setMessageBoxIcon(msg, standard_icon, icon=None):
+    """
+    Set a message box's icon: 'standard_icon' (e.g. QStyle.SP_MessageBoxQuestion),
+    or the game's own icon 'icon' (a name from the icons module, e.g. icons.PIRATES).
+    The pixmap is set directly-- if we use the "setIcon" method on the message
+    box, the message box will make an annoying bell noise when it opens
+    """
+    if icon is not None:
+        msg.setIconPixmap(icons.iconPixmap(icon, EVENT_ICON_SIZE, msg.devicePixelRatioF()))
+        return
+
+    style = msg.style()
+    iconSize = style.pixelMetric(QtWidgets.QStyle.PM_MessageBoxIconSize)
+    msg.setIconPixmap(style.standardIcon(standard_icon).pixmap(iconSize, iconSize))
+
+def choiceDialog(parent, header, message, choices, enabled=None, icon=None):
     """
     Ask a question with one button per choice (a list of button texts), and
     return the index of the chosen one. There's no way out without choosing.
-    'enabled' is a list of True/False, one per choice (all enabled if None)
+    'enabled' is a list of True/False, one per choice (all enabled if None).
+    'icon' is one of the game's own icons (see setMessageBoxIcon)
     """
     msg = QtWidgets.QMessageBox(parent)
-
-    # Set icon pixmap directly, for the same reason as in errorDialog
-    style = msg.style()
-    iconSize = style.pixelMetric(QtWidgets.QStyle.PM_MessageBoxIconSize)
-    icon = style.standardIcon(QtWidgets.QStyle.SP_MessageBoxQuestion)
-    msg.setIconPixmap(icon.pixmap(iconSize, iconSize))
+    setMessageBoxIcon(msg, QtWidgets.QStyle.SP_MessageBoxQuestion, icon)
 
     # Like yesNoDialog: the header is the window title
     msg.setText(message)
@@ -157,13 +178,7 @@ def errorDialog(parent, heading=None, message=None):
         message = translate("Dialogs", "Unrecoverable error occurred")
 
     msg = QtWidgets.QMessageBox(parent)
-
-    # Set icon pixmap directly-- if we use the "setIcon" method on the message
-    # box, the message box will make an annoying bell noise when it opens
-    style = msg.style()
-    iconSize = style.pixelMetric(QtWidgets.QStyle.PM_MessageBoxIconSize)
-    icon = style.standardIcon(QtWidgets.QStyle.SP_MessageBoxWarning)
-    msg.setIconPixmap(icon.pixmap(iconSize, iconSize))
+    setMessageBoxIcon(msg, QtWidgets.QStyle.SP_MessageBoxWarning)
 
     msg.setText(heading + "<br><br>" + message)
     msg.setWindowTitle(translate("Dialogs", "Error"))
@@ -171,15 +186,12 @@ def errorDialog(parent, heading=None, message=None):
     msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
     msg.exec_()
 
-def infoDialog(parent, heading="", message=""):
+def infoDialog(parent, heading="", message="", icon=None):
+    """
+    'icon' is one of the game's own icons (see setMessageBoxIcon)
+    """
     msg = QtWidgets.QMessageBox(parent)
-
-    # Set icon pixmap directly-- if we use the "setIcon" method on the message
-    # box, the message box will make an annoying bell noise when it opens
-    style = msg.style()
-    iconSize = style.pixelMetric(QtWidgets.QStyle.PM_MessageBoxIconSize)
-    icon = style.standardIcon(QtWidgets.QStyle.SP_MessageBoxInformation)
-    msg.setIconPixmap(icon.pixmap(iconSize, iconSize))
+    setMessageBoxIcon(msg, QtWidgets.QStyle.SP_MessageBoxInformation, icon)
 
     msg.setText(heading + "<br><br>" + message)
     msg.setWindowTitle(translate("Dialogs", "Information"))

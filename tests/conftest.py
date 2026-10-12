@@ -100,6 +100,7 @@ class Dialogs(object):
     """
     def __init__(self):
         self.shown = []        # (kind, title, message)
+        self.icons = []        # icon names given to info and choice dialogs (None for the usual icons)
         self.executed = []     # dialogs whose exec_() was called
         self.answers = {}
         self.choices = {}
@@ -116,8 +117,9 @@ class Dialogs(object):
 
         return True
 
-    def choice(self, parent, header, message, choices, enabled=None):
+    def choice(self, parent, header, message, choices, enabled=None, icon=None):
         self.shown.append(("choice", header, message))
+        self.icons.append(icon)
         self.choices_offered = list(choices)
         self.choices_enabled = [True] * len(choices) if enabled is None else list(enabled)
         index = next((i for key, i in self.choices.items() if key in header),
@@ -125,8 +127,9 @@ class Dialogs(object):
         assert self.choices_enabled[index], "%r is disabled" % choices[index]
         return index
 
-    def info(self, parent, heading="", message=""):
+    def info(self, parent, heading="", message="", icon=None):
         self.shown.append(("info", heading, message))
+        self.icons.append(icon)
 
     def error(self, parent, heading=None, message=None):
         self.shown.append(("error", heading or "", message or ""))
@@ -139,6 +142,7 @@ class Dialogs(object):
 
     def clear(self):
         self.shown.clear()
+        self.icons.clear()
         self.executed.clear()
 
 

@@ -190,3 +190,20 @@ def test_about_and_intro(dialogs):
     assert "Created by" in about.text.text()
 
     assert utils.gameStoryDialog() is False
+
+
+def test_reset_button_is_last(game):
+    layout = game.buttonBar.mainLayout
+    buttons = [layout.itemAt(i).widget() for i in range(layout.count())]
+    assert [b.text() for b in buttons] == ["Go to store", "Go to next day", "Reset"]
+    assert [layout.stretch(i) for i in range(layout.count())] == [2, 2, 1]
+
+
+def test_bars_show_their_values(game):
+    state = game.state
+    state.health = 85
+    state.engine_level = 3
+    game.infoBar.update()
+    assert game.infoBar.healthValueLabel.text() == "85"
+    assert game.infoBar.engineValueLabel.text() == "3/10"
+    assert game.infoBar.reputationValueLabel.text() == "70"

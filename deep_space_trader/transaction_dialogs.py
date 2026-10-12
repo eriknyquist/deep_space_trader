@@ -19,12 +19,24 @@ class TransactionDialog(QtWidgets.QDialog):
         buttonLayout = QtWidgets.QHBoxLayout()
 
         self.description = QtWidgets.QLabel()
+        font = self.description.font()
+        font.setBold(True)
+        self.description.setFont(font)
+
+        # The price of one item, and how many there are (Buy and Sell only)
+        self.detailsLabel = QtWidgets.QLabel()
+        self.detailsLabel.setVisible(False)
+
+        # The total price of the chosen quantity (Buy and Sell only)
+        self.totalLabel = QtWidgets.QLabel()
+        self.totalLabel.setFont(font)
+        self.totalLabel.setVisible(False)
 
         # Says how the planet's opinion of the player changes the price (Buy and Sell only)
         self.reputationLabel = QtWidgets.QLabel()
         self.reputationLabel.setWordWrap(True)
         self.reputationLabel.setVisible(False)
-        moneyCount = QtWidgets.QLabel(translate("TransactionDialog", "(your money: {0})").format(
+        moneyCount = QtWidgets.QLabel(translate("TransactionDialog", "Your money: {0}").format(
                                       formatNumber(parent.state.money)))
 
         self.spinboxLabel = QtWidgets.QLabel("")
@@ -32,6 +44,7 @@ class TransactionDialog(QtWidgets.QDialog):
         # Use a double spin box with 0 decimal places so we can get 64 bit integers
         self.spinbox = QtWidgets.QDoubleSpinBox()
         self.spinbox.setDecimals(0)
+        self.spinbox.setMinimumWidth(140)
 
         self.spinbox.valueChanged.connect(self.valueChanged)
         self.spinbox.setMaximum(self.maximumQuantity())
@@ -40,6 +53,7 @@ class TransactionDialog(QtWidgets.QDialog):
         maxButton.clicked.connect(self.maxButtonClicked)
 
         spinboxLayout.addWidget(self.spinboxLabel)
+        spinboxLayout.addStretch(1)
         spinboxLayout.addWidget(self.spinbox)
         spinboxLayout.addWidget(maxButton)
 
@@ -51,13 +65,19 @@ class TransactionDialog(QtWidgets.QDialog):
         cancelButton.clicked.connect(self.cancelButtonClicked)
         buttonLayout.addWidget(cancelButton)
 
+        mainLayout.setContentsMargins(16, 16, 16, 16)
+        mainLayout.setSpacing(8)
         mainLayout.addWidget(self.description)
-        mainLayout.addWidget(self.reputationLabel)
+        mainLayout.addWidget(self.detailsLabel)
 
         if include_money:
             mainLayout.addWidget(moneyCount)
 
+        mainLayout.addSpacing(6)
         mainLayout.addLayout(spinboxLayout)
+        mainLayout.addWidget(self.totalLabel)
+        mainLayout.addWidget(self.reputationLabel)
+        mainLayout.addSpacing(6)
         mainLayout.addLayout(buttonLayout)
 
         # Size the window to fit its contents. The price message wraps over several
@@ -125,6 +145,9 @@ class Buy(TransactionDialog):
 
         self.description.setText(self.tr("How much {0} do you want to buy?",
                                          "{0} is an item name, e.g. tin").format(itemDisplayName(self.itemName)))
+        self.detailsLabel.setText(self.tr("Price: {0} each, {1} available").format(
+                                  formatNumber(self.normalValue), formatNumber(self.quantity)))
+        self.detailsLabel.setVisible(True)
         self.acceptButton.setText(self.tr("Buy"))
         self.setWindowTitle(self.tr("Buy items"))
 
@@ -142,8 +165,9 @@ class Buy(TransactionDialog):
         return self.parent.state.buy_total(self.parent.state.current_planet, self.itemName, quantity)
 
     def valueChanged(self):
-        self.spinboxLabel.setText(self.tr("Buy quantity (cost: {0})").format(
-                                  formatNumber(self.total(int(self.spinbox.value())))))
+        self.spinboxLabel.setText(self.tr("Quantity:"))
+        self.totalLabel.setText(self.tr("You pay: {0}").format(formatNumber(self.total(int(self.spinbox.value())))))
+        self.totalLabel.setVisible(True)
 
         # Totals for the chosen quantity (no message until a quantity is chosen)
         quantity = int(self.spinbox.value())
@@ -182,6 +206,9 @@ class Sell(TransactionDialog):
         super(Sell, self).__init__(parent, itemname, include_money=False)
         self.description.setText(self.tr("How much {0} do you want to sell?",
                                          "{0} is an item name, e.g. tin").format(itemDisplayName(self.itemName)))
+        self.detailsLabel.setText(self.tr("Price: {0} each, you have {1}").format(
+                                  formatNumber(self.normalValue), formatNumber(self.quantity)))
+        self.detailsLabel.setVisible(True)
         self.acceptButton.setText(self.tr("Sell"))
         self.setWindowTitle(self.tr("Sell items"))
 
@@ -205,8 +232,9 @@ class Sell(TransactionDialog):
         return self.parent.state.sell_total(self.parent.state.current_planet, self.itemName, quantity)
 
     def valueChanged(self):
-        self.spinboxLabel.setText(self.tr("Sell quantity (gain: {0})").format(
-                                  formatNumber(self.total(int(self.spinbox.value())))))
+        self.spinboxLabel.setText(self.tr("Quantity:"))
+        self.totalLabel.setText(self.tr("You get: {0}").format(formatNumber(self.total(int(self.spinbox.value())))))
+        self.totalLabel.setVisible(True)
 
         # Totals for the chosen quantity (no message until a quantity is chosen)
         quantity = int(self.spinbox.value())
