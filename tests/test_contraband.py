@@ -589,7 +589,11 @@ def test_inspection_during_travel(game, dialogs, cargo, inspected, unlucky):
     assert dialogs.messages("info") == ["The officers search your ship, seize your contraband "
                                         "(worth 2,500), and fine you 2,500."]
     assert TOBACCO not in column(game.playerItemBrowser.table, 0)
-    assert "FailureSound" in game.audio.played
+
+    # A siren when the patrol stops the ship, then the outcome's sound
+    sounds = game.audio.played
+    assert sounds.index("SirenSound") < sounds.index("FailureSound")
+    assert "BattleSound" not in sounds
 
 
 @pytest.mark.parametrize("choice, luck, title", [

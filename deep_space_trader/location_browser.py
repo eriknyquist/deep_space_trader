@@ -594,7 +594,7 @@ class LocationBrowser(QtWidgets.QWidget):
             lines.append(self.tr("<b>Let them search:</b> your contraband is seized, and you're "
                                  "fined {0}.").format(formatNumber(fine)))
 
-        self.parent.audio.play(self.parent.audio.BattleSound)
+        self.parent.audio.play(self.parent.audio.SirenSound)
         choices = [self.tr("Bribe"), self.tr("Flee"), self.tr("Let them search")]
         choice = choiceDialog(self, self.tr("Customs inspection!"), "<br><br>".join(lines), choices,
                               enabled=[state.money >= bribe_cost, True, True], icon=icons.CUSTOMS)

@@ -25,6 +25,7 @@ SOUND_FILES = {
     "RumourSound": "rumour.wav",
     "RumourTrueSound": "rumour_true.wav",
     "DumpSound": "dump.wav",
+    "SirenSound": "siren.wav",
 }
 
 
