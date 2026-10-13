@@ -1,4 +1,5 @@
 import math
+import os
 import random
 
 import pytest
@@ -750,13 +751,39 @@ def test_encounter_icons(game, dialogs, cargo, inspected, unlucky):
     assert dialogs.icons == ["customs", "customs", "black_market"]
 
 
+@pytest.mark.parametrize("dpr", [1.0, 2.0])
 @pytest.mark.parametrize("name", ["pirates", "customs", "black_market"])
-def test_icons_are_drawn(qapp, name):
+def test_icons(qapp, name, dpr):
     from deep_space_trader import icons
-    image = icons.iconPixmap(name, 64, 2.0).toImage()
-    assert (image.width(), image.height()) == (128, 128)
+    pixmap = icons.iconPixmap(name, 64, dpr)
+    assert pixmap.devicePixelRatio() == dpr
+    image = pixmap.toImage()
+    assert (image.width(), image.height()) == (64 * dpr, 64 * dpr)
 
     # Something is drawn, and the corners are see-through
-    colours = {image.pixel(x, y) for x in range(0, 128, 4) for y in range(0, 128, 4)}
+    colours = {image.pixel(x, y) for x in range(0, image.width(), 2) for y in range(0, image.height(), 2)}
     assert len(colours) > 5
-    assert QtGui.qAlpha(image.pixel(0, 127)) == 0
+    assert QtGui.qAlpha(image.pixel(0, image.height() - 1)) == 0
+
+
+def test_icon_files_are_large_enough(qapp):
+    from deep_space_trader import icons
+    from deep_space_trader.utils import IMAGE_DIR
+    for filename in icons.FILENAMES.values():
+        image = QtGui.QImage(os.path.join(IMAGE_DIR, filename))
+        assert (image.width(), image.height()) == (icons.FILE_SIZE, icons.FILE_SIZE)
+        assert image.hasAlphaChannel()
+
+
+def test_icon_script(qapp, tmp_path):
+    # The script that makes the icon files still works
+    import importlib.util
+    path = os.path.join(os.path.dirname(__file__), os.pardir, "scripts", "make_icons.py")
+    spec = importlib.util.spec_from_file_location("make_icons", path)
+    make_icons = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(make_icons)
+
+    make_icons.main(["--output", str(tmp_path)])
+    from deep_space_trader import icons
+    assert sorted(os.listdir(tmp_path)) == sorted(icons.FILENAMES.values())
+    assert QtGui.QImage(str(tmp_path / icons.FILENAMES[icons.PIRATES])).width() == icons.FILE_SIZE

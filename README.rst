@@ -1018,8 +1018,8 @@ To add a language, run ``pylupdate5`` as above with a new file name, e.g.
 language. The tests check that every ``.ts`` file is up to date, and that translations keep
 placeholders like ``{0}`` and formatting tags.
 
-README images and PDF manual
-############################
+Images and PDF manual
+#####################
 
 The screenshots in this README are made by a script, which sets up a game part-way through and
 captures every window. Run it on a desktop (it captures windows with their title bars):
@@ -1028,6 +1028,14 @@ captures every window. Run it on a desktop (it captures windows with their title
 
     python scripts/make_readme_images.py                  # all images, saved in images/
     python scripts/make_readme_images.py --only store star_map
+
+The icons shown for pirates, customs patrols and black markets are PNG files in
+``deep_space_trader/images`` (``event_*.png``, 256x256 pixels). They're drawn by a script, which is
+only needed to change them; they can also be edited, or replaced, in any image editor:
+
+::
+
+    python scripts/make_icons.py
 
 The PDF version of this README is built with rst2pdf:
 
