@@ -792,3 +792,53 @@ def test_icon_script(qapp, tmp_path):
     from deep_space_trader import icons
     assert sorted(os.listdir(tmp_path)) == sorted(icons.FILENAMES.values())
     assert QtGui.QImage(str(tmp_path / icons.FILENAMES[icons.PIRATES])).width() == icons.FILE_SIZE
+
+def test_info_bar_shows_black_market_icon(game, dialogs, no_pirates):
+    info = game.infoBar
+    assert info.blackMarketIcon.isHidden()
+
+    planet = other_planet(game)
+    make_black_market(planet, {TOBACCO: 100})
+    travel(game, planet)
+    assert not info.blackMarketIcon.isHidden()
+    assert info.planetGroup.toolTip() == "the planet you are currently on"
+
+    # Gone on an ordinary planet, and in a new game
+    travel(game, other_planet(game, 1))
+    assert info.blackMarketIcon.isHidden()
+    travel(game, planet)
+    assert not info.blackMarketIcon.isHidden()
+    game.reset()
+    assert info.blackMarketIcon.isHidden()
+
+
+def test_planet_picture_stays_centred_with_black_market_icon(game, no_pirates):
+    # Space is kept on both sides of the picture, with or without the icon, so
+    # the picture is always in the middle of the "Current planet" box
+    info = game.infoBar
+
+    def offset():
+        QtWidgets.QApplication.processEvents()
+        image = info.planetImage.mapTo(info.planetGroup, info.planetImage.rect().center()).x()
+        box = info.planetGroup.contentsRect().center().x()
+        return abs(image - box)
+
+    assert offset() <= 1
+    planet = other_planet(game)
+    make_black_market(planet, {TOBACCO: 100})
+    travel(game, planet)
+    assert offset() <= 1
+    icon_left = info.blackMarketIcon.mapTo(info.planetGroup, info.blackMarketIcon.rect().topLeft()).x()
+    image_right = info.planetImage.mapTo(info.planetGroup, info.planetImage.rect().topRight()).x()
+    assert icon_left >= image_right
+
+
+def test_planet_box_doesnt_take_spare_width(game):
+    # Bug: the space kept for the black market icon made the "Current planet"
+    # box take all the spare width when the window was maximized. It should
+    # grow like the boxes next to it
+    window = game.main
+    window.resize(2400, 960)
+    QtWidgets.QApplication.processEvents()
+    info = game.infoBar
+    assert abs(info.planetGroup.width() - info.moneyGroup.width()) <= 2

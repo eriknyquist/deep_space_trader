@@ -3,10 +3,14 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 from deep_space_trader.planet_image import PlanetImage
 from deep_space_trader import constants as const
 from deep_space_trader import reputation
+from deep_space_trader import icons
 from deep_space_trader.i18n import translate, formatNumber, formatPercent
 
 # Engine power bar colour: solid blue, so it isn't confused with the health bar
 ENGINE_BAR_COLOR = "#3399ff"
+
+# Size of the black market icon next to the current planet's picture, in pixels
+BLACK_MARKET_ICON_SIZE = 36
 
 GROUPBOX_STYLE= "QGroupBox{ font-size: 12px; }"
 LABEL_STYLE = "QLabel{ font-size: 14px; }"
@@ -62,7 +66,30 @@ class InfoBar(QtWidgets.QWidget):
         self.tooltipsEnabled = True
 
         self.planetImage = PlanetImage(self.parent)
-        planetLayout.addWidget(self.planetImage)
+
+        # The black market icon, next to the picture, when the current planet is
+        # a black market. The same space is kept on the other side, and both
+        # are kept when the icon is hidden, so the picture stays centred and
+        # doesn't move from planet to planet
+        self.blackMarketIcon = QtWidgets.QLabel()
+        self.blackMarketIcon.setPixmap(icons.iconPixmap(icons.BLACK_MARKET, BLACK_MARKET_ICON_SIZE,
+                                                        self.devicePixelRatioF()))
+        balance = QtWidgets.QWidget()
+        for widget in (self.blackMarketIcon, balance):
+            widget.setFixedSize(BLACK_MARKET_ICON_SIZE, BLACK_MARKET_ICON_SIZE)
+            policy = widget.sizePolicy()
+            policy.setRetainSizeWhenHidden(True)
+            widget.setSizePolicy(policy)
+
+        # (In a widget of their own, centred, rather than between stretchable
+        # spaces, which would make the whole box grow with the window)
+        imageRow = QtWidgets.QWidget()
+        imageLayout = QtWidgets.QHBoxLayout(imageRow)
+        imageLayout.setContentsMargins(0, 0, 0, 0)
+        imageLayout.addWidget(balance, 0, QtCore.Qt.AlignBottom)
+        imageLayout.addWidget(self.planetImage)
+        imageLayout.addWidget(self.blackMarketIcon, 0, QtCore.Qt.AlignBottom)
+        planetLayout.addWidget(imageRow, 0, QtCore.Qt.AlignHCenter)
 
         self.planetLabel = QtWidgets.QLabel()
         self.planetLabel.setAlignment(QtCore.Qt.AlignCenter)
@@ -326,6 +353,7 @@ class InfoBar(QtWidgets.QWidget):
     def update(self):
         self.planetLabel.setText(self.parent.state.current_planet.full_name)
         self.planetImage.update()
+        self.blackMarketIcon.setVisible(self.parent.state.current_planet.black_market_found)
         self.dayLabel.setText('%s/%s' % (formatNumber(self.parent.state.day), formatNumber(self.parent.state.max_days)))
         self.moneyLabel.setText(formatNumber(self.parent.state.money))
         self.planetCountLabel.setText(formatNumber(self.parent.state.planets_discovered))

@@ -264,7 +264,8 @@ This section describes the functionality of the "Information" section of the mai
 The "Information" section stretches across the entire top of the main game window, and
 shows useful information about the current state of the game.
 
-* **"Current Planet"**: Shows the name of, and an image of, the current planet the player is on.
+* **"Current Planet"**: Shows the name of, and an image of, the current planet the player is on. On a
+  black market, a crate with a red X is shown next to the image (see `Contraband`_).
 * **"Daily cost"**: Current daily cost of living that gets subtracted from your money on each new day.
 * **"Money"**: Shows the amount of money currently held by the player.
 * **"Purchases"**: Shows the number of store purchases made by the player so far on the current day, against

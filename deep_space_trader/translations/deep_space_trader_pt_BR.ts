@@ -542,72 +542,72 @@
 <context>
     <name>InfoBar</name>
     <message>
-        <location filename="../information_bar.py" line="71"/>
+        <location filename="../information_bar.py" line="98"/>
         <source>Current planet</source>
         <translation>Planeta atual</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="81"/>
+        <location filename="../information_bar.py" line="108"/>
         <source>Money</source>
         <translation>Dinheiro</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="91"/>
+        <location filename="../information_bar.py" line="118"/>
         <source>Daily cost</source>
         <translation>Custo diário</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="105"/>
+        <location filename="../information_bar.py" line="132"/>
         <source>Purchases</source>
         <translation>Compras</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="115"/>
+        <location filename="../information_bar.py" line="142"/>
         <source>Warehouse trips</source>
         <translation>Viagens ao armazém</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="129"/>
+        <location filename="../information_bar.py" line="156"/>
         <source>Planets discovered</source>
         <translation>Planetas descobertos</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="139"/>
+        <location filename="../information_bar.py" line="166"/>
         <source>Current day</source>
         <translation>Dia atual</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="153"/>
+        <location filename="../information_bar.py" line="180"/>
         <source>Scout fleet level</source>
         <translation>Nível da frota de reconhecimento</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="163"/>
+        <location filename="../information_bar.py" line="190"/>
         <source>Battle fleet level</source>
         <translation>Nível da frota de batalha</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="180"/>
+        <location filename="../information_bar.py" line="207"/>
         <source>Health</source>
         <translation>Saúde</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="258"/>
+        <location filename="../information_bar.py" line="285"/>
         <source>the planet you are currently on</source>
         <translation>o planeta em que você está agora</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="259"/>
+        <location filename="../information_bar.py" line="286"/>
         <source>how much money you currently have</source>
         <translation>quanto dinheiro você tem agora</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="260"/>
+        <location filename="../information_bar.py" line="287"/>
         <source>how many planets you have discovered since day 1</source>
         <translation>quantos planetas você descobriu desde o dia 1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../information_bar.py" line="265"/>
+        <location filename="../information_bar.py" line="292"/>
         <source>%Ln days remaining</source>
         <translation>
             <numerusform>%Ln dia restante</numerusform>
@@ -615,7 +615,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../information_bar.py" line="266"/>
+        <location filename="../information_bar.py" line="293"/>
         <source>%Ln store purchases remaining today</source>
         <translation>
             <numerusform>%Ln compra na loja restante hoje</numerusform>
@@ -623,7 +623,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../information_bar.py" line="267"/>
+        <location filename="../information_bar.py" line="294"/>
         <source>%Ln warehouse trips remaining today</source>
         <translation>
             <numerusform>%Ln viagem ao armazém restante hoje</numerusform>
@@ -631,7 +631,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../information_bar.py" line="271"/>
+        <location filename="../information_bar.py" line="298"/>
         <source>{0} - %Ln new planets per scout expedition</source>
         <comment>{0} is the smallest number of planets</comment>
         <translation>
@@ -640,66 +640,66 @@
         </translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="275"/>
+        <location filename="../information_bar.py" line="302"/>
         <source>Scout expeditions are not possible</source>
         <translation>Expedições de reconhecimento não são possíveis</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="277"/>
+        <location filename="../information_bar.py" line="304"/>
         <source>{0} chance of winning battles</source>
         <comment>{0} is a percentage</comment>
         <translation>{0} de chance de vencer batalhas</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="285"/>
+        <location filename="../information_bar.py" line="312"/>
         <source>{0} per day is required to feed yourself and maintain all purchased services</source>
         <translation>{0} por dia são necessários para se alimentar e manter todos os serviços comprados</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="338"/>
+        <location filename="../information_bar.py" line="366"/>
         <source>No battle fleet</source>
         <translation>Sem frota de batalha</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="346"/>
+        <location filename="../information_bar.py" line="374"/>
         <source>No scout fleet</source>
         <translation>Sem frota de reconhecimento</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="194"/>
+        <location filename="../information_bar.py" line="221"/>
         <source>Engine power</source>
         <translation>Potência do motor</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="280"/>
+        <location filename="../information_bar.py" line="307"/>
         <source>Engine power {0}/{1}. Travel costs {2} per light-year.</source>
         <translation>Potência do motor {0}/{1}. Viajar custa {2} por ano-luz.</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="202"/>
+        <location filename="../information_bar.py" line="229"/>
         <source>Reputation</source>
         <translation>Reputação</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="308"/>
+        <location filename="../information_bar.py" line="335"/>
         <source>Reputation here: {0}. {1} refuses to trade with you.</source>
         <comment>{0} is a reputation, e.g. Hostile (12), and {1} is a planet name</comment>
         <translation>Reputação aqui: {0}. {1} se recusa a negociar com você.</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="315"/>
+        <location filename="../information_bar.py" line="342"/>
         <source>Reputation here: {0}. Prices are {1} worse.</source>
         <comment>{0} is a reputation, e.g. Wary (58), and {1} is a percentage</comment>
         <translation>Reputação aqui: {0}. Os preços estão {1} piores.</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="319"/>
+        <location filename="../information_bar.py" line="346"/>
         <source>Reputation here: {0}. Prices are {1} better.</source>
         <comment>{0} is a reputation, e.g. Allied (90), and {1} is a percentage</comment>
         <translation>Reputação aqui: {0}. Os preços estão {1} melhores.</translation>
     </message>
     <message>
-        <location filename="../information_bar.py" line="323"/>
+        <location filename="../information_bar.py" line="350"/>
         <source>Reputation here: {0}. Prices are normal.</source>
         <comment>{0} is a reputation, e.g. Friendly (70)</comment>
         <translation>Reputação aqui: {0}. Os preços estão normais.</translation>
@@ -1246,133 +1246,133 @@
         <translation>Tem certeza de que quer sair?</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="212"/>
+        <location filename="../main_widget.py" line="218"/>
         <source>The rumour you heard about {0} was true!&lt;br&gt;&lt;br&gt;{0} prices are through the roof.</source>
         <comment>{0} is an item name, e.g. tin</comment>
         <translation>O boato que você ouviu sobre {0} era verdade!&lt;br&gt;&lt;br&gt;O preço de {0} está nas alturas.</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="215"/>
+        <location filename="../main_widget.py" line="221"/>
         <source>The rumour you heard about {0} was true!&lt;br&gt;&lt;br&gt;{0} prices are at an all-time low.</source>
         <comment>{0} is an item name, e.g. tin</comment>
         <translation>O boato que você ouviu sobre {0} era verdade!&lt;br&gt;&lt;br&gt;O preço de {0} está no menor valor de todos os tempos.</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="219"/>
+        <location filename="../main_widget.py" line="225"/>
         <source>Rumour was true!</source>
         <translation>O boato era verdade!</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="223"/>
+        <location filename="../main_widget.py" line="229"/>
         <source>Rumour was false</source>
         <translation>O boato era falso</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="223"/>
+        <location filename="../main_widget.py" line="229"/>
         <source>The rumour you heard about {0} on {1} was false!</source>
         <comment>{0} is an item name, e.g. tin, and {1} is a planet name</comment>
         <translation>O boato que você ouviu sobre {0} em {1} era falso!</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="257"/>
+        <location filename="../main_widget.py" line="263"/>
         <source>You hear a rumour that {0} will be very expensive on {1} tomorrow!</source>
         <comment>{0} is an item name, e.g. tin, and {1} is a planet name</comment>
         <translation>Você ouve um boato de que o preço de {0} vai estar muito alto em {1} amanhã!</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="257"/>
+        <location filename="../main_widget.py" line="263"/>
         <source>You hear a rumour that {0} will be extremely expensive on {1} tomorrow!</source>
         <comment>{0} is an item name, e.g. tin, and {1} is a planet name</comment>
         <translation>Você ouve um boato de que o preço de {0} vai estar extremamente alto em {1} amanhã!</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="257"/>
+        <location filename="../main_widget.py" line="263"/>
         <source>You hear a rumour that {0} will be unreasonably expensive on {1} tomorrow!</source>
         <comment>{0} is an item name, e.g. tin, and {1} is a planet name</comment>
         <translation>Você ouve um boato de que o preço de {0} vai estar absurdamente alto em {1} amanhã!</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="257"/>
+        <location filename="../main_widget.py" line="263"/>
         <source>You hear a rumour that {0} will be unusually expensive on {1} tomorrow!</source>
         <comment>{0} is an item name, e.g. tin, and {1} is a planet name</comment>
         <translation>Você ouve um boato de que o preço de {0} vai estar excepcionalmente alto em {1} amanhã!</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="268"/>
+        <location filename="../main_widget.py" line="274"/>
         <source>You hear a rumour that {0} will be very cheap on {1} tomorrow!</source>
         <comment>{0} is an item name, e.g. tin, and {1} is a planet name</comment>
         <translation>Você ouve um boato de que o preço de {0} vai estar muito baixo em {1} amanhã!</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="268"/>
+        <location filename="../main_widget.py" line="274"/>
         <source>You hear a rumour that {0} will be extremely cheap on {1} tomorrow!</source>
         <comment>{0} is an item name, e.g. tin, and {1} is a planet name</comment>
         <translation>Você ouve um boato de que o preço de {0} vai estar extremamente baixo em {1} amanhã!</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="268"/>
+        <location filename="../main_widget.py" line="274"/>
         <source>You hear a rumour that {0} will be unreasonably cheap on {1} tomorrow!</source>
         <comment>{0} is an item name, e.g. tin, and {1} is a planet name</comment>
         <translation>Você ouve um boato de que o preço de {0} vai estar absurdamente baixo em {1} amanhã!</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="268"/>
+        <location filename="../main_widget.py" line="274"/>
         <source>You hear a rumour that {0} will be unusually cheap on {1} tomorrow!</source>
         <comment>{0} is an item name, e.g. tin, and {1} is a planet name</comment>
         <translation>Você ouve um boato de que o preço de {0} vai estar excepcionalmente baixo em {1} amanhã!</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="282"/>
+        <location filename="../main_widget.py" line="288"/>
         <source>Rumour overheard!</source>
         <translation>Boato ouvido!</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="290"/>
+        <location filename="../main_widget.py" line="296"/>
         <source>Dead!</source>
         <translation>Morto!</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="290"/>
+        <location filename="../main_widget.py" line="296"/>
         <source>You have starved to death.</source>
         <translation>Você morreu de fome.</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="301"/>
+        <location filename="../main_widget.py" line="307"/>
         <source>Game complete</source>
         <translation>Fim de jogo</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="301"/>
+        <location filename="../main_widget.py" line="307"/>
         <source>Time is up!</source>
         <translation>O tempo acabou!</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="316"/>
+        <location filename="../main_widget.py" line="322"/>
         <source>High score!</source>
         <translation>Recorde!</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="316"/>
+        <location filename="../main_widget.py" line="322"/>
         <source>You have achieved a high score ({0}) ! would you like to enter your name? (high scores are only stored locally)</source>
         <translation>Você alcançou um recorde ({0})! Quer registrar seu nome? (os recordes ficam salvos apenas neste computador)</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="329"/>
+        <location filename="../main_widget.py" line="335"/>
         <source>Enter name</source>
         <translation>Digite o nome</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="329"/>
+        <location filename="../main_widget.py" line="335"/>
         <source>Enter your name for the high score table</source>
         <translation>Digite seu nome para a tabela de recordes</translation>
     </message>
     <message>
-        <location filename="../main_widget.py" line="339"/>
+        <location filename="../main_widget.py" line="345"/>
         <source>Too long</source>
         <translation>Longo demais</translation>
     </message>
     <message numerus="yes">
-        <location filename="../main_widget.py" line="339"/>
+        <location filename="../main_widget.py" line="345"/>
         <source>Name is too long (max %Ln characters)</source>
         <translation>
             <numerusform>O nome é longo demais (máx. %Ln caractere)</numerusform>
@@ -2281,42 +2281,42 @@
 <context>
     <name>SoundLoadingDialog</name>
     <message>
-        <location filename="../sounds.py" line="136"/>
+        <location filename="../sounds.py" line="138"/>
         <source>reserializing quantum encoders...</source>
         <translation>reserializando codificadores quânticos...</translation>
     </message>
     <message>
-        <location filename="../sounds.py" line="137"/>
+        <location filename="../sounds.py" line="139"/>
         <source>backtracing core entanglements...</source>
         <translation>rastreando emaranhamentos do núcleo...</translation>
     </message>
     <message>
-        <location filename="../sounds.py" line="138"/>
+        <location filename="../sounds.py" line="140"/>
         <source>reverse-engineering universe...</source>
         <translation>fazendo engenharia reversa do universo...</translation>
     </message>
     <message>
-        <location filename="../sounds.py" line="139"/>
+        <location filename="../sounds.py" line="141"/>
         <source>rotating atomic stack carriers...</source>
         <translation>girando portadores da pilha atômica...</translation>
     </message>
     <message>
-        <location filename="../sounds.py" line="140"/>
+        <location filename="../sounds.py" line="142"/>
         <source>initializing reality...</source>
         <translation>inicializando a realidade...</translation>
     </message>
     <message>
-        <location filename="../sounds.py" line="141"/>
+        <location filename="../sounds.py" line="143"/>
         <source>deriving orbital constants...</source>
         <translation>derivando constantes orbitais...</translation>
     </message>
     <message>
-        <location filename="../sounds.py" line="142"/>
+        <location filename="../sounds.py" line="144"/>
         <source>rate-matching baffle alignments...</source>
         <translation>sincronizando o alinhamento dos defletores...</translation>
     </message>
     <message>
-        <location filename="../sounds.py" line="155"/>
+        <location filename="../sounds.py" line="157"/>
         <source>Please wait</source>
         <translation>Aguarde</translation>
     </message>
