@@ -175,6 +175,12 @@ class MainWidget(QtWidgets.QDialog):
         self.updatePlayerItemsLabel()
         self.updateWarehouseLabel()
 
+        # A new game starts with every table scrolled back to the top (and the left)
+        for browser in (self.locationBrowser, self.playerItemBrowser, self.planetItemBrowser,
+                        self.warehouseItemBrowser):
+            browser.table.scrollToTop()
+            browser.table.horizontalScrollBar().setValue(0)
+
     def quit(self):
         if self.warningBeforeQuit():
             config.config_store()

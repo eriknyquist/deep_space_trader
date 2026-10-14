@@ -207,3 +207,65 @@ def test_bars_show_their_values(game):
     assert game.infoBar.healthValueLabel.text() == "85"
     assert game.infoBar.engineValueLabel.text() == "3/10"
     assert game.infoBar.reputationValueLabel.text() == "70"
+
+
+def scroll_everything(game):
+    """
+    Fill every table, scroll each one down (and right), and return the tables
+    """
+    from helpers import give
+    state = game.state
+    state.scout_level = 3
+    state.expand_planets(200)
+    for name in ("tin", "steel", "copper", "silver", "gold", "silicon", "uranium", "diamond"):
+        give(state.items, name, 1)
+        give(state.warehouse, name, 1)
+        give(state.current_planet.items, name, 1)
+
+    browsers = (game.locationBrowser, game.playerItemBrowser, game.planetItemBrowser, game.warehouseItemBrowser)
+    tables = [browser.table for browser in browsers]
+    for browser in browsers:
+        browser.update()
+
+    for table in tables:
+        # Small enough that every table has something to scroll
+        table.resize(150, 80)
+        QtWidgets.QApplication.processEvents()
+        table.verticalScrollBar().setValue(table.verticalScrollBar().maximum())
+        table.horizontalScrollBar().setValue(table.horizontalScrollBar().maximum())
+        assert table.verticalScrollBar().value() > 0
+
+        # (Tables whose last column stretches to fit can't scroll sideways)
+        if table.horizontalScrollBar().maximum() > 0:
+            assert table.horizontalScrollBar().value() > 0
+
+    return tables
+
+
+def assert_scrolled_to_top(tables):
+    for table in tables:
+        assert table.verticalScrollBar().value() == 0
+        assert table.horizontalScrollBar().value() == 0
+
+
+def test_reset_button_scrolls_tables_to_the_top(game):
+    tables = scroll_everything(game)
+    game.buttonBar.resetButtonClicked()
+    assert_scrolled_to_top(tables)
+
+
+def test_game_over_scrolls_tables_to_the_top(game):
+    tables = scroll_everything(game)
+    game.state.day = game.state.max_days
+    game.buttonBar.dayButtonClicked()
+    assert game.state.day == 1
+    assert_scrolled_to_top(tables)
+
+
+def test_death_scrolls_tables_to_the_top(game):
+    tables = scroll_everything(game)
+    game.state.money = 0
+    game.state.health = 10
+    game.buttonBar.dayButtonClicked()
+    assert game.state.day == 1
+    assert_scrolled_to_top(tables)
