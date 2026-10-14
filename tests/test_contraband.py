@@ -152,7 +152,8 @@ def test_first_visit_finds_a_black_market(game, dialogs, no_pirates):
     assert dialogs.titles("info") == ["Black market found!"]
     assert dialogs.messages("info") == ["You've found a black market on %s! Contraband can be bought "
                                         "and sold here." % planet.full_name]
-    assert "PlanetDiscoverySound" in game.audio.played
+    assert "BlackMarketSound" in game.audio.played
+    assert "PlanetDiscoverySound" not in game.audio.played
 
     # Only the first time
     dialogs.clear()

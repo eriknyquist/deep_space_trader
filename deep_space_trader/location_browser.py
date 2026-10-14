@@ -550,7 +550,7 @@ class LocationBrowser(QtWidgets.QWidget):
 
         # (Unless the game ended when the day passed)
         if found_black_market and (self.parent.state.current_planet is planet):
-            self.parent.audio.play(self.parent.audio.PlanetDiscoverySound)
+            self.parent.audio.play(self.parent.audio.BlackMarketSound)
             infoDialog(self, self.tr("Black market found!"),
                        self.tr("You've found a black market on {0}! Contraband can be bought "
                                "and sold here.", "{0} is a planet name").format(planet.full_name),
