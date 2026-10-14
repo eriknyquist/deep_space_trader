@@ -1,55 +1,154 @@
+import hashlib
+import json
+import math
+import random
+
+import pytest
 from PyQt5 import QtGui
 
 from deep_space_trader import planet_image
-from deep_space_trader.planet_image import PlanetImage
+from deep_space_trader.planet import Planet
+from deep_space_trader.planet_image import planetRecipe, planetPixmap, SeededChoices
 
 
-def recoloured_slowly(image, color, alpha_white):
+def fingerprint(recipe):
     """
-    The original pixel-by-pixel version of PlanetImage.changeColor
+    Short summary of a whole recipe. Numbers are rounded, so that differences
+    in the last digits between computers don't count
     """
-    ret = image.toImage()
-    for i in range(planet_image.WIDTH):
-        for j in range(planet_image.HEIGHT):
-            if ret.pixelColor(i, j).alpha() > 0:
-                ret.setPixelColor(i, j, color)
-            elif alpha_white:
-                ret.setPixelColor(i, j, QtGui.QColor(255, 255, 255))
+    def rounded(value):
+        if isinstance(value, float):
+            return round(value, 6)
+        if isinstance(value, (list, tuple)):
+            return [rounded(v) for v in value]
+        if isinstance(value, dict):
+            return {k: rounded(v) for k, v in value.items()}
+        return value
 
-    return ret
-
-
-def argb(image):
-    return image.convertToFormat(QtGui.QImage.Format_ARGB32)
+    return hashlib.sha256(json.dumps(rounded(recipe), sort_keys=True).encode()).hexdigest()[:16]
 
 
-TEMPLATES = [
-    planet_image.planet_background, planet_image.planet_outline, planet_image.planet_fill,
-    planet_image.planet_ring, planet_image.planet_shine_1, planet_image.planet_shine_2,
-    planet_image.planet_shine_3, planet_image.planet_shine_4,
-]
+def some_names(count=300):
+    state = random.getstate()
+    random.seed(1234)
+    names = [p.full_name for p in Planet.random(num=count, used_names=set())]
+    random.setstate(state)
+    return names
 
 
-def change_color(image, color, alpha_white=False):
-    # changeColor doesn't use the widget, so there's no need to make a game for it
-    return PlanetImage.changeColor(None, image, color, alpha_white)
+def test_same_name_same_recipe(qapp):
+    for name in some_names(50):
+        assert planetRecipe(name) == planetRecipe(name)
 
 
-def test_recolouring_matches_pixel_by_pixel_version(qapp):
-    color = QtGui.QColor(12, 200, 99)
-    for filename in TEMPLATES:
-        image = planet_image.templateImage(filename)
-        for alpha_white in (False, True):
-            expected = argb(recoloured_slowly(image, color, alpha_white))
-            assert argb(change_color(image, color, alpha_white)) == expected, (filename, alpha_white)
+def test_recipes_never_change(qapp):
+    # The most important rule: a planet always looks the same, on every
+    # computer, in every version of the game. If this fails, a change to
+    # planetRecipe has changed every planet's picture
+    recipe = planetRecipe("Kandar 12 c")
+    assert recipe["color"] == "#9c7248"
+    assert recipe["atmosphere"] is None
+    assert recipe["ring"]["color"] == "#ca9d63"
+    assert recipe["moon"] is not None
+    assert len(recipe["stars"]) == 33
+    assert recipe["light_angle"] == pytest.approx(321.1279389553688)
+    assert recipe["phase"] == pytest.approx(-0.044026730129961555)
+
+    assert {name: fingerprint(planetRecipe(name)) for name in
+            ("Kandar 12 c", "Pordoth 48", "Sithrifuan 301", "Zijuan 133 g")} == {
+        "Kandar 12 c": "1dba1539f13e645c",
+        "Pordoth 48": "2fab95dd8f976e3a",
+        "Sithrifuan 301": "59f90c5f1c3d6029",
+        "Zijuan 133 g": "cc77b20c4ffd7b4e",
+    }
 
 
-def test_no_colour_leaves_image_alone(qapp):
-    image = planet_image.templateImage(planet_image.planet_ring)
-    assert change_color(image, None) == image.toImage()
+def test_names_give_varied_pictures(qapp):
+    recipes = [planetRecipe(name) for name in some_names()]
+    assert len({r["color"] for r in recipes}) > 250
+    for feature, low, high in (("ring", 0.2, 0.4), ("moon", 0.4, 0.6), ("atmosphere", 0.4, 0.6),
+                               ("nebula", 0.2, 0.4)):
+        share = sum(r[feature] is not None for r in recipes) / float(len(recipes))
+        assert low < share < high, feature
 
 
-def test_template_images_are_loaded_once(qapp):
-    first = planet_image.templateImage(planet_image.planet_fill)
-    assert planet_image.templateImage(planet_image.planet_fill).cacheKey() == first.cacheKey()
-    assert (first.width(), first.height()) == (planet_image.WIDTH, planet_image.HEIGHT)
+def test_everything_fits_in_the_picture(qapp):
+    for name in some_names():
+        recipe = planetRecipe(name)
+        radius = recipe["radius"]
+        reach = radius * (recipe["ring"]["outer"] if recipe["ring"] else 1.0)
+        assert reach <= 50
+
+        if recipe["moon"] is not None:
+            x, y, moon_radius, _ = recipe["moon"]
+            assert moon_radius <= x <= 100 - moon_radius
+            assert moon_radius <= y <= 100 - moon_radius
+            # Not in front of the planet
+            assert math.hypot(x - 50, y - 50) >= radius + moon_radius
+
+        # Never too dark to see against space
+        assert QtGui.QColor(recipe["color"]).valueF() >= 0.5
+        assert QtGui.QColor(recipe["space"]).valueF() <= 0.15
+
+
+def test_seeded_choices_stay_in_range():
+    choose = SeededChoices(42)
+    for _ in range(1000):
+        assert 3 <= choose.uniform(3, 7) < 7
+        assert 0 <= choose.index(5) <= 4
+    assert not any(SeededChoices(1).chance(0.0) for _ in range(100))
+
+
+def test_seed_is_not_pythons_hash():
+    # hash() of a string changes every time Python starts
+    assert planet_image.planetSeed("Kandar 12 c") == planet_image.planetSeed("Kandar 12 c")
+    assert planet_image.planetSeed("Kandar 12 c") == 0x1ec7ad483d616b8a
+
+
+@pytest.mark.parametrize("dpr", [1.0, 2.0])
+def test_pixmap_size(qapp, dpr):
+    pixmap = planetPixmap("Pordoth 48", 72, dpr)
+    assert (pixmap.width(), pixmap.height()) == (72 * dpr, 72 * dpr)
+    assert pixmap.devicePixelRatio() == dpr
+
+    # Space fills the corners (no see-through background)
+    image = pixmap.toImage()
+    assert QtGui.qAlpha(image.pixel(0, 0)) == 255
+
+
+def test_picture_follows_the_current_planet(game):
+    image = game.infoBar.planetImage
+    first = image.pixmap.toImage()
+    game.state.current_planet = next(p for p in game.state.planets if p is not game.state.current_planet)
+    game.infoBar.update()
+    assert image.pixmap.toImage() != first
+
+
+def brightness(image, x, y):
+    return QtGui.QColor(image.pixel(x, y)).value()
+
+
+def test_shading_curves_round_the_ball(qapp):
+    from deep_space_trader.planet_image import _sphereImage
+    white = "#ffffff"
+
+    # Light from the right, half lit: dark on the left, lit on the right
+    image = _sphereImage(100, white, 0, 0.0, 255)
+    assert brightness(image, 20, 50) < 20 < 200 < brightness(image, 80, 50)
+
+    # Light partly from in front: more than half lit, so the middle is lit,
+    # and the line between day and night curves (it's further left in the
+    # middle than near the top)
+    image = _sphereImage(100, white, 0, 0.6, 255)
+    assert brightness(image, 50, 50) > 150
+    assert brightness(image, 30, 50) > brightness(image, 30, 12)
+
+    # Light partly from behind: a crescent, with the middle dark
+    image = _sphereImage(100, white, 0, -0.6, 255)
+    assert brightness(image, 50, 50) < 20
+    assert brightness(image, 95, 50) > 100
+
+    # See-through outside the ball, with a smooth edge
+    assert QtGui.qAlpha(image.pixel(0, 0)) == 0
+    assert QtGui.qAlpha(image.pixel(50, 0)) < 255
+    assert QtGui.qAlpha(image.pixel(50, 50)) == 255
