@@ -65,6 +65,12 @@ class ScrollableTextDisplay(QtWidgets.QDialog):
         self.setWindowIcon(windowIcon())
         self.setMinimumSize(480, 200)
 
+# Width of the text in InfoDialog windows, and the most height it's given before
+# it scrolls (or less, on small screens), in pixels
+INFO_DIALOG_TEXT_WIDTH = 560
+INFO_DIALOG_MAX_TEXT_HEIGHT = 450
+
+
 class InfoDialog(QtWidgets.QDialog):
     def __init__(self, title, text, cancelable=True):
         super(InfoDialog, self).__init__()
@@ -77,7 +83,26 @@ class InfoDialog(QtWidgets.QDialog):
 
         self.text.setText(text)
         self.text.setWordWrap(True)
-        textLayout.addWidget(self.text)
+        self.text.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+
+        # The text scrolls when it's too long for the window (e.g. the About text,
+        # with its strategy tips). The window opens tall enough for all of the
+        # text if it fits on the screen, and can be resized
+        self.scrollArea = QtWidgets.QScrollArea()
+        self.scrollArea.setWidget(self.text)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+
+        scrollbar = self.scrollArea.verticalScrollBar().sizeHint().width()
+        self.scrollArea.setMinimumWidth(INFO_DIALOG_TEXT_WIDTH + scrollbar)
+        screen = QtWidgets.QApplication.primaryScreen()
+        max_height = INFO_DIALOG_MAX_TEXT_HEIGHT
+        if screen is not None:
+            max_height = min(max_height, int(screen.availableGeometry().height() * 0.6))
+        self.scrollArea.setMinimumHeight(min(self.text.heightForWidth(INFO_DIALOG_TEXT_WIDTH), max_height))
+
+        textLayout.addWidget(self.scrollArea)
         textGroup.setLayout(textLayout)
         mainLayout.addWidget(textGroup)
 

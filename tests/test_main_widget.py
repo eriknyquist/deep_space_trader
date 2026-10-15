@@ -269,3 +269,24 @@ def test_death_scrolls_tables_to_the_top(game):
     game.buttonBar.dayButtonClicked()
     assert game.state.day == 1
     assert_scrolled_to_top(tables)
+
+
+def test_about_text_scrolls(qapp, dialogs):
+    utils.showAboutDialog()
+    about = dialogs.executed[-1]
+    about.show()
+    QtWidgets.QApplication.processEvents()
+
+    # Taller than the window allows, so it scrolls
+    assert about.scrollArea.height() <= utils.INFO_DIALOG_MAX_TEXT_HEIGHT + 2
+    assert about.scrollArea.verticalScrollBar().maximum() > 0
+    about.close()
+
+
+def test_short_text_doesnt_scroll(qapp):
+    dialog = InfoDialog("Title", "A short message.", cancelable=False)
+    dialog.show()
+    QtWidgets.QApplication.processEvents()
+    assert dialog.scrollArea.verticalScrollBar().maximum() == 0
+    assert dialog.scrollArea.height() < 100
+    dialog.close()
