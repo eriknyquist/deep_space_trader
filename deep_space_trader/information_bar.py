@@ -9,8 +9,8 @@ from deep_space_trader.i18n import translate, formatNumber, formatPercent
 # Engine power bar colour: solid blue, so it isn't confused with the health bar
 ENGINE_BAR_COLOR = "#3399ff"
 
-# Size of the black market icon next to the current planet's picture, in pixels
-BLACK_MARKET_ICON_SIZE = 36
+# Size of the icon next to the current planet's picture (see InfoBar.planetBadgeName), in pixels
+PLANET_BADGE_SIZE = 36
 
 GROUPBOX_STYLE= "QGroupBox{ font-size: 12px; }"
 LABEL_STYLE = "QLabel{ font-size: 14px; }"
@@ -67,16 +67,14 @@ class InfoBar(QtWidgets.QWidget):
 
         self.planetImage = PlanetImage(self.parent)
 
-        # The black market icon, next to the picture, when the current planet is
-        # a black market. The same space is kept on the other side, and both
-        # are kept when the icon is hidden, so the picture stays centred and
+        # An icon next to the picture, on the home planet (a house) or a black
+        # market (a crate). The same space is kept on the other side, and both
+        # are kept when there's no icon, so the picture stays centred and
         # doesn't move from planet to planet
-        self.blackMarketIcon = QtWidgets.QLabel()
-        self.blackMarketIcon.setPixmap(icons.iconPixmap(icons.BLACK_MARKET, BLACK_MARKET_ICON_SIZE,
-                                                        self.devicePixelRatioF()))
+        self.planetBadge = QtWidgets.QLabel()
         balance = QtWidgets.QWidget()
-        for widget in (self.blackMarketIcon, balance):
-            widget.setFixedSize(BLACK_MARKET_ICON_SIZE, BLACK_MARKET_ICON_SIZE)
+        for widget in (self.planetBadge, balance):
+            widget.setFixedSize(PLANET_BADGE_SIZE, PLANET_BADGE_SIZE)
             policy = widget.sizePolicy()
             policy.setRetainSizeWhenHidden(True)
             widget.setSizePolicy(policy)
@@ -88,7 +86,7 @@ class InfoBar(QtWidgets.QWidget):
         imageLayout.setContentsMargins(0, 0, 0, 0)
         imageLayout.addWidget(balance, 0, QtCore.Qt.AlignBottom)
         imageLayout.addWidget(self.planetImage)
-        imageLayout.addWidget(self.blackMarketIcon, 0, QtCore.Qt.AlignBottom)
+        imageLayout.addWidget(self.planetBadge, 0, QtCore.Qt.AlignBottom)
         planetLayout.addWidget(imageRow, 0, QtCore.Qt.AlignHCenter)
 
         self.planetLabel = QtWidgets.QLabel()
@@ -350,10 +348,30 @@ class InfoBar(QtWidgets.QWidget):
         return self.tr("Reputation here: {0}. Prices are normal.",
                        "{0} is a reputation, e.g. Friendly (70)").format(description)
 
+    def planetBadgeName(self):
+        """
+        The icon shown next to the current planet's picture (a name from the
+        icons module), or None for no icon
+        """
+        planet = self.parent.state.current_planet
+        if planet is self.parent.state.home_planet:
+            return icons.HOME
+        if planet.black_market_found:
+            return icons.BLACK_MARKET
+
+        return None
+
+    def updatePlanetBadge(self):
+        name = self.planetBadgeName()
+        if name is not None:
+            self.planetBadge.setPixmap(icons.iconPixmap(name, PLANET_BADGE_SIZE, self.devicePixelRatioF()))
+
+        self.planetBadge.setVisible(name is not None)
+
     def update(self):
         self.planetLabel.setText(self.parent.state.current_planet.full_name)
         self.planetImage.update()
-        self.blackMarketIcon.setVisible(self.parent.state.current_planet.black_market_found)
+        self.updatePlanetBadge()
         self.dayLabel.setText('%s/%s' % (formatNumber(self.parent.state.day), formatNumber(self.parent.state.max_days)))
         self.moneyLabel.setText(formatNumber(self.parent.state.money))
         self.planetCountLabel.setText(formatNumber(self.parent.state.planets_discovered))

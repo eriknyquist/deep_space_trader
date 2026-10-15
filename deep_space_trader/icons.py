@@ -1,5 +1,6 @@
 """
-Icons for message boxes about special events (see utils.setMessageBoxIcon).
+Icons for message boxes about special events (see utils.setMessageBoxIcon),
+and for the current planet in the information section.
 They're PNG files in the images folder, made by scripts/make_icons.py (which is
 only needed to change them), and scaled down to the size they're shown at
 """
@@ -14,11 +15,13 @@ from deep_space_trader import utils
 PIRATES = "pirates"
 CUSTOMS = "customs"
 BLACK_MARKET = "black_market"
+HOME = "home"
 
 FILENAMES = {
     PIRATES: "event_pirates.png",
     CUSTOMS: "event_customs.png",
     BLACK_MARKET: "event_black_market.png",
+    HOME: "home.png",
 }
 
 # Size of the files, in pixels: large enough to stay sharp at any size the

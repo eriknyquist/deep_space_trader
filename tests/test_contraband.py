@@ -757,7 +757,7 @@ def test_encounter_icons(game, dialogs, cargo, inspected, unlucky):
 
 
 @pytest.mark.parametrize("dpr", [1.0, 2.0])
-@pytest.mark.parametrize("name", ["pirates", "customs", "black_market"])
+@pytest.mark.parametrize("name", ["pirates", "customs", "black_market", "home"])
 def test_icons(qapp, name, dpr):
     from deep_space_trader import icons
     pixmap = icons.iconPixmap(name, 64, dpr)
@@ -794,22 +794,45 @@ def test_icon_script(qapp, tmp_path):
     assert QtGui.QImage(str(tmp_path / icons.FILENAMES[icons.PIRATES])).width() == icons.FILE_SIZE
 
 def test_info_bar_shows_black_market_icon(game, dialogs, no_pirates):
+    from deep_space_trader import icons
     info = game.infoBar
-    assert info.blackMarketIcon.isHidden()
+
+    # (The game starts at home, which has its own icon)
+    assert info.planetBadgeName() == icons.HOME
 
     planet = other_planet(game)
     make_black_market(planet, {TOBACCO: 100})
     travel(game, planet)
-    assert not info.blackMarketIcon.isHidden()
+    assert not info.planetBadge.isHidden()
+    assert info.planetBadgeName() == icons.BLACK_MARKET
     assert info.planetGroup.toolTip() == "the planet you are currently on"
 
-    # Gone on an ordinary planet, and in a new game
+    # Gone on an ordinary planet, and back at the black market
     travel(game, other_planet(game, 1))
-    assert info.blackMarketIcon.isHidden()
+    assert info.planetBadge.isHidden()
+    assert info.planetBadgeName() is None
     travel(game, planet)
-    assert not info.blackMarketIcon.isHidden()
+    assert info.planetBadgeName() == icons.BLACK_MARKET
+
+
+def test_info_bar_shows_home_icon(game, dialogs, no_pirates):
+    from deep_space_trader import icons
+    info = game.infoBar
+    assert not info.planetBadge.isHidden()
+    assert info.planetBadgeName() == icons.HOME
+
+    travel(game, other_planet(game))
+    assert info.planetBadge.isHidden()
+
+    game.locationBrowser.homeButtonClicked()
+    assert info.planetBadgeName() == icons.HOME
+    assert not info.planetBadge.isHidden()
+
+    # A new game starts at home
+    travel(game, other_planet(game))
     game.reset()
-    assert info.blackMarketIcon.isHidden()
+    assert info.planetBadgeName() == icons.HOME
+    assert not info.planetBadge.isHidden()
 
 
 def test_planet_picture_stays_centred_with_black_market_icon(game, no_pirates):
@@ -828,7 +851,7 @@ def test_planet_picture_stays_centred_with_black_market_icon(game, no_pirates):
     make_black_market(planet, {TOBACCO: 100})
     travel(game, planet)
     assert offset() <= 1
-    icon_left = info.blackMarketIcon.mapTo(info.planetGroup, info.blackMarketIcon.rect().topLeft()).x()
+    icon_left = info.planetBadge.mapTo(info.planetGroup, info.planetBadge.rect().topLeft()).x()
     image_right = info.planetImage.mapTo(info.planetGroup, info.planetImage.rect().topRight()).x()
     assert icon_left >= image_right
 

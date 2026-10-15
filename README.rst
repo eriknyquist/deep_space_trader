@@ -264,8 +264,9 @@ This section describes the functionality of the "Information" section of the mai
 The "Information" section stretches across the entire top of the main game window, and
 shows useful information about the current state of the game.
 
-* **"Current Planet"**: Shows the name of, and an image of, the current planet the player is on. On a
-  black market, a crate with a red X is shown next to the image (see `Contraband`_).
+* **"Current Planet"**: Shows the name of, and an image of, the current planet the player is on. On the
+  home planet, a little house is shown next to the image, and on a black market, a crate with a red X
+  (see `Contraband`_).
 * **"Daily cost"**: Current daily cost of living that gets subtracted from your money on each new day.
 * **"Money"**: Shows the amount of money currently held by the player.
 * **"Purchases"**: Shows the number of store purchases made by the player so far on the current day, against
@@ -1030,8 +1031,8 @@ captures every window. Run it on a desktop (it captures windows with their title
     python scripts/make_readme_images.py                  # all images, saved in images/
     python scripts/make_readme_images.py --only store star_map
 
-The icons shown for pirates, customs patrols and black markets are PNG files in
-``deep_space_trader/images`` (``event_*.png``, 256x256 pixels). They're drawn by a script, which is
+The icons shown for pirates, customs patrols, black markets and the home planet are PNG files in
+``deep_space_trader/images`` (``event_*.png`` and ``home.png``, 256x256 pixels). They're drawn by a script, which is
 only needed to change them; they can also be edited, or replaced, in any image editor:
 
 ::

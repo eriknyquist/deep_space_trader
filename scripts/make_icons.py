@@ -162,11 +162,57 @@ def _drawBlackMarket(painter):
     painter.setOpacity(1.0)
 
 
+def _drawHome(painter):
+    """
+    A little house, with a chimney, a door and two windows
+    """
+    walls = QtGui.QColor("#eadfc8")
+    roof = QtGui.QColor("#c0504d")
+    wood = QtGui.QColor("#7a4a2a")
+    glass = QtGui.QColor("#9fd3f0")
+
+    # Chimney, behind the roof
+    painter.setPen(_pen(3.5))
+    painter.setBrush(roof.darker(115))
+    painter.drawRect(QtCore.QRectF(64, 16, 11, 26))
+
+    # Walls
+    painter.setBrush(walls)
+    painter.drawRect(QtCore.QRectF(20, 46, 60, 44))
+
+    # Roof, overhanging the walls
+    painter.setBrush(roof)
+    painter.drawPolygon(QtGui.QPolygonF([QtCore.QPointF(8, 52), QtCore.QPointF(50, 12),
+                                         QtCore.QPointF(92, 52)]))
+
+    # Door, with a rounded top and a knob
+    painter.setPen(_pen(3))
+    painter.setBrush(wood)
+    door = QtGui.QPainterPath()
+    door.addRoundedRect(QtCore.QRectF(42, 62, 16, 30), 7, 7)
+    clip = QtGui.QPainterPath()
+    clip.addRect(QtCore.QRectF(0, 0, 100, 90))
+    painter.drawPath(door.intersected(clip))
+    painter.setPen(QtCore.Qt.NoPen)
+    painter.setBrush(QtGui.QColor("#e8c25a"))
+    painter.drawEllipse(QtCore.QPointF(54, 77), 1.8, 1.8)
+
+    # Windows, with crossed frames
+    for x in (26, 63):
+        painter.setPen(_pen(3))
+        painter.setBrush(glass)
+        painter.drawRect(QtCore.QRectF(x, 58, 12, 12))
+        painter.setPen(_pen(2))
+        painter.drawLine(QtCore.QPointF(x + 6, 58), QtCore.QPointF(x + 6, 70))
+        painter.drawLine(QtCore.QPointF(x, 64), QtCore.QPointF(x + 12, 64))
+
+
 # Icon name (see deep_space_trader/icons.py) -> function that draws it
 DRAWERS = {
     icons.PIRATES: _drawPirates,
     icons.CUSTOMS: _drawCustoms,
     icons.BLACK_MARKET: _drawBlackMarket,
+    icons.HOME: _drawHome,
 }
 
 
