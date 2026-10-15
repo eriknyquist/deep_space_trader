@@ -1,6 +1,7 @@
 from deep_space_trader.store import Store
 from deep_space_trader.utils import errorDialog, yesNoDialog
 from deep_space_trader.i18n import translate
+from deep_space_trader import icons
 
 from PyQt5 import QtWidgets, QtCore
 
@@ -14,16 +15,19 @@ class ButtonBar(QtWidgets.QWidget):
 
         self.storeButton = QtWidgets.QPushButton(self.tr("Go to store"))
         self.storeButton.clicked.connect(self.storeButtonClicked)
+        icons.setButtonIcon(self.storeButton, icons.STORE)
         self.mainLayout.addWidget(self.storeButton, 2)
 
         self.dayButton = QtWidgets.QPushButton(self.tr("Go to next day"))
         self.dayButton.clicked.connect(self.dayButtonClicked)
+        icons.setButtonIcon(self.dayButton, icons.NEXT_DAY)
         self.mainLayout.addWidget(self.dayButton, 2)
 
         # Reset is last and narrower, so it doesn't look like the main button,
         # and isn't the one that gets the keyboard focus when the game starts
         self.resetButton = QtWidgets.QPushButton(self.tr("Reset"))
         self.resetButton.clicked.connect(self.resetButtonClicked)
+        icons.setButtonIcon(self.resetButton, icons.RESET)
         self.mainLayout.addWidget(self.resetButton, 1)
 
         self.tooltipsEnabled = True

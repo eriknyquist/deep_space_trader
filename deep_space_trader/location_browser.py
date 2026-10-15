@@ -96,23 +96,28 @@ class LocationBrowser(QtWidgets.QWidget):
 
         self.travelButton = QtWidgets.QPushButton(self.tr("Travel..."))
         self.travelButton.clicked.connect(self.travelButtonClicked)
+        icons.setButtonIcon(self.travelButton, icons.TRAVEL)
         self.buttonLayout.addWidget(self.travelButton)
 
         self.previousButton = QtWidgets.QPushButton(self.tr("Travel to previous"))
         self.previousButton.clicked.connect(self.previousButtonClicked)
+        icons.setButtonIcon(self.previousButton, icons.TRAVEL_PREVIOUS)
         self.buttonLayout.addWidget(self.previousButton)
 
         self.homeButton = QtWidgets.QPushButton(self.tr("Travel home"))
         self.homeButton.clicked.connect(self.homeButtonClicked)
+        icons.setButtonIcon(self.homeButton, icons.TRAVEL_HOME)
         self.buttonLayout.addWidget(self.homeButton)
 
         self.pricesButton = QtWidgets.QPushButton(self.tr("Trading console"))
         self.pricesButton.clicked.connect(self.pricesButtonClicked)
+        icons.setButtonIcon(self.pricesButton, icons.TRADING_CONSOLE)
         self.toolButtonLayout.addWidget(self.pricesButton)
         self.pricesButton.setEnabled(self.parent.state.have_trading_console)
 
         self.starMapButton = QtWidgets.QPushButton(self.tr("Star map..."))
         self.starMapButton.clicked.connect(self.parent.showStarMap)
+        icons.setButtonIcon(self.starMapButton, icons.STAR_MAP)
         self.toolButtonLayout.addWidget(self.starMapButton)
 
         self.table = QtWidgets.QTableWidget()

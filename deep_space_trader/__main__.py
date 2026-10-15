@@ -9,6 +9,7 @@ from deep_space_trader.main_widget import MainWidget
 from deep_space_trader.sounds import waitForSounds
 from deep_space_trader.utils import gameStoryDialog, showAboutDialog, ICON_PATH, windowIcon
 from deep_space_trader.i18n import installTranslators
+from deep_space_trader import icons
 
 from PyQt5 import QtWidgets
 
@@ -123,6 +124,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         app.setStyle('Fusion')
         app.setStyleSheet("")
+
+        # The button icons are drawn in the colour of the button text, which has just changed
+        icons.refreshButtonIcons(self)
 
     def toggleDarkTheme(self):
         self.enableDarkTheme(self.darkThemeAction.isChecked())

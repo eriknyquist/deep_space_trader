@@ -12,6 +12,7 @@ from deep_space_trader.utils import (
     errorDialog, yesNoDialog, infoDialog, checkForMoneyBonus, selectedRowKey, selectRowByKey, NUMBER_ALIGNMENT
 )
 from deep_space_trader.items import itemDisplayName, isContraband
+from deep_space_trader import icons
 from deep_space_trader.i18n import translate, formatNumber, formatPercent
 
 from PyQt5 import QtWidgets, QtCore, QtGui
@@ -191,9 +192,11 @@ class ItemBrowser(QtWidgets.QWidget):
         selectRowByKey(self.table, selectedKey)
         super(ItemBrowser, self).update()
 
-    def add_button(self, text, on_click, tooltip):
+    def add_button(self, text, on_click, tooltip, icon=None):
         b = QtWidgets.QPushButton(text)
         b.clicked.connect(on_click)
+        if icon is not None:
+            icons.setButtonIcon(b, icon)
         b.setToolTip(tooltip)
         self.buttonLayout.addWidget(b)
         self.buttons.append([b, tooltip])
@@ -210,14 +213,16 @@ class PlayerItemBrowser(ItemBrowser):
         super(PlayerItemBrowser, self).__init__(*args, **kwargs)
 
         self.add_button(self.tr("Sell items"), self.sellButtonClicked,
-                        self.tr("sell one or more of the selected item to the current planet"))
+                        self.tr("sell one or more of the selected item to the current planet"), icons.SELL)
         self.add_button(self.tr("Sell all"), self.sellAllButtonClicked,
-                        self.tr("sell all items on your ship to the current planet"))
+                        self.tr("sell all items on your ship to the current planet"), icons.SELL_ALL)
         self.add_button(self.tr("To warehouse"), self.warehouseButtonClicked,
-                        self.tr("move one or more of the selected item from your ship to the warehouse"))
+                        self.tr("move one or more of the selected item from your ship to the warehouse"),
+                        icons.TO_WAREHOUSE)
         self.add_button(self.tr("Dump"), self.dumpButtonClicked,
-                        self.tr("dump one or more of the selected item from your ship"))
-        self.add_button(self.tr("Dump all"), self.dumpAllButtonClicked, self.tr("dump all items from your ship"))
+                        self.tr("dump one or more of the selected item from your ship"), icons.DUMP)
+        self.add_button(self.tr("Dump all"), self.dumpAllButtonClicked, self.tr("dump all items from your ship"),
+                        icons.DUMP_ALL)
 
         self.table.doubleClicked.connect(self.onDoubleClick)
 
@@ -566,7 +571,7 @@ class PlanetItemBrowser(ItemBrowser):
         super(PlanetItemBrowser, self).__init__(*args, **kwargs)
 
         self.add_button(self.tr("Buy item"), self.buyButtonClicked,
-                        self.tr("buy one or more of the selected item from the current planet"))
+                        self.tr("buy one or more of the selected item from the current planet"), icons.BUY)
 
     def setupHeader(self):
         planet_item_browser_setup_header(self)
@@ -628,12 +633,14 @@ class WarehouseItemBrowser(ItemBrowser):
 
         self.table.doubleClicked.connect(self.onDoubleClick)
         self.add_button(self.tr("Retrieve"), self.removeButtonClicked,
-                        self.tr("move one or more of the selected item from the warehouse to your ship"))
+                        self.tr("move one or more of the selected item from the warehouse to your ship"),
+                        icons.RETRIEVE)
         self.add_button(self.tr("Retrieve all"), self.removeAllButtonClicked,
-                        self.tr("move all items from the warehouse to your ship"))
+                        self.tr("move all items from the warehouse to your ship"), icons.RETRIEVE_ALL)
         self.add_button(self.tr("Dump"), self.dumpButtonClicked,
-                        self.tr("dump one or more of the selected item from your warehouse"))
-        self.add_button(self.tr("Dump all"), self.dumpAllButtonClicked, self.tr("dump all items from your warehouse"))
+                        self.tr("dump one or more of the selected item from your warehouse"), icons.DUMP)
+        self.add_button(self.tr("Dump all"), self.dumpAllButtonClicked, self.tr("dump all items from your warehouse"),
+                        icons.DUMP_ALL)
 
     def onDoubleClick(self):
         self.removeButtonClicked()

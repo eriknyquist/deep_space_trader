@@ -290,3 +290,51 @@ def test_short_text_doesnt_scroll(qapp):
     assert dialog.scrollArea.verticalScrollBar().maximum() == 0
     assert dialog.scrollArea.height() < 100
     dialog.close()
+
+
+def main_buttons(game):
+    """
+    Every button on the main window, by text
+    """
+    return {b.text(): b for b in game.findChildren(QtWidgets.QPushButton)}
+
+
+def test_every_main_window_button_has_an_icon(game):
+    buttons = main_buttons(game)
+    expected = ["Go to store", "Go to next day", "Reset", "Travel...", "Travel to previous", "Travel home",
+                "Trading console", "Star map...", "Sell items", "Sell all", "To warehouse", "Dump", "Dump all",
+                "Buy item", "Retrieve", "Retrieve all"]
+    for text in expected:
+        assert not buttons[text].icon().isNull(), text
+
+
+def icon_colour(button):
+    """
+    Colour of the first solid pixel of a button's icon (the colour of its lines)
+    """
+    from PyQt5 import QtGui
+    image = button.icon().pixmap(button.iconSize(), QtGui.QIcon.Normal).toImage()
+    for y in range(image.height()):
+        for x in range(image.width()):
+            if QtGui.qAlpha(image.pixel(x, y)) == 255:
+                return QtGui.QColor(image.pixel(x, y)).name()
+    raise AssertionError("no solid pixels")
+
+
+def test_button_icons_follow_the_theme(game):
+    from PyQt5 import QtGui
+    window = game.main
+    button = main_buttons(game)["Go to store"]
+    for dark in (True, False, True):
+        window.enableDarkTheme(dark)
+        expected = button.palette().color(QtGui.QPalette.Active, QtGui.QPalette.ButtonText).name()
+        assert icon_colour(button) == expected
+
+
+def test_disabled_buttons_have_greyed_out_icons(game):
+    from PyQt5 import QtGui
+    button = main_buttons(game)["Trading console"]
+    assert not button.isEnabled()
+    normal = button.icon().pixmap(button.iconSize(), QtGui.QIcon.Normal).toImage()
+    disabled = button.icon().pixmap(button.iconSize(), QtGui.QIcon.Disabled).toImage()
+    assert normal != disabled

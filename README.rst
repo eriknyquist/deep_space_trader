@@ -1031,8 +1031,10 @@ captures every window. Run it on a desktop (it captures windows with their title
     python scripts/make_readme_images.py                  # all images, saved in images/
     python scripts/make_readme_images.py --only store star_map
 
-The icons shown for pirates, customs patrols, black markets and the home planet are PNG files in
-``deep_space_trader/images`` (``event_*.png`` and ``home.png``, 256x256 pixels). They're drawn by a script, which is
+The icons shown for pirates, customs patrols, black markets and the home planet, and on the main
+window's buttons, are PNG files in ``deep_space_trader/images`` (``event_*.png``, ``home.png`` and
+``button_*.png``, 256x256 pixels). The button icons are white line drawings, which the game tints to
+the colour of the button text, so they suit both the dark and light themes. They're drawn by a script, which is
 only needed to change them; they can also be edited, or replaced, in any image editor:
 
 ::
