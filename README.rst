@@ -141,6 +141,8 @@ Early game
 
 * **Capacity first.** "Increase ship capacity" costs 250, 500, 1,000, 2,000... and doubles your
   capacity each time (100, 200, 400, 800...). Buy it as often as you can afford it.
+* **Come back to good sources.** A planet you've bought out is back to half its usual stock in
+  about 5 days, and most of it in two or three weeks.
 * **Trade short hops.** With little money, most of your profit comes from small price differences,
   so keep travel costs low. Planets in the same star system or cluster are usually only a few
   light-years apart.
@@ -399,7 +401,10 @@ in the bottom left area of the main game window.
     what the player actually pays can be higher or lower, depending on the planet's opinion of the
     player (see `Reputation`_).
   * **"Quantity available"** shows the quantity of an item available for purchase on the
-    current planet.
+    current planet. Other traders buy and sell too, so this changes over time: each planet's stock of
+    each item drifts back towards the amount it started with, a little more each day (half way back
+    in about 5 days), with a little random variation. A planet the player has bought out slowly
+    refills, and one they've flooded with an item slowly sells it off.
   * **"Item type"** shows the name of the item.
 
   The player can attempt to buy an item by double-clicking on the item name

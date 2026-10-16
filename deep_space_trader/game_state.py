@@ -1,11 +1,13 @@
 import math
 import random
 
+import numpy
+
 from PyQt5.QtCore import QLocale
 from collections import deque
 
 from deep_space_trader.planet import Planet
-from deep_space_trader.items import ItemCollection, Items, contraband_item_types, isContraband
+from deep_space_trader.items import ItemCollection, Items, contraband_item_types, isContraband, restockedQuantity
 from deep_space_trader import constants as const
 from deep_space_trader.utils import percentChance
 from deep_space_trader.items import itemDisplayName
@@ -245,6 +247,72 @@ class State(object):
             return 0.0
 
         return const.HIDDEN_HOLD_NOTHING_FOUND_PERCENTAGES[self.hidden_hold_level - 1]
+
+    def catch_up_planets(self, planets):
+        """
+        Bring the prices and stock of many planets up to date at once (e.g. all
+        of them, for the planet destruction window). The same as calling
+        update_prices and update_stock on each planet, which the result is the
+        same as on average, but much faster with thousands of planets: every
+        item's numbers are put in numpy arrays, and updated all together
+        """
+        day = self.day
+        items = []
+        price_days = []
+        stock_days = []
+        for planet in planets:
+            behind_prices = planet.prices_days_behind(day)
+            behind_stock = planet.stock_days_behind(day)
+            if not (behind_prices or behind_stock):
+                # Already up to date
+                continue
+
+            for item in planet.items.iter_items():
+                items.append(item)
+                price_days.append(behind_prices)
+                stock_days.append(behind_stock)
+
+            planet._last_prices_update_day = day
+            planet._last_stock_update_day = day
+
+        if not items:
+            return
+
+        count = len(items)
+        price_days = numpy.array(price_days)
+        stock_days = numpy.array(stock_days)
+        generator = numpy.random.default_rng()
+
+        # Prices: the daily rule of Items.update_value, for all items at once,
+        # one day at a time, each item for as many days as it's behind
+        value = numpy.fromiter((item._value for item in items), float, count)
+        slope = numpy.fromiter((item.value_slope for item in items), float, count)
+        variance = numpy.fromiter((item._daily_variance for item in items), float, count)
+        most_days = int(price_days.max())
+        history = numpy.empty((count, most_days), dtype=numpy.int64)
+        for step in range(most_days):
+            behind = price_days > step
+            slope[behind] += generator.uniform(-1.0, 1.0, count)[behind] * variance[behind]
+            moves = behind & (value + slope > 1.0)
+            value[moves] += slope[moves]
+            history[:, step] = value.astype(numpy.int64)
+
+        # Stock: one formula for any number of days (see restockedQuantity)
+        quantity = numpy.fromiter((item._quantity for item in items), float, count)
+        target = numpy.fromiter((item.target_quantity for item in items), float, count)
+        restocked = restockedQuantity(quantity, target, stock_days, generator.standard_normal(count))
+        quantity = numpy.where(stock_days > 0, restocked, quantity)
+
+        # Back into the items
+        values, slopes, quantities = value.tolist(), slope.tolist(), quantity.astype(numpy.int64).tolist()
+        rows = history.tolist()
+        days = price_days.tolist()
+        for i, item in enumerate(items):
+            item._value = values[i]
+            item.value_slope = slopes[i]
+            item._quantity = quantities[i]
+            if days[i]:
+                item.value_history.extend(rows[i][:days[i]])
 
     def add_black_market(self, planet):
         """

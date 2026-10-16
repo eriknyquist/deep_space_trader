@@ -28,6 +28,7 @@ class TradingConsole(QtWidgets.QDialog):
 
         self.mainLayout = QtWidgets.QVBoxLayout(self)
         planet.update_prices(parent.state.day)
+        planet.update_stock(parent.state.day)
         self.mainLayout.addWidget(TradingConsolePlanetDisplay(parent, planet))
         self.setLayout(self.mainLayout)
         self.update()

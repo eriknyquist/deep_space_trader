@@ -83,6 +83,11 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
 
         self.setWindowTitle(self.tr("Select a planet to destroy"))
         self.setLayout(self.mainLayout)
+
+        # Every planet's prices and stock as of today, for the "Planet value"
+        # column, and for what goes to the warehouse when a planet is destroyed
+        self.state.catch_up_planets(self.destroyablePlanets())
+
         self.table.resizeColumnsToContents()
         self.update()
 

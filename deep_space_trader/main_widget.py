@@ -198,6 +198,7 @@ class MainWidget(QtWidgets.QDialog):
             if percentChance(const.TRADING_TIP_ACCURACY_PERCENTAGE):
                 if itemname in planet.items.items:
                     planet.update_prices(self.state.day)
+                    planet.update_stock(self.state.day)
                     item = planet.items.items[itemname]
 
                     self.temporary_price_change = (planet, itemname, item.value)
@@ -300,6 +301,7 @@ class MainWidget(QtWidgets.QDialog):
 
             self.runRandomNotifications()
             self.state.current_planet.update_prices(self.state.day)
+            self.state.current_planet.update_stock(self.state.day)
             self.infoBar.update()
             self.planetItemBrowser.update()
         else:

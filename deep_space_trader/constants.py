@@ -153,6 +153,16 @@ BEST_PRICE_FACTOR = 0.1
 # Size of the cells reputation is stored in, in light-years
 REPUTATION_GRID_LY = 5.0
 
+# ----- Planet stock -----
+
+# Stock on planets drifts back towards its starting amount, as if other traders
+# were buying and selling too: half way back in this many days (see Items.restock)
+STOCK_RECOVERY_HALF_LIFE_DAYS = 5.0
+
+# How much stock wobbles around its starting amount, once it has settled there:
+# one standard deviation, as a fraction of the starting amount
+STOCK_NOISE_FRACTION = 0.03
+
 # ----- Contraband -----
 
 # Percentage of planets that are black markets (the same everywhere; never the home planet)

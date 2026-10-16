@@ -169,6 +169,7 @@ class Planet(object):
         self._items = ItemCollection()
         self._samples_today = []
         self._last_prices_update_day = None
+        self._last_stock_update_day = None
 
         # Position in the galaxy, in light-years (see State.expand_planets)
         self.x = 0.0
@@ -186,16 +187,40 @@ class Planet(object):
         return math.hypot(self.x - other.x, self.y - other.y)
 
     def update_prices(self, current_day):
-        if self._last_prices_update_day == None:
-            num_updates = current_day - 1
-        else:
-            num_updates = current_day - self._last_prices_update_day
-
-        for _ in range(num_updates):
+        for _ in range(self.prices_days_behind(current_day)):
             for item in self.items.iter_items():
                 item.update_value()
 
         self._last_prices_update_day = current_day
+
+    def prices_days_behind(self, current_day):
+        """
+        How many days of price changes this planet hasn't had yet. Prices
+        change from day 1, even for planets discovered later
+        """
+        last = 1 if self._last_prices_update_day is None else self._last_prices_update_day
+        return max(0, current_day - last)
+
+    def stock_days_behind(self, current_day):
+        """
+        How many days of restocking this planet hasn't had yet (counted from
+        the day it was discovered)
+        """
+        last = self._discovery_day if self._last_stock_update_day is None else self._last_stock_update_day
+        return max(0, current_day - last)
+
+    def update_stock(self, current_day):
+        """
+        Bring the stock of every item up to date: other traders buy and sell
+        too, so it drifts back towards the amount the planet started with (see
+        Items.restock). Only done when the player looks at the planet, since
+        catching up any number of days takes the same time as one
+        """
+        days = self.stock_days_behind(current_day)
+        for item in self.items.iter_items():
+            item.restock(days)
+
+        self._last_stock_update_day = current_day
 
     def neighbour(self):
         name = self._name

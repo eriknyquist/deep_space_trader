@@ -1,6 +1,8 @@
 import copy
 import random
 
+import numpy
+
 from deep_space_trader import constants as const
 from deep_space_trader.i18n import translate
 
@@ -112,11 +114,57 @@ scarcity_price_init_factors = {
     Scarcity.EXTREMELY_PLENTIFUL: -0.5
 }
 
+def quantityRange(itemtype):
+    """
+    (smallest, largest) amount of an item type that a planet starts with.
+    (Item types are compared by name, since items moved from one collection to
+    another are copies, with copies of their item types)
+    """
+    name = itemtype.name
+    if name in contraband_item_names:
+        return const.BLACK_MARKET_QUANTITY_RANGE
+    if any(name == t.name for t in rare_item_types):
+        return const.RARE_QUANTITY_RANGE
+    if any(name == t.name for t in medium_rare_item_types):
+        return const.MEDIUM_RARE_QUANTITY_RANGE
+
+    return const.COMMON_QUANTITY_RANGE
+
+
+def randomQuantity(itemtype, quantity_multiplier=1.0):
+    """
+    A random amount of an item type for a planet to start with
+    """
+    low, high = quantityRange(itemtype)
+    return random.randrange(low, high + 1) * quantity_multiplier
+
+
+def restockedQuantity(quantity, target, days, normal):
+    """
+    Stock after 'days' days of drifting towards 'target' (see Items.restock).
+    'normal' is a random number from a normal distribution (mean 0, standard
+    deviation 1). Works on numbers, or on numpy arrays of them (one per item).
+
+    Each day, the stock moves part of the way to the target (the same part
+    every day, so the further away it is, the bigger the change), plus some
+    noise. This is the exact result of doing that 'days' times, in one go: the
+    gap shrinks by r ** days, and the noise of all the days adds up to one
+    random amount, so that catching up 10 days at once behaves like 10 single days
+    """
+    r = 0.5 ** (1.0 / const.STOCK_RECOVERY_HALF_LIFE_DAYS)
+    left = r ** days
+    noise = const.STOCK_NOISE_FRACTION * target * numpy.sqrt(1.0 - left * left) * normal
+    return numpy.maximum(0, numpy.round(target + (quantity - target) * left + noise))
+
+
 class Items(object):
     def __init__(self, itemtype, quantity, value=None):
         self.type = itemtype
         self._scarcity = 0.0
         self._quantity = quantity
+
+        # The amount this planet's stock drifts back towards (see restock)
+        self.target_quantity = quantity
         self._daily_variance = random.uniform(0.0, 1.5)
 
         if value is None:
@@ -175,28 +223,35 @@ class Items(object):
         # Update value history
         self.value_history.append(self.value)
 
+    def restock(self, days):
+        """
+        Let 'days' days pass for this item on a planet's market: other traders
+        buy and sell, so the stock drifts back towards its starting amount (see
+        restockedQuantity). Prices aren't affected
+        """
+        if days <= 0:
+            return
+
+        # (Not through the quantity setter, which nudges the price trend)
+        self._quantity = int(restockedQuantity(self._quantity, self.target_quantity, days, random.gauss(0.0, 1.0)))
+
     @classmethod
     def random(cls, value_multiplier=1.0, quantity_multiplier=1.0):
         prob = random.randrange(0, 100)
         choices = None
-        quantity_range = None
 
         if prob >= 95:
             # 5% chance of a rare item
             choices = rare_item_types
-            quantity_range = const.RARE_QUANTITY_RANGE
         elif prob >= 75:
             # 25% chance of a rare or medium rare item
             choices = medium_rare_item_types
-            quantity_range = const.MEDIUM_RARE_QUANTITY_RANGE
         else:
             # otherwise, a common item
             choices = common_item_types
-            quantity_range = const.COMMON_QUANTITY_RANGE
 
         itemtype = random.choice(choices)
-        quantity = random.randrange(quantity_range[0], quantity_range[1] + 1)
-        quantity *= quantity_multiplier
+        quantity = randomQuantity(itemtype, quantity_multiplier)
 
         value = random.randrange(int(itemtype.base_value / 2), int(itemtype.base_value * 2))
         value *= value_multiplier
@@ -213,6 +268,7 @@ class ItemCollection(object):
                 self.items[item.type.name] = item
             else:
                 self.items[item.type.name].quantity += item.quantity
+                self.items[item.type.name].target_quantity += item.quantity
 
     @property
     def total_value(self):

@@ -11,7 +11,7 @@ from deep_space_trader import reputation
 from deep_space_trader.utils import (
     errorDialog, yesNoDialog, infoDialog, checkForMoneyBonus, selectedRowKey, selectRowByKey, NUMBER_ALIGNMENT
 )
-from deep_space_trader.items import itemDisplayName, isContraband
+from deep_space_trader.items import itemDisplayName, isContraband, randomQuantity
 from deep_space_trader import icons
 from deep_space_trader.i18n import translate, formatNumber, formatPercent
 
@@ -275,6 +275,11 @@ class PlayerItemBrowser(ItemBrowser):
             # Reset item's value history
             item = planet.items.items[itemname]
             item.value_history = [item.value]
+
+            # The planet's stock of it grows from the sample towards a normal
+            # amount for a planet to have (not the amount that the player's
+            # copy came with, from wherever they got it)
+            item.target_quantity = randomQuantity(item.type, self.parent.state.level)
 
             title = self.tr("Good news!")
             msg = self.tr("Your sample achieved its intended purpose! "
