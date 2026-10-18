@@ -1,5 +1,5 @@
 import random
-from deep_space_trader.utils import errorDialog, infoDialog, yesNoDialog, windowIcon, NUMBER_ALIGNMENT
+from deep_space_trader.utils import errorDialog, infoDialog, yesNoDialog, windowIcon, NUMBER_ALIGNMENT, ProgressWindow
 from deep_space_trader.location_picker import PlanetDestructionPicker
 from deep_space_trader import constants as const
 from deep_space_trader.i18n import translate, formatNumber, formatPercent
@@ -59,9 +59,14 @@ class PlanetExploration(StoreItem):
         if (num_new + len(self.parent.state.planets)) > const.MAX_PLANETS_ALLOWED:
             num_new = const.MAX_PLANETS_ALLOWED - len(self.parent.state.planets)
 
-        self.parent.state.expand_planets(num_new)
+        # With a big scout fleet this finds thousands of planets, which takes a
+        # moment, so there's a progress bar (which only appears if it takes a while)
+        exploring = ProgressWindow(self.parent, translate("PlanetExploration", "Exploring new planets..."))
+        self.parent.state.expand_planets(num_new, lambda done: exploring.progress(done * 0.5))
         self.parent.infoBar.update()
-        self.parent.locationBrowser.update()
+        self.parent.locationBrowser.update(lambda done: exploring.progress(0.5 + done * 0.5))
+        exploring.finish()
+        exploring.deleteLater()
 
         self.parent.audio.play(self.parent.audio.PlanetDiscoverySound)
         infoDialog(self.parent, translate("PlanetExploration",

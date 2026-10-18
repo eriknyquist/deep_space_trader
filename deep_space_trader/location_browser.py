@@ -347,7 +347,11 @@ class LocationBrowser(QtWidgets.QWidget):
         self.table.setItem(row, 2, item3)
         self.table.setItem(row, 3, item4)
 
-    def populateTable(self, planets):
+    def populateTable(self, planets, progress=None):
+        """
+        Fill the table with 'planets'. 'progress', if given, is called now and
+        then with how much is done (0 to 1)
+        """
         selectedKey = selectedRowKey(self.table)
         self.table.setUpdatesEnabled(False)
         self.table.blockSignals(True)
@@ -366,8 +370,22 @@ class LocationBrowser(QtWidgets.QWidget):
         self.tableReputations = self.shownReputations(planets)
         self.shownReputationKey = self.reputationKey()
 
+        # The cells are filled in silently, and the table is told once, at the
+        # end, that they've all changed. Otherwise every new cell makes the
+        # table re-measure its columns over all rows, which with thousands of
+        # rows takes forever once the progress bar has let Qt lay the table out
+        model = self.table.model()
+        model.blockSignals(True)
         for row in range(len(planets)):
+            if (progress is not None) and (row % 1000 == 0):
+                # (The last tenth is sorting, below)
+                progress(0.9 * row / float(len(planets)))
+
             self.addRow(planets[row], row, texts, self.tableReputations[row])
+        model.blockSignals(False)
+
+        if planets:
+            model.dataChanged.emit(model.index(0, 0), model.index(len(planets) - 1, self.table.columnCount() - 1))
 
         self.nameItems = [self.table.item(row, 0) for row in range(len(planets))]
         self.nameItemIndex = {id(item): i for i, item in enumerate(self.nameItems)}
@@ -378,6 +396,8 @@ class LocationBrowser(QtWidgets.QWidget):
         self.table.setUpdatesEnabled(True)
 
         self.parent.updatePlanetsGroupBoxTitle(len(planets))
+        if progress is not None:
+            progress(1.0)
 
     def refreshDistances(self):
         """
@@ -451,9 +471,13 @@ class LocationBrowser(QtWidgets.QWidget):
         self.table.viewport().update()
         self.colorPreviousPlanets()
 
-    def update(self):
+    def update(self, progress=None):
+        """
+        Rebuild the table. 'progress', if given, is called now and then with
+        how much is done (0 to 1), for a progress bar
+        """
         # Keep the search filter, so the table always matches the search box
-        self.populateTable(self.filteredPlanets())
+        self.populateTable(self.filteredPlanets(), progress)
         self.colorPreviousPlanets()
         super(LocationBrowser, self).update()
 

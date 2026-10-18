@@ -248,19 +248,27 @@ class State(object):
 
         return const.HIDDEN_HOLD_NOTHING_FOUND_PERCENTAGES[self.hidden_hold_level - 1]
 
-    def catch_up_planets(self, planets):
+    def catch_up_planets(self, planets, progress=None):
         """
         Bring the prices and stock of many planets up to date at once (e.g. all
         of them, for the planet destruction window). The same as calling
         update_prices and update_stock on each planet, which the result is the
         same as on average, but much faster with thousands of planets: every
-        item's numbers are put in numpy arrays, and updated all together
+        item's numbers are put in numpy arrays, and updated all together.
+        'progress', if given, is called now and then with how much is done (0 to 1)
         """
+        def report(fraction):
+            if progress is not None:
+                progress(fraction)
+
         day = self.day
         items = []
         price_days = []
         stock_days = []
-        for planet in planets:
+        for number, planet in enumerate(planets):
+            if number % 1000 == 0:
+                report(0.3 * number / len(planets))
+
             behind_prices = planet.prices_days_behind(day)
             behind_stock = planet.stock_days_behind(day)
             if not (behind_prices or behind_stock):
@@ -276,6 +284,7 @@ class State(object):
             planet._last_stock_update_day = day
 
         if not items:
+            report(1.0)
             return
 
         count = len(items)
@@ -291,6 +300,7 @@ class State(object):
         most_days = int(price_days.max())
         history = numpy.empty((count, most_days), dtype=numpy.int64)
         for step in range(most_days):
+            report(0.3 + 0.3 * step / most_days)
             behind = price_days > step
             slope[behind] += generator.uniform(-1.0, 1.0, count)[behind] * variance[behind]
             moves = behind & (value + slope > 1.0)
@@ -308,11 +318,16 @@ class State(object):
         rows = history.tolist()
         days = price_days.tolist()
         for i, item in enumerate(items):
+            if i % 5000 == 0:
+                report(0.6 + 0.4 * i / count)
+
             item._value = values[i]
             item.value_slope = slopes[i]
             item._quantity = quantities[i]
             if days[i]:
                 item.value_history.extend(rows[i][:days[i]])
+
+        report(1.0)
 
     def add_black_market(self, planet):
         """
@@ -560,11 +575,18 @@ class State(object):
         # Centre too close to the edge of the area: anywhere in the area will do
         return cls.randomPosition(low, high)
 
-    def expand_planets(self, num_new=None):
+    def expand_planets(self, num_new=None, progress=None):
+        """
+        Discover 'num_new' new planets. 'progress', if given, is called now and
+        then with how much is done (0 to 1)
+        """
         if num_new is None:
             num_new = random.randrange(1, 10)
 
         new_planets = Planet.random(num=num_new, used_names=self.used_planet_names)
+        if progress is not None:
+            progress(0.2)
+
         low, high = self.discovery_distances()
 
         # New planets may join existing clusters in their area, or new clusters
@@ -575,7 +597,10 @@ class State(object):
             clusters.append(centre)
 
         previous = None
-        for new in new_planets:
+        for number, new in enumerate(new_planets):
+            if (progress is not None) and (number % 200 == 0):
+                progress(0.2 + 0.8 * number / float(num_new))
+
             new.discovery_day = self.day
 
             if (previous is not None) and (new.letter is not None) and \
@@ -600,3 +625,5 @@ class State(object):
 
         self.planets += new_planets
         self.planets_discovered += num_new
+        if progress is not None:
+            progress(1.0)

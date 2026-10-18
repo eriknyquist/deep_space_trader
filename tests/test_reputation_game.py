@@ -591,3 +591,24 @@ def test_reputation_refresh_after_sorting_and_filtering(game, search):
     row = browser.rowOf(state.current_planet)
     if row is not None:
         assert table.item(row, 1).background().color() == QtGui.QColor(0, 0xAA, 0)
+
+
+def test_planets_table_rebuild_with_progress_bar_is_fast(big_galaxy):
+    # Bug: a progress bar lets Qt handle events while the table is being
+    # filled, after which every new cell made the table re-measure its columns
+    # over all rows, and a scout expedition seemed to hang forever
+    from PyQt5 import QtWidgets
+    import time
+
+    browser = big_galaxy.locationBrowser
+    done = []
+
+    def progress(fraction):
+        done.append(fraction)
+        QtWidgets.QApplication.processEvents()
+
+    start = time.time()
+    browser.update(progress)
+    assert time.time() - start < 5
+    assert done[-1] == 1.0
+    assert browser.table.rowCount() == len(big_galaxy.state.planets)

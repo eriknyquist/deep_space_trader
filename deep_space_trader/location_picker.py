@@ -1,7 +1,7 @@
 import random
 from deep_space_trader import constants as const
 from deep_space_trader.utils import (
-    errorDialog, yesNoDialog, choiceDialog, infoDialog, NUMBER_ALIGNMENT, CENTRE_ALIGNMENT
+    errorDialog, yesNoDialog, choiceDialog, infoDialog, NUMBER_ALIGNMENT, CENTRE_ALIGNMENT, ProgressWindow
 )
 from deep_space_trader.item_browsers import TableWidgetNumber
 from deep_space_trader.location_browser import DistanceDelegate, LocationBrowser
@@ -85,11 +85,17 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         self.setLayout(self.mainLayout)
 
         # Every planet's prices and stock as of today, for the "Planet value"
-        # column, and for what goes to the warehouse when a planet is destroyed
-        self.state.catch_up_planets(self.destroyablePlanets())
+        # column, and for what goes to the warehouse when a planet is destroyed.
+        # With thousands of planets this takes a moment, so there's a progress
+        # bar (which only appears if it takes a while)
+        loading = ProgressWindow(self.parent, self.tr("Loading planet information..."))
+        self.state.catch_up_planets(self.destroyablePlanets(), lambda done: loading.progress(done * 0.6))
+        self.populateTable(lambda done: loading.progress(0.6 + done * 0.4))
+        loading.finish()
+        loading.deleteLater()
 
         self.table.resizeColumnsToContents()
-        self.update()
+        super(PlanetDestructionPicker, self).update()
 
     def onSelectionChanged(self, selected, deselected):
         cost = 0
@@ -116,7 +122,11 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         return [p for p in self.state.planets
                 if (p is not self.state.home_planet) and (include_current or (p is not self.state.current_planet))]
 
-    def populateTable(self):
+    def populateTable(self, progress=None):
+        """
+        Fill the table. 'progress', if given, is called now and then with how
+        much is done (0 to 1)
+        """
         self.table.setUpdatesEnabled(False)
         self.table.blockSignals(True)
         self.table.setSortingEnabled(False)
@@ -127,6 +137,9 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         self.table.setRowCount(len(planets))
 
         for row in range(len(planets)):
+            if (progress is not None) and (row % 1000 == 0):
+                progress(row / float(len(planets)))
+
             planet = planets[row]
             item1 = QtWidgets.QTableWidgetItem(planet.full_name)
             # Keep a reference to the planet on the row, since the player can
@@ -236,6 +249,32 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
 
         return planets_to_destroy, resisting_planet
 
+    def destroyPlanets(self, planets_to_destroy):
+        """
+        Destroy planets: their neighbours think less of the player, their items
+        go to the warehouse, and they're gone from the planets table. With
+        thousands of planets this takes a moment, so there's a progress bar
+        (which only appears if it takes a while)
+        """
+        state = self.parent.state
+        destroying = ProgressWindow(self.parent, self.tr("Destroying planets..."))
+
+        state.planets_destroyed(planets_to_destroy)
+        for number, planet in enumerate(planets_to_destroy):
+            if number % 500 == 0:
+                destroying.progress(0.5 * number / float(len(planets_to_destroy)))
+
+            state.warehouse.add_all_items(planet.items)
+
+        # The others stay in their usual order. (One pass over the list, rather
+        # than removing planets one at a time, which gets slow with thousands)
+        destroyed = set(map(id, planets_to_destroy))
+        state.planets = [p for p in state.planets if id(p) not in destroyed]
+
+        self.parent.locationBrowser.update(lambda done: destroying.progress(0.5 + done * 0.5))
+        destroying.finish()
+        destroying.deleteLater()
+
     def allButtonClicked(self):
         proceed = yesNoDialog(self, self.tr("Are you sure?"),
                               message=self.tr("Are you sure you want to destroy all planets for {0}? "
@@ -261,16 +300,8 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
             self.close()
             return
 
-        self.state.planets_destroyed(planets_to_destroy)
-        for planet in planets_to_destroy:
-            self.state.warehouse.add_all_items(planet.items)
-
-        # Keep the current planet, the home planet and any planet that resisted, in their usual order
-        state = self.parent.state
-        state.planets = [p for p in state.planets
-                         if (p is state.current_planet) or (p is state.home_planet) or (p is resisting_planet)]
-
-        self.parent.locationBrowser.update()
+        # (Leaves the current planet, the home planet and any planet that resisted)
+        self.destroyPlanets(planets_to_destroy)
 
         self.close()
 
@@ -331,12 +362,7 @@ class PlanetDestructionPicker(QtWidgets.QDialog):
         # what is actually being destroyed, not what was selected
         on_planet = any(planet is self.parent.state.current_planet for planet in planets_to_destroy)
 
-        self.parent.state.planets_destroyed(planets_to_destroy)
-        for planet in planets_to_destroy:
-            self.parent.state.warehouse.add_all_items(planet.items)
-            self.parent.state.planets.remove(planet)
-
-        self.parent.locationBrowser.update()
+        self.destroyPlanets(planets_to_destroy)
 
         if len(planets_to_destroy) == 1:
             destroyed_msg = self.tr("Destruction of {0} is complete.", "{0} is a planet name").format(

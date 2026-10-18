@@ -355,3 +355,127 @@ def test_destroy_all_disabled_with_only_home_and_current_planet(game):
     dialog = picker(game)
     assert not dialog.allButton.isEnabled()
     assert dialog.allButton.text() == "Destroy all"
+
+
+class RecordingProgress(object):
+    """
+    Stand-in for utils.ProgressWindow, recording what it's told
+    """
+    made = []
+
+    def __init__(self, parent, text, delay_ms=300):
+        self.text = text
+        self.done = []
+        self.finished = False
+        RecordingProgress.made.append(self)
+
+    def progress(self, fraction):
+        self.done.append(fraction)
+
+    def finish(self):
+        self.finished = True
+
+    def deleteLater(self):
+        pass
+
+
+def test_progress_bar_while_loading_planets(game, monkeypatch):
+    from deep_space_trader import location_picker
+    monkeypatch.setattr(location_picker, "ProgressWindow", RecordingProgress)
+    RecordingProgress.made = []
+
+    state = game.state
+    state.scout_level = 3
+    state.expand_planets(3000)
+    state.day = 10
+    picker(game)
+
+    assert len(RecordingProgress.made) == 1
+    progress = RecordingProgress.made[0]
+    assert progress.text == "Loading planet information..."
+    assert progress.finished
+    # Goes up steadily, through catching up and filling the table
+    assert progress.done == sorted(progress.done)
+    assert len(progress.done) > 5
+    assert progress.done[-1] >= 0.9
+
+
+def test_progress_window(qapp):
+    from PyQt5 import QtWidgets
+    from deep_space_trader.utils import ProgressWindow
+
+    window = ProgressWindow(None, "Loading planet information...", delay_ms=0)
+    assert window.labelText() == "Loading planet information..."
+    assert window.windowTitle() == "Please wait"
+    assert window.findChild(QtWidgets.QPushButton) is None   # can't be cancelled
+
+    window.progress(0.25)
+    assert window.value() == 250
+    window.progress(0.1)   # never goes backwards
+    assert window.value() == 250
+    window.reject()        # Escape does nothing
+    window.finish()
+    assert not window.isVisible()
+
+
+def check_progress(progress, text):
+    assert progress.text == text
+    assert progress.finished
+    assert progress.done == sorted(progress.done)
+    assert progress.done[-1] >= 0.99
+
+
+@pytest.fixture
+def recorded_progress(monkeypatch):
+    from deep_space_trader import location_picker
+    monkeypatch.setattr(location_picker, "ProgressWindow", RecordingProgress)
+    monkeypatch.setattr(store, "ProgressWindow", RecordingProgress)
+    RecordingProgress.made = []
+    return RecordingProgress.made
+
+
+def test_progress_bar_while_destroying_selected_planets(game, dialogs, recorded_progress, monkeypatch):
+    monkeypatch.setattr(PlanetDestructionPicker, "checkForResistingPlanet", lambda self, planets: None)
+    dialog = picker(game)
+    victims = others(game, 3)
+    choose(dialog, victims)
+    dialog.selectButtonClicked()
+
+    # Loading the window, then destroying
+    assert [p.text for p in recorded_progress] == ["Loading planet information...", "Destroying planets..."]
+    check_progress(recorded_progress[1], "Destroying planets...")
+    assert not any(p in game.state.planets for p in victims)
+
+
+def test_progress_bar_while_destroying_all_planets(game, dialogs, recorded_progress, monkeypatch):
+    monkeypatch.setattr(PlanetDestructionPicker, "checkForResistingPlanet", lambda self, planets: None)
+    state = game.state
+    picker(game).allButtonClicked()
+    check_progress(recorded_progress[-1], "Destroying planets...")
+    assert state.planets == [state.home_planet]
+
+
+def test_progress_bar_while_exploring(game, dialogs, recorded_progress):
+    state = game.state
+    state.scout_level = 1
+    before = len(state.planets)
+    item = next(i for i in store.store_items if isinstance(i, store.PlanetExploration))
+    item.use()
+
+    assert len(state.planets) > before
+    assert len(recorded_progress) == 1
+    check_progress(recorded_progress[0], "Exploring new planets...")
+
+
+def test_destroying_many_planets_keeps_the_others_in_order(game, dialogs, monkeypatch):
+    monkeypatch.setattr(PlanetDestructionPicker, "checkForResistingPlanet", lambda self, planets: None)
+    state = game.state
+    state.scout_level = 3
+    state.expand_planets(200)
+    victims = others(game, 150)[::2]
+    survivors = [p for p in state.planets if p not in victims]
+
+    dialog = picker(game)
+    choose(dialog, victims)
+    dialog.selectButtonClicked()
+    assert state.planets == survivors

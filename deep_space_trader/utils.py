@@ -171,6 +171,46 @@ def setMessageBoxIcon(msg, standard_icon, icon=None):
     iconSize = style.pixelMetric(QtWidgets.QStyle.PM_MessageBoxIconSize)
     msg.setIconPixmap(style.standardIcon(standard_icon).pixmap(iconSize, iconSize))
 
+class ProgressWindow(QtWidgets.QProgressDialog):
+    """
+    A progress bar, with a message, for slow work (like the window shown while
+    sounds load). It only appears if the work takes longer than 'delay_ms',
+    so it doesn't flash up for quick work, and it can't be cancelled
+    """
+    STEPS = 1000
+
+    def __init__(self, parent, text, delay_ms=300):
+        super(ProgressWindow, self).__init__(parent)
+        self.setWindowTitle(translate("ProgressWindow", "Please wait"))
+        self.setLabelText(text)
+        self.setCancelButton(None)
+        self.setRange(0, self.STEPS)
+        self.setMinimumDuration(delay_ms)
+        self.setAutoClose(False)
+        self.setAutoReset(False)
+        self.setWindowModality(QtCore.Qt.ApplicationModal)
+        self.setWindowFlags(QtCore.Qt.Dialog | QtCore.Qt.CustomizeWindowHint | QtCore.Qt.WindowTitleHint)
+        self.setWindowIcon(windowIcon())
+        self.setValue(0)
+
+    def progress(self, fraction):
+        """
+        Show how much of the work is done, from 0 to 1. (For a modal progress
+        window, Qt redraws it straight away, while the work carries on)
+        """
+        value = int(max(0.0, min(1.0, fraction)) * self.STEPS)
+        if value > self.value():
+            self.setValue(value)
+
+    def finish(self):
+        self.setValue(self.STEPS)
+        self.close()
+
+    def reject(self):
+        # Ignore the Escape key
+        pass
+
+
 def choiceDialog(parent, header, message, choices, enabled=None, icon=None):
     """
     Ask a question with one button per choice (a list of button texts), and
