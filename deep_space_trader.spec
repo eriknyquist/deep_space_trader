@@ -1,6 +1,61 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+import os
+import re
+
+from PyInstaller.utils.win32.versioninfo import (
+    VSVersionInfo, FixedFileInfo, StringFileInfo, StringTable, StringStruct, VarFileInfo, VarStruct
+)
+
 block_cipher = None
+
+
+def readPackageInfo():
+    """
+    The game's version and author (from deep_space_trader/__init__.py), and
+    the copyright line (the first line of LICENSE)
+    """
+    with open(os.path.join(SPECPATH, 'deep_space_trader', '__init__.py'), encoding='utf-8') as fh:
+        text = fh.read()
+    version = re.search(r'__version__\s*=\s*"([^"]+)"', text).group(1)
+    author = re.search(r'__author__\s*=\s*"([^"]+)"', text).group(1)
+
+    with open(os.path.join(SPECPATH, 'LICENSE'), encoding='utf-8') as fh:
+        copyright = fh.readline().strip()
+
+    return version, author, copyright
+
+
+def versionInfo():
+    """
+    Version information for the .exe file, shown in its Properties (Details tab):
+    name, version, author and copyright, all taken from the project's files, so
+    there's nothing extra to update for a new version
+    """
+    version, author, copyright = readPackageInfo()
+
+    # Windows wants four numbers, e.g. (1, 5, 0, 0) for 1.5.0
+    numbers = tuple(int(n) for n in version.split('.'))[:4]
+    numbers += (0,) * (4 - len(numbers))
+
+    return VSVersionInfo(
+        ffi=FixedFileInfo(filevers=numbers, prodvers=numbers, mask=0x3f, flags=0x0, OS=0x40004,
+                          fileType=0x1, subtype=0x0, date=(0, 0)),
+        kids=[
+            StringFileInfo([
+                StringTable('040904B0', [
+                    StringStruct('CompanyName', author),
+                    StringStruct('FileDescription', 'Deep Space Trader'),
+                    StringStruct('FileVersion', version),
+                    StringStruct('InternalName', 'Deep Space Trader'),
+                    StringStruct('LegalCopyright', copyright + '. MIT license.'),
+                    StringStruct('OriginalFilename', 'Deep Space Trader.exe'),
+                    StringStruct('ProductName', 'Deep Space Trader'),
+                    StringStruct('ProductVersion', version),
+                ])
+            ]),
+            VarFileInfo([VarStruct('Translation', [0x0409, 1200])]),
+        ])
 
 # DLLs the game doesn't need, left out to make the download smaller: OpenGL
 # (the game draws everything without it), encryption, and Qt modules for QML
@@ -103,14 +158,19 @@ exe = EXE(pyz,
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
-          upx=True,
-          console=False)
+          # Not compressed with UPX: it saves little, and UPX-packed programs
+          # are often flagged by antivirus software
+          upx=False,
+          console=False,
+          # The game's icon (in Explorer, the taskbar, and "Apps & features"),
+          # and its name, version and copyright in the file's Properties
+          icon=os.path.join(SPECPATH, 'deep_space_trader', 'images', 'icon.ico'),
+          version=versionInfo())
 
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
                a.datas,
                strip=False,
-               upx=True,
-               upx_exclude=[],
+               upx=False,
                name='Deep Space Trader')
