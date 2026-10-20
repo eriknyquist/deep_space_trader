@@ -12,10 +12,13 @@ Usage (from the project folder):
     python scripts/make_readme_images.py                  # all images, saved in images/
     python scripts/make_readme_images.py --output preview # save them somewhere else
     python scripts/make_readme_images.py --only store star_map
+    python scripts/make_readme_images.py --language pt_BR # in Portuguese, saved in images/pt_BR/
 
 Your settings don't affect the images: the game uses the default values from
-constants.py whatever INITIAL_PLANET_COUNT etc. are set to, English text, a
-temporary config file (your real high scores aren't touched), and no sounds.
+constants.py whatever INITIAL_PLANET_COUNT etc. are set to, English text (or
+the language given with --language), a temporary config file (your real high
+scores aren't touched), and no sounds. For other languages, the translations
+must be built first (lrelease, see the README), or new text shows in English.
 """
 import argparse
 import importlib
@@ -35,7 +38,6 @@ from deep_space_trader import constants as const
 # Same starting values for everyone, whatever constants.py has been changed to locally
 const.INITIAL_PLANET_COUNT = 8
 const.INITIAL_MONEY = 2000
-const.FORCE_LANGUAGE = None
 
 
 class SilentAudio(object):
@@ -62,6 +64,7 @@ except ImportError:
         AudioPlayer=SilentAudio, waitForSounds=lambda parent, audio: None)
 
 from deep_space_trader import config, main_widget  # noqa: E402
+from deep_space_trader.i18n import installTranslators  # noqa: E402
 from deep_space_trader.items import (  # noqa: E402
     ItemCollection, Items, common_item_types, medium_rare_item_types, contraband_item_types
 )
@@ -352,13 +355,14 @@ def makeImages(shots):
     original_choice = random.choice
 
     def choose(options):
-        # The rumour's planet, item and wording
-        if options and isinstance(options[0], str) and options[0].startswith("You hear"):
-            return options[0]
+        # The rumour's planet, item and wording (the first of the messages, in
+        # whatever language: the only other list of text is the item names)
         if options is state.planets:
             return state.current_planet
         if rumoured in options:
             return rumoured
+        if options and all(isinstance(option, str) for option in options):
+            return options[0]
         return original_choice(options)
 
     main_widget.random.choice = choose
@@ -379,11 +383,21 @@ def makeImages(shots):
 
 def main():
     parser = argparse.ArgumentParser(description="Make the screenshots used in README.rst")
-    parser.add_argument("--output", default=DEFAULT_OUTPUT, help="folder to save the images in (default: images/)")
+    parser.add_argument("--output", default=None,
+                        help="folder to save the images in (default: images/, or images/LANGUAGE/ with --language)")
     parser.add_argument("--only", nargs="+", metavar="NAME",
                         help="only make these images (names without .png, e.g. store star_map)")
+    parser.add_argument("--language", default="en",
+                        help="language of the text in the images, e.g. pt_BR for Brazilian Portuguese (default: en)")
     args = parser.parse_args()
+
+    # (Images in other languages go in a folder of their own, so the English ones aren't replaced)
+    if args.output is None:
+        args.output = DEFAULT_OUTPUT if args.language == "en" else os.path.join(DEFAULT_OUTPUT, args.language)
     os.makedirs(args.output, exist_ok=True)
+
+    # The language, whatever FORCE_LANGUAGE is set to in constants.py
+    const.FORCE_LANGUAGE = args.language
 
     # A temporary config file, so the player's real high scores aren't read or changed
     config.FILENAME = os.path.join(tempfile.mkdtemp(), "config.json")
@@ -391,6 +405,10 @@ def main():
 
     # The same look as the game (see main() in __main__.py)
     app = QtWidgets.QApplication(sys.argv)
+
+    # Must happen before any translated text is created (as in __main__.py)
+    installTranslators(app)
+
     app.setStyle('Fusion')
     font = app.font()
     font.setPointSize(12)

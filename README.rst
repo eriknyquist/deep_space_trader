@@ -1035,6 +1035,7 @@ captures every window. Run it on a desktop (it captures windows with their title
 
     python scripts/make_readme_images.py                  # all images, saved in images/
     python scripts/make_readme_images.py --only store star_map
+    python scripts/make_readme_images.py --language pt_BR     # in Portuguese, saved in images/pt_BR/
 
 The icons shown for pirates, customs patrols, black markets and the home planet, and on the main
 window's buttons, are PNG files in ``deep_space_trader/images`` (``event_*.png``, ``home.png`` and
