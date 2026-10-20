@@ -260,14 +260,13 @@ def _drawRing(painter, recipe, front_only):
     painter.restore()
 
 
-def drawPlanet(painter, recipe):
+def drawSpace(painter, recipe):
     """
-    Draw a planet from its recipe (see planetRecipe), on a 100x100 grid
+    Draw the space behind a planet (see planetRecipe), on a 100x100 grid:
+    stars, and maybe a nebula
     """
     painter.setRenderHint(QtGui.QPainter.Antialiasing)
     painter.setPen(QtCore.Qt.NoPen)
-
-    # Space, stars, and maybe a nebula
     painter.fillRect(QtCore.QRectF(0, 0, GRID, GRID), QtGui.QColor(recipe["space"]))
     if recipe["nebula"] is not None:
         x, y, radius, color = recipe["nebula"]
@@ -284,6 +283,17 @@ def drawPlanet(painter, recipe):
         painter.setBrush(QtGui.QColor(255, 255, 255, int(255 * brightness)))
         painter.drawEllipse(QtCore.QPointF(x, y), radius, radius)
 
+
+def drawPlanet(painter, recipe, background=True):
+    """
+    Draw a planet from its recipe (see planetRecipe), on a 100x100 grid. With
+    'background' False, only the planet (and its ring and moon), with no space behind
+    """
+    if background:
+        drawSpace(painter, recipe)
+
+    painter.setRenderHint(QtGui.QPainter.Antialiasing)
+    painter.setPen(QtCore.Qt.NoPen)
     centre = QtCore.QPointF(50, 50)
     radius = recipe["radius"]
 

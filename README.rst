@@ -1056,15 +1056,23 @@ The PDF version of this README is built with rst2pdf:
 Windows installer
 #################
 
-1. Build the game with PyInstaller, which puts it in ``dist/Deep Space Trader``:
+1. Build the game with PyInstaller, which puts it in ``dist/Deep Space Trader`` (``-y`` replaces
+   the previous build without asking first; check that the build gets to the end, or the installer
+   will contain the previous build):
 
    ::
 
-       pyinstaller deep_space_trader.spec
+       pyinstaller -y deep_space_trader.spec
 
-2. Compile ``setup.iss`` with `Inno Setup <https://jrsoftware.org/isinfo.php>`_, which makes the
-   installer. The paths in ``setup.iss`` point to the project folder on the maintainer's computer,
-   so check them first.
+2. Compile ``setup.iss`` with `Inno Setup <https://jrsoftware.org/isinfo.php>`_ 6.0 or newer, which
+   makes the installer in ``Output/``. Its paths are relative to the project folder, so it works
+   from any copy of the project. The installer is in English and Brazilian Portuguese (it uses the
+   Windows language), installs the 64-bit game into "Program Files", and lets players choose to
+   install just for themselves, without administrator rights.
+
+The installer's images and its copy of the license (in ``installer/``) are made by
+``python scripts/make_installer_files.py``, which is only needed to change them (e.g. after
+changing ``LICENSE``).
 
 For a new version, update the version number in ``deep_space_trader/__init__.py``, in
 ``setup.iss`` (``AppVersion`` and ``OutputBaseFilename``), and in the title of this README.
