@@ -134,8 +134,6 @@ A typical opening, to get a feel for the game:
 Strategy guide
 ==============
 
-The numbers here are the game's defaults.
-
 Early game
 ##########
 
@@ -148,7 +146,7 @@ Early game
   light-years apart.
 * **Travel is safe while you're poor.** Pirates only attack players worth over 1,000,000 (money
   plus the value of your cargo; the warehouse doesn't count).
-* **The trading console** (3,000, plus 500 per day) shows any planet's prices from anywhere, so
+* **The trading console** (costs 3,000, plus 500 per day) shows any planet's prices from anywhere, so
   you can plan routes instead of guessing. It quickly pays for itself.
 * **Contraband** is worth 250 to 800 per unit at base price, more than any legal material, and black
   market prices range from 0.3 to 3 times that. Even a small load can bring in more than a
@@ -164,13 +162,13 @@ Mid game
 * **But destruction has a price.** Planets around a destroyed planet think much less of you
   (see `Reputation`_): they charge more, pay less, and may refuse to trade at all. Sell the
   materials you get far from where you destroyed them, or on newly discovered planets.
-* **Engine upgrades** (50,000 each) make travel 25% cheaper per light-year, and give two more
+* **Engine upgrades** (costs 50,000 each) make travel 25% cheaper per light-year, and give two more
   warehouse trips per day, which you'll need to move the goods from destroyed planets.
-* **Battle fleet.** The chance of pirates grows with your wealth: 5% per trip when you're worth
-  over 1,000,000, 15% over 10,000,000, 30% over 50,000,000, and up to 90%, multiplied by up to 3
-  for long trips (and down to half for short hops). Without a battle fleet you'll almost always
-  lose a fight. Each level costs twice the last (from 250,000) and adds 100,000 per day.
-* **Scout fleet.** A scout fleet (750,000, plus 50,000 per day per level) lets you buy scout
+* **Battle fleet.** (costs 250,000, plus 100,000 per day per level) The chance of pirates grows
+  with your wealth: 5% per trip when you're worth over 1,000,000, 15% over 10,000,000, 30% over
+  50,000,000, and up to 90%, multiplied by up to 3 for long trips (and down to half for short hops).
+  Without a battle fleet you'll almost always lose a fight. Each upgrade costs twice the last.
+* **Scout fleet.** A scout fleet (costs 750,000, plus 50,000 per day per level) lets you buy scout
   expeditions (50,000,000 each), which discover new planets further from home. Remote planets
   sell their materials cheaper, and haven't heard of what you did near home.
 
@@ -193,6 +191,7 @@ Staying alive
 * **Fight only when you can win.** Losing a fight against pirates or a resisting planet kills you.
   Surrendering to pirates costs you your cargo (and often your money), but not your life.
 * **Customs patrols** won't kill you unless you flee and get caught with little health left.
+:wa
 
 Keyboard shortcuts
 ==================
@@ -233,15 +232,8 @@ Menus and settings
   These settings last until the game is closed.
 * **Help**: About, which shows the game's story and some strategy tips.
 
-**Language.** The game uses your system's language if it has a translation (currently Brazilian
-Portuguese), and English otherwise. Numbers are formatted for your language too (e.g. 1.000.000
-in Portuguese).
-
-**Intro story.** The story shown when the game starts can be turned off with its "Don't show this
-message again" box. It's still shown in **Help->About**.
-
-**Config file.** High scores, and whether to show the intro story, are saved in
-``.deep_space_trader_config.json``, in your home folder (on Windows, ``C:\Users\<your name>``).
+**Language.** The game uses your system's language if it has a translation. Currently only
+English and Brazilian Portuguese are supported.
 
 Complete Game Reference
 =======================
