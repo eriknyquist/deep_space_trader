@@ -191,7 +191,6 @@ Staying alive
 * **Fight only when you can win.** Losing a fight against pirates or a resisting planet kills you.
   Surrendering to pirates costs you your cargo (and often your money), but not your life.
 * **Customs patrols** won't kill you unless you flee and get caught with little health left.
-:wa
 
 Keyboard shortcuts
 ==================
