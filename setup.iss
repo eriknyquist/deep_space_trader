@@ -50,6 +50,11 @@ WizardSmallImageFile=installer\wizard_small_image_55x55.bmp,installer\wizard_sma
 ; The MIT license, shown before installing
 LicenseFile=installer\license.txt
 
+; Don't ask which language to use: the installer uses the Windows display
+; language if it's one of those in [Languages], like the game does, so the two
+; always match. (Only asks if Windows is in a language the installer doesn't have)
+ShowLanguageDialog=auto
+
 [Languages]
 ; The installer uses the Windows language if it's one of these (as the game
 ; does), and English otherwise
